@@ -17,19 +17,19 @@ static void initLot(int i, Pair pair, Object[] args) {
     }
 }
 
-static Lot _head(Lot lo, int i) {
+static Lot _head(Lot lt, int i) {
     if (i == 0) {
         return lot();
     } else {
-        return cons(car(lo), _head(cdr(lo), i - 1));
+        return cons(car(lt), _head(cdr(lt), i - 1));
     }
 }
 
-static Lot _tail(Lot lo, int i) {
+static Lot _tail(Lot lt, int i) {
     if (i == 0) {
-        return lo;
+        return lt;
     } else {
-        return _tail(cdr(lo), i - 1);
+        return _tail(cdr(lt), i - 1);
     }
 }
 
@@ -69,11 +69,11 @@ static String stringOfChar(char c) {
 static Object isolate(Object datum) {
     if (datum instanceof Few fw) {
         return isolateFex(fw.array);
-    } else if (datum instanceof Lot lo) {
-        if (isNull(lo)) {
+    } else if (datum instanceof Lot lt) {
+        if (isNull(lt)) {
             return new PairNull();
         } else {
-            return isolateLot(lo.pair);
+            return isolateLot(lt.pair);
         }
     } else {
         return datum;

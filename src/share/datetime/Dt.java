@@ -12,8 +12,6 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
-import static share.primitive.Pm.feSet;
-
 
 public class Dt {
 
@@ -32,14 +30,14 @@ public static @NotNull Time currentTime(TimeType type) {
         return makeTime(sec, nsec);
     } else if (type == TimeType.Monotonic) {
         long stamp = System.nanoTime();
-        long sec = stamp / DtAid.NANO_SEC;
-        long nsec = stamp % DtAid.NANO_SEC;
+        long sec = stamp / Aid.NANO_SEC;
+        long nsec = stamp % Aid.NANO_SEC;
         return makeTime(sec, nsec);
     } else {
         ThreadMXBean bean = ManagementFactory.getThreadMXBean();
         long stamp = bean.getCurrentThreadCpuTime();
-        long sec = stamp / DtAid.NANO_SEC;
-        long nsec = stamp % DtAid.NANO_SEC;
+        long sec = stamp / Aid.NANO_SEC;
+        long nsec = stamp % Aid.NANO_SEC;
         return makeTime(sec, nsec);
     }
 }
@@ -88,10 +86,10 @@ public static @NotNull Time copyTime(@NotNull Time t) {
 public static @NotNull Time timeAdd(@NotNull Time t1, @NotNull Time t2) {
     long sec = t1.second() + t2.second();
     long nsec = t1.nano() + t2.nano();
-    if (nsec >= DtAid.NANO_SEC) {
-        return makeTime(sec + 1, nsec - DtAid.NANO_SEC);
-    } else if (nsec <= DtAid.NANO_SEC * -1) {
-        return makeTime(sec - 1, nsec + DtAid.NANO_SEC);
+    if (nsec >= Aid.NANO_SEC) {
+        return makeTime(sec + 1, nsec - Aid.NANO_SEC);
+    } else if (nsec <= Aid.NANO_SEC * -1) {
+        return makeTime(sec - 1, nsec + Aid.NANO_SEC);
     } else {
         return makeTime(sec, nsec);
     }
@@ -99,7 +97,7 @@ public static @NotNull Time timeAdd(@NotNull Time t1, @NotNull Time t2) {
 
 @Contract("_, _ -> new")
 public static @NotNull Time timeSub(@NotNull Time t1, @NotNull Time t2) {
-    return timeAdd(t1, DtAid._neg_time(t2));
+    return timeAdd(t1, Aid.negTime(t2));
 }
 
 /**
@@ -118,7 +116,7 @@ public static @NotNull Date makeDate(int year, int month, int day_of_month, int 
         throw new IllegalArgumentException(
         String.format("month %d is out of range [1 12]", month));
     }
-    if (!DtAid._check_day_month(year, month, day_of_month)) {
+    if (!Aid.checkDayMonth(year, month, day_of_month)) {
         throw new IllegalArgumentException(
         String.format("day %d-%02d-%02d is invalid", year, month, day_of_month));
     }
@@ -143,7 +141,7 @@ public static @NotNull Date makeDate(int year, int month, int day_of_month, int 
         String.format("zone offset %d is out of range [-64800 64800]", offset));
     }
 
-    DtAid._check_boundary(date);
+    Aid.checkBoundary(date);
 
     return date;
 }
@@ -187,12 +185,12 @@ public static @NotNull Date currentDate() {
 }
 
 public static @NotNull Date timeToDate(@NotNull Time t, int offset) {
-    if (DtAid._check_time(t)) {
-        return DtAid._time_date(t, offset);
+    if (Aid._check_time(t)) {
+        return Aid.timeDate(t, offset);
     } else {
         throw new IllegalArgumentException(
         String.format("the time converted to date, must be in range [%d %d]",
-        DtAid.UTC_MIN, DtAid.UTC_MAX));
+        Aid.UTC_MIN, Aid.UTC_MAX));
     }
 }
 
@@ -202,9 +200,9 @@ public static @NotNull Date timeToDate(@NotNull Time t) {
 }
 
 public static @NotNull Time dateToTime(@NotNull Date d) {
-    long days = DtAid._sum_days(d.year(), d.month(), d.dayOfMonth());
+    long days = Aid.sumDays(d.year(), d.month(), d.dayOfMonth());
     long secs_day = d.hour() * 3600L + d.minute() * 60L + d.second();
-    long secs = days * 24 * 3600 + secs_day - d.offset() - DtAid.COMPLEMENT;
+    long secs = days * 24 * 3600 + secs_day - d.offset() - Aid.COMPLEMENT;
     return makeTime(secs, d.nano());
 }
 }

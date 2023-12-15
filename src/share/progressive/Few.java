@@ -33,5 +33,4 @@ public boolean equals(Object datum) {
 public String toString() {
     return Cycle.stringOf(this);
 }
-
 }

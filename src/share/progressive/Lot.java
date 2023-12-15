@@ -19,16 +19,16 @@ Lot(Object[] args) {
 
 @Override
 public boolean equals(Object datum) {
-    if (datum instanceof Lot lo) {
+    if (datum instanceof Lot lt) {
         Lot c1 = Cycle.detect(this);
-        Lot c2 = Cycle.detect(lo);
+        Lot c2 = Cycle.detect(lt);
         if (Pg.isNull(c1) && Pg.isNull(c2)) {
             Object o1 = PgAid.isolate(this);
-            Object o2 = PgAid.isolate(lo);
+            Object o2 = PgAid.isolate(lt);
             return o1.equals(o2);
         } else if (Pg.length(c1) == Pg.length(c2)) {
             Object o1 = Cycle.labeling(this, c1);
-            Object o2 = Cycle.labeling(lo, c2);
+            Object o2 = Cycle.labeling(lt, c2);
             return o1.equals(o2);
         } else {
             return false;
@@ -42,5 +42,4 @@ public boolean equals(Object datum) {
 public String toString() {
     return Cycle.stringOf(this);
 }
-
 }

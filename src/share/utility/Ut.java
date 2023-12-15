@@ -30,43 +30,43 @@ public static @NotNull String randomString(int length) {
 
 
 //region Lot
-public static boolean isBelong(Object o, Lot lo) {
-    if (isNull(lo)) {
+public static boolean isBelong(Object o, Lot lt) {
+    if (isNull(lt)) {
         return false;
-    } else if (eq(o, car(lo))) {
+    } else if (eq(o, car(lt))) {
         return true;
     } else {
-        return isBelong(o, cdr(lo));
+        return isBelong(o, cdr(lt));
     }
 }
 
-public static boolean isBelong(Eqv pred, Object o, Lot lo) {
-    if (isNull(lo)) {
+public static boolean isBelong(Eqv pred, Object o, Lot lt) {
+    if (isNull(lt)) {
         return false;
-    } else if (pred.apply(o, car(lo))) {
+    } else if (pred.apply(o, car(lt))) {
         return true;
     } else {
-        return isBelong(pred, o, cdr(lo));
+        return isBelong(pred, o, cdr(lt));
     }
 }
 
-public static Lot noDup(Lot lo) {
-    if (isNull(lo)) {
+public static Lot noDup(Lot lt) {
+    if (isNull(lt)) {
         return lot();
-    } else if (isBelong(car(lo), cdr(lo))) {
-        return noDup(cdr(lo));
+    } else if (isBelong(car(lt), cdr(lt))) {
+        return noDup(cdr(lt));
     } else {
-        return cons(car(lo), noDup(cdr(lo)));
+        return cons(car(lt), noDup(cdr(lt)));
     }
 }
 
-public static Lot remove(Object o, Lot lo) {
-    if (isNull(lo)) {
+public static Lot remove(Object o, Lot lt) {
+    if (isNull(lt)) {
         return lot();
-    } else if (eq(o, car(lo))) {
-        return cdr(lo);
+    } else if (eq(o, car(lt))) {
+        return cdr(lt);
     } else {
-        return cons(car(lo), remove(o, cdr(lo)));
+        return cons(car(lt), remove(o, cdr(lt)));
     }
 }
 //endregion
@@ -185,5 +185,4 @@ public static String stringOfRBTree(Few tree) {
     return String.format("<RBTree %s>", RBTree.stringOfNode((Few) ref0(tree)));
 }
 //endregion
-
 }

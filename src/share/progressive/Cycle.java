@@ -26,9 +26,9 @@ private static class $Detect {
     void _detect(Object datum, Lot col) {
         if (datum instanceof Few fw) {
             _processFex(fw.array, col);
-        } else if (datum instanceof Lot lo) {
-            if (!isNull(lo)) {
-                _processLot(lo.pair, col);
+        } else if (datum instanceof Lot lt) {
+            if (!isNull(lt)) {
+                _processLot(lt.pair, col);
             }
         }
     }
@@ -98,11 +98,11 @@ private static class $Label {
     Object processing(Object datum) {
         if (datum instanceof Few fw) {
             return _processFex(fw.array);
-        } else if (datum instanceof Lot lo) {
-            if (isNull(lo)) {
+        } else if (datum instanceof Lot lt) {
+            if (isNull(lt)) {
                 return new PairNull();
             } else {
-                return _processLot(lo.pair);
+                return _processLot(lt.pair);
             }
         } else {
             return datum;
@@ -220,8 +220,7 @@ private static boolean _isTailCyc(Pair pair, Lot col) {
     }
 }
 
-static boolean isTailCyc(@NotNull Lot lo) {
-    return _isTailCyc(lo.pair, lot());
+static boolean isTailCyc(@NotNull Lot lt) {
+    return _isTailCyc(lt.pair, lot());
 }
-
 }

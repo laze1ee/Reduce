@@ -8,7 +8,7 @@ import static share.datetime.Dt.makeTime;
 import static share.primitive.Pm.*;
 
 
-class DtAid {
+class Aid {
 
 static final long NANO_SEC = 1_000_000_000L;
 
@@ -28,11 +28,11 @@ private static final int START_DAY_OF_WEEK = 5;
 
 
 @Contract(value = "_ -> new", pure = true)
-static @NotNull Time _neg_time(@NotNull Time t) {
+static @NotNull Time negTime(@NotNull Time t) {
     return makeTime(t.second() * -1, t.nano() * -1);
 }
 
-static String _string_offset(int offset) {
+static String stringOffset(int offset) {
     int n = offset;
     String sign;
     if (n == 0) {
@@ -49,7 +49,7 @@ static String _string_offset(int offset) {
 }
 
 @Contract(pure = true)
-static @NotNull String _string_week(int day) {
+static @NotNull String stringWeek(int day) {
     if (day == 1) {
         return "Monday";
     } else if (day == 2) {
@@ -67,13 +67,13 @@ static @NotNull String _string_week(int day) {
     }
 }
 
-static @NotNull Date _time_date(@NotNull Time t, int offset) {
+static @NotNull Date timeDate(@NotNull Time t, int offset) {
     long secs = t.second() + offset + COMPLEMENT;
     long days = secs / SEC_DAY;
     long secs_day = secs % SEC_DAY;
 
-    Feint d1 = DtAid._track_date(days);
-    Feint d2 = DtAid._track_time(secs_day);
+    Feint d1 = Aid.trackDate(days);
+    Feint d2 = Aid.trackTime(secs_day);
 
     Date date = new Date();
     feSet(date.arr, 0, feRef(d1, 0));
@@ -88,12 +88,12 @@ static @NotNull Date _time_date(@NotNull Time t, int offset) {
     return date;
 }
 
-static int _day_week(int year, int month, int day) {
-    long days = _sum_days(year, month, day);
-    return _track_day_week(days);
+static int dayWeek(int year, int month, int day) {
+    long days = sumDays(year, month, day);
+    return trackDayWeek(days);
 }
 
-private static boolean _is_leap_year(int year) {
+private static boolean isLeapYear(int year) {
     if (year % 4 == 0) {
         return year % 100 != 0 || year % 400 == 0;
     } else {
@@ -101,28 +101,28 @@ private static boolean _is_leap_year(int year) {
     }
 }
 
-static @NotNull Feint _track_date(long days) {
+static @NotNull Feint trackDate(long days) {
     Feint degree = makeFeint(4);
 
-    int days_400y = _400years(degree, days);
-    int days_100y = _100years(degree, days_400y);
-    int days_4y = _4years(degree, days_100y);
-    int days_1y = _1year(degree, days_4y);
+    int days_400y = _400Years(degree, days);
+    int days_100y = _100Years(degree, days_400y);
+    int days_4y = _4Years(degree, days_100y);
+    int days_1y = _1Year(degree, days_4y);
 
-    int year = _track_year(degree);
-    Feint tmp = _track_month_and_day(days_1y + 1, _is_leap_year(year));
+    int year = trackYear(degree);
+    Feint tmp = trackMonthAndDay(days_1y + 1, isLeapYear(year));
     int month = feRef(tmp, 0);
     int day_month = feRef(tmp, 1);
-    int day_week = _track_day_week(days);
+    int day_week = trackDayWeek(days);
     return feint(year, month, day_month, day_week);
 }
 
-private static int _400years(Feint degree, long days) {
+private static int _400Years(Feint degree, long days) {
     feSet(degree, 0, (int) (days / DAYS_400Y));
     return (int) (days % DAYS_400Y);
 }
 
-private static int _100years(Feint degree, int days) {
+private static int _100Years(Feint degree, int days) {
     if (days <= DAYS_100Y + 1) {
         feSet(degree, 1, 0);
         return days;
@@ -133,7 +133,7 @@ private static int _100years(Feint degree, int days) {
     }
 }
 
-private static int _4years(Feint degree, int days) {
+private static int _4Years(Feint degree, int days) {
     if (feRef(degree, 1) == 0) {
         feSet(degree, 2, (int) (days / DAYS_4Y));
         return (int) (days % DAYS_4Y);
@@ -147,7 +147,7 @@ private static int _4years(Feint degree, int days) {
     }
 }
 
-private static int _1year(Feint degree, int days) {
+private static int _1Year(Feint degree, int days) {
     if (feRef(degree, 1) > 0 && feRef(degree, 2) == 0) {
         feSet(degree, 3, days / 365);
         return days % 365;
@@ -164,11 +164,11 @@ private static int _1year(Feint degree, int days) {
     }
 }
 
-private static int _track_year(Feint degree) {
+private static int trackYear(Feint degree) {
     return feRef(degree, 0) * 400 + feRef(degree, 1) * 100 + feRef(degree, 2) * 4 + feRef(degree, 3);
 }
 
-private static @NotNull Feint _track_month_and_day(int days, boolean leap) {
+private static @NotNull Feint trackMonthAndDay(int days, boolean leap) {
     int i;
     if (leap) {
         i = 1;
@@ -184,20 +184,20 @@ private static @NotNull Feint _track_month_and_day(int days, boolean leap) {
     throw new IllegalArgumentException(String.format("days %d is invalid", days));
 }
 
-private static int _track_day_week(long days) {
+private static int trackDayWeek(long days) {
     long in_week = (days % 7 + START_DAY_OF_WEEK) % 7;
     return (int) (in_week + 1);
 }
 
 @Contract(pure = true)
-static @NotNull Feint _track_time(long sec) {
+static @NotNull Feint trackTime(long sec) {
     int hour = (int) (sec / 3600);
     int minute = (int) (sec % 3600 / 60);
     int second = (int) (sec % 3600 % 60);
     return feint(hour, minute, second);
 }
 
-static long _sum_days(int year, int month, int day) {
+static long sumDays(int year, int month, int day) {
     Feint degree = makeFeint(4);
     int y = year;
     feSet(degree, 0, y / 400);
@@ -208,12 +208,12 @@ static long _sum_days(int year, int month, int day) {
     y = y % 4;
     feSet(degree, 3, y);
 
-    long days = _sum_days_years(degree, year);
-    days = days + _sum_days_year(year, month, day);
+    long days = sumDaysYears(degree, year);
+    days = days + sumDaysYear(year, month, day);
     return days;
 }
 
-private static long _sum_days_years(Feint degree, int year) {
+private static long sumDaysYears(Feint degree, int year) {
     long days = feRef(degree, 0) * DAYS_400Y;
 
     if (feRef(degree, 1) > 0) {
@@ -229,7 +229,7 @@ private static long _sum_days_years(Feint degree, int year) {
     }
 
     if (feRef(degree, 3) > 0) {
-        if (_is_leap_year(year - feRef(degree, 3))) {
+        if (isLeapYear(year - feRef(degree, 3))) {
             days = days + feRef(degree, 3) * DAYS_Y + 1;
         } else {
             days = days + feRef(degree, 3) * DAYS_Y;
@@ -238,9 +238,9 @@ private static long _sum_days_years(Feint degree, int year) {
     return days;
 }
 
-private static int _sum_days_year(int year, int month, int day) {
+private static int sumDaysYear(int year, int month, int day) {
     int i;
-    if (_is_leap_year(year)) {
+    if (isLeapYear(year)) {
         i = 1;
     } else {
         i = 0;
@@ -253,9 +253,9 @@ private static final Feint DAY_YEAR = feint(
 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31,
 0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
 
-static boolean _check_day_month(int year, int month, int day_month) {
+static boolean checkDayMonth(int year, int month, int day_month) {
     int day;
-    if (_is_leap_year(year)) {
+    if (isLeapYear(year)) {
         day = feRef(DAY_YEAR, month);
     } else {
         day = feRef(DAY_YEAR, 13 + month);
@@ -270,9 +270,9 @@ static boolean _check_time(@NotNull Time t) {
     return COMPLEMENT * -1 <= t.second() && t.second() <= UTC_MAX;
 }
 
-static void _check_boundary(Date d) {
+static void checkBoundary(Date d) {
     Time t = Dt.dateToTime(d);
-    Date utc = _time_date(t, 0);
+    Date utc = timeDate(t, 0);
     int year = utc.year();
     int month = utc.month();
     int day_of_month = utc.dayOfMonth();

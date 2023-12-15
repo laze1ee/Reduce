@@ -23,12 +23,24 @@ Symbol(String name) {
     }
 }
 
+
 @Override
 public String toString() {
     return name;
 }
 
-public String asDataStruct() {
+
+@Override
+public boolean equals(Object obj) {
+    if (obj instanceof Symbol sym) {
+        return this.id == sym.id;
+    } else {
+        return false;
+    }
+}
+
+
+public String display() {
     if (name.isEmpty()) {
         return "||";
     } else {

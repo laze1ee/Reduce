@@ -10,13 +10,21 @@ PairCycTail(Object data, Pair next, int count) {
 public boolean equals(Object datum) {
     if (datum instanceof PairCycTail pair) {
         if (data == null && next == null) {
-            return pair.data == null && pair.next == null && count == pair.count;
+            return pair.data == null &&
+                   pair.next == null &&
+                   count == pair.count;
         } else if (data == null) {
-            return count == pair.count && next.equals(pair.next);
+            return pair.data == null &&
+                   count == pair.count &&
+                   next.equals(pair.next);
         } else if (next == null) {
-            return count == pair.count && data.equals(pair.data);
+            return pair.next == null &&
+                   count == pair.count &&
+                   data.equals(pair.data);
         } else {
-            return count == pair.count && data.equals(pair.data) && next.equals(pair.next);
+            return count == pair.count &&
+                   data.equals(pair.data) &&
+                   next.equals(pair.next);
         }
     } else {
         return false;
@@ -31,5 +39,4 @@ public String toString() {
         return String.format(". #%d=(%s %s)", count, Pg.stringOf(data), next);
     }
 }
-
 }

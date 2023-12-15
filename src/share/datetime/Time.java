@@ -9,10 +9,10 @@ private final long nsec;
 Time(long second, long nanosecond) {
     if (0 < second && nanosecond < 0) {
         sec = second - 1;
-        nsec = DtAid.NANO_SEC + nanosecond;
+        nsec = Aid.NANO_SEC + nanosecond;
     } else if (0 > second && nanosecond > 0) {
         sec = second + 1;
-        nsec = nanosecond - DtAid.NANO_SEC;
+        nsec = nanosecond - Aid.NANO_SEC;
     } else {
         sec = second;
         nsec = nanosecond;

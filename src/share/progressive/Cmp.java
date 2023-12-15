@@ -42,7 +42,9 @@ public static boolean greater(Object o1, Object o2) {
 
 
 public static boolean eq(Object o1, Object o2) {
-    if (o1 instanceof Symbol s1 && o2 instanceof Symbol s2) {
+    if (o1 instanceof Boolean b1 && o2 instanceof Boolean b2) {
+        return b1.booleanValue() == b2.booleanValue();
+    } else if (o1 instanceof Symbol s1 && o2 instanceof Symbol s2) {
         return s1.id == s2.id;
     } else if (o1 instanceof Lot l1 && o2 instanceof Lot l2) {
         return l1.pair == l2.pair;
@@ -60,7 +62,6 @@ public static boolean eq(Object o1, Object o2) {
         return o1 == o2;
     }
 }
-
 
 public static boolean equal(Object o1, Object o2) {
     return eq(o1, o2) || o1.equals(o2);

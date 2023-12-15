@@ -150,33 +150,33 @@ public static @NotNull Febyte codeString(@NotNull String str, byte... endings) {
 
 public static Febyte codeDatum(@NotNull Object datum) {
     if (datum instanceof Boolean) {
-        return BinaryAid._code_bool((boolean) datum);
+        return Aid.codeBool((boolean) datum);
     } else if (datum instanceof Integer) {
-        return BinaryAid._code_int((int) datum);
+        return Aid.codeInt((int) datum);
     } else if (datum instanceof Long) {
-        return BinaryAid._code_long((long) datum);
+        return Aid.codeLong((long) datum);
     } else if (datum instanceof Double) {
-        return BinaryAid._code_double((double) datum);
+        return Aid.codeDouble((double) datum);
     } else if (datum instanceof Character) {
-        return BinaryAid._code_char((char) datum);
+        return Aid.codeChar((char) datum);
     } else if (datum instanceof String) {
-        return BinaryAid._code_string((String) datum);
+        return Aid.codeString((String) datum);
     } else if (datum instanceof Febool) {
-        return BinaryAid._code_febool((Febool) datum);
+        return Aid.codeFebool((Febool) datum);
     } else if (datum instanceof Feint) {
-        return BinaryAid._code_feint((Feint) datum);
+        return Aid.codeFeint((Feint) datum);
     } else if (datum instanceof Felong) {
-        return BinaryAid._code_felong((Felong) datum);
+        return Aid.codeFelong((Felong) datum);
     } else if (datum instanceof Fedouble) {
-        return BinaryAid._code_fedouble((Fedouble) datum);
+        return Aid.codeFedouble((Fedouble) datum);
     } else if (datum instanceof Time) {
-        return BinaryAid._code_time((Time) datum);
+        return Aid.codeTime((Time) datum);
     } else if (datum instanceof Date) {
-        return BinaryAid._code_date((Date) datum);
+        return Aid.codeDate((Date) datum);
     } else if (datum instanceof Lot) {
-        return BinaryAid._code_lot((Lot) datum);
+        return Aid.codeLot((Lot) datum);
     } else if (datum instanceof Few) {
-        return BinaryAid._code_fex((Few) datum);
+        return Aid.codeFew((Few) datum);
     } else {
         throw new IllegalArgumentException(
         String.format("%s is invalid data type", datum));
@@ -185,6 +185,6 @@ public static Febyte codeDatum(@NotNull Object datum) {
 
 public static Object deDatum(Febyte b_data) {
     Feint pos = makeFeint(1);
-    return BinaryAid._de_datum(b_data, pos);
+    return Aid.deDatum(b_data, pos);
 }
 }

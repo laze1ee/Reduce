@@ -15,5 +15,4 @@ public boolean equals(Object datum) {
 public String toString() {
     return "()";
 }
-
 }

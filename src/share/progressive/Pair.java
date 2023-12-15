@@ -14,13 +14,17 @@ Pair(Object data, Pair next) {
 public boolean equals(Object datum) {
     if (datum instanceof Pair pair) {
         if (data == null && next == null) {
-            return pair.data == null && pair.next == null;
+            return pair.data == null &&
+                   pair.next == null;
         } else if (data == null) {
-            return next.equals(pair.next);
+            return pair.data == null &&
+                   next.equals(pair.next);
         } else if (next == null) {
-            return data.equals(pair.data);
+            return pair.next == null &&
+                   data.equals(pair.data);
         } else {
-            return data.equals(pair.data) && next.equals(pair.next);
+            return data.equals(pair.data) &&
+                   next.equals(pair.next);
         }
     } else {
         return false;

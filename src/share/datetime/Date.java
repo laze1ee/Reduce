@@ -21,7 +21,7 @@ Date(int year, int month, int day_of_month, int hour, int minute, int second, in
     feSet(arr, 0, year);
     feSet(arr, 1, month);
     feSet(arr, 2, day_of_month);
-    feSet(arr, 3, DtAid._day_week(year, month, day_of_month));
+    feSet(arr, 3, Aid.dayWeek(year, month, day_of_month));
     feSet(arr, 4, hour);
     feSet(arr, 5, minute);
     feSet(arr, 6, second);
@@ -68,7 +68,7 @@ public int offset() {
 @Override
 public String toString() {
     return String.format("#<date %s %d-%02d-%02d %s %02d:%02d:%02d>",
-    DtAid._string_offset(feRef(arr, 8)), feRef(arr, 0), feRef(arr, 1), feRef(arr, 2),
-    DtAid._string_week(feRef(arr, 3)), feRef(arr, 4), feRef(arr, 5), feRef(arr, 6));
+    Aid.stringOffset(feRef(arr, 8)), feRef(arr, 0), feRef(arr, 1), feRef(arr, 2),
+    Aid.stringWeek(feRef(arr, 3)), feRef(arr, 4), feRef(arr, 5), feRef(arr, 6));
 }
 }

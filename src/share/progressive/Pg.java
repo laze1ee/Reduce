@@ -58,22 +58,22 @@ public static @NotNull Few makeFew(int amount) {
 
 
 //region Predicate
-public static boolean isNull(@NotNull Lot lo) {
-    return lo.pair == null;
+public static boolean isNull(@NotNull Lot lt) {
+    return lt.pair == null;
 }
 //endregion
 
 
 //region Visitor
-public static int length(@NotNull Lot lo) {
-    if (Cycle.isTailCyc(lo)) {
+public static int length(@NotNull Lot lt) {
+    if (Cycle.isTailCyc(lt)) {
         throw new IllegalArgumentException
-              (String.format("error: lot is circular\n%s", lo));
+              (String.format("error: lot is circular\n%s", lt));
     } else {
         int n = 0;
-        while (!isNull(lo)) {
+        while (!isNull(lt)) {
             n = n + 1;
-            lo = cdr(lo);
+            lt = cdr(lt);
         }
         return n;
     }
@@ -84,16 +84,16 @@ public static int length(@NotNull Few fw) {
     return fw.array.length;
 }
 
-public static Object car(@NotNull Lot lo) {
-    if (isNull(lo)) {
+public static Object car(@NotNull Lot lt) {
+    if (isNull(lt)) {
         throw new IllegalArgumentException("() is not a pair");
     } else {
-        return lo.pair.data;
+        return lt.pair.data;
     }
 }
 
-public static Object caar(Lot lo) {
-    Lot tmp = (Lot) car(lo);
+public static Object caar(Lot lt) {
+    Lot tmp = (Lot) car(lt);
     if (isNull(tmp)) {
         throw new IllegalArgumentException("() is not a pair");
     } else {
@@ -102,22 +102,22 @@ public static Object caar(Lot lo) {
 }
 
 @Contract("_ -> new")
-public static @NotNull Lot cdr(@NotNull Lot lo) {
-    if (isNull(lo)) {
+public static @NotNull Lot cdr(@NotNull Lot lt) {
+    if (isNull(lt)) {
         throw new IllegalArgumentException("() is not a pair");
     } else {
-        return new Lot(lo.pair.next);
+        return new Lot(lt.pair.next);
     }
 }
 
-public static Object cadr(Lot lo) {
-    return car(cdr(lo));
+public static Object cadr(Lot lt) {
+    return car(cdr(lt));
 }
 
 @Contract("_ -> new")
-public static @NotNull Lot cdar(Lot lo) {
-    Lot tmp = (Lot) car(lo);
-    if (isNull(lo)) {
+public static @NotNull Lot cdar(Lot lt) {
+    Lot tmp = (Lot) car(lt);
+    if (isNull(lt)) {
         throw new IllegalArgumentException("() is not a pair");
     } else {
         return new Lot(tmp.pair.next);
@@ -125,20 +125,20 @@ public static @NotNull Lot cdar(Lot lo) {
 }
 
 @Contract("_ -> new")
-public static @NotNull Lot cddr(Lot lo) {
-    return cdr(cdr(lo));
+public static @NotNull Lot cddr(Lot lt) {
+    return cdr(cdr(lt));
 }
 
-public static Object lotRef(@NotNull Lot lo, int index) {
-    if (0 <= index && index < length(lo)) {
+public static Object lotRef(@NotNull Lot lt, int index) {
+    if (0 <= index && index < length(lt)) {
         while (0 < index) {
-            lo = cdr(lo);
+            lt = cdr(lt);
             index = index - 1;
         }
-        return car(lo);
+        return car(lt);
     } else {
         throw new IndexOutOfBoundsException
-              (String.format("index %d is out of range for lot %s", index, lo));
+              (String.format("index %d is out of range for lot %s", index, lt));
     }
 }
 
@@ -178,19 +178,19 @@ public static Object ref5(Few fw) {
 
 
 //region Setter
-public static void setCar(@NotNull Lot lo, @NotNull Object value) {
-    if (isNull(lo)) {
+public static void setCar(@NotNull Lot lt, @NotNull Object value) {
+    if (isNull(lt)) {
         throw new IllegalArgumentException("() is not a pair");
     } else {
-        lo.pair.data = value;
+        lt.pair.data = value;
     }
 }
 
-public static void setCdr(@NotNull Lot lo, @NotNull Lot value) {
-    if (isNull(lo)) {
+public static void setCdr(@NotNull Lot lt, @NotNull Lot value) {
+    if (isNull(lt)) {
         throw new IllegalArgumentException("() is not a pair");
     } else {
-        lo.pair.next = value.pair;
+        lt.pair.next = value.pair;
     }
 }
 
@@ -234,8 +234,8 @@ public static void fill(@NotNull Few fw, Object value) {
 
 
 //region Connection
-public static @NotNull Lot cons(@NotNull Object obj, @NotNull Lot lo) {
-    Pair pair = new Pair(obj, lo.pair);
+public static @NotNull Lot cons(@NotNull Object obj, @NotNull Lot lt) {
+    Pair pair = new Pair(obj, lt.pair);
     return new Lot(pair);
 }
 
@@ -258,46 +258,46 @@ public static Lot append(@NotNull Lot l1, @NotNull Lot l2) {
 
 
 //region Copy
-public static @NotNull Lot reverse(@NotNull Lot lo) {
-    if (isNull(lo)) {
-        return lo;
-    } else if (Cycle.isTailCyc(lo)) {
+public static @NotNull Lot reverse(@NotNull Lot lt) {
+    if (isNull(lt)) {
+        return lt;
+    } else if (Cycle.isTailCyc(lt)) {
         throw new IllegalArgumentException
-              (String.format("error: lot is circular\n%s", lo));
+              (String.format("error: lot is circular\n%s", lt));
     } else {
-        Pair moo = new Pair(lo.pair.data, null);
-        lo = cdr(lo);
-        while (!isNull(lo)) {
-            moo = new Pair(lo.pair.data, moo);
-            lo = cdr(lo);
+        Pair moo = new Pair(lt.pair.data, null);
+        lt = cdr(lt);
+        while (!isNull(lt)) {
+            moo = new Pair(lt.pair.data, moo);
+            lt = cdr(lt);
         }
         return new Lot(moo);
     }
 }
 
-public static Lot lotHead(@NotNull Lot lo, int index) {
-    if (Cycle.isTailCyc(lo) || 0 <= index && index <= length(lo)) {
-        return PgAid._head(lo, index);
+public static Lot lotHead(@NotNull Lot lt, int index) {
+    if (Cycle.isTailCyc(lt) || 0 <= index && index <= length(lt)) {
+        return PgAid._head(lt, index);
     } else {
         throw new IndexOutOfBoundsException
-              (String.format("index %d is out of range for lot %s", index, lo));
+              (String.format("index %d is out of range for lot %s", index, lt));
     }
 }
 
-public static Lot lotTail(@NotNull Lot lo, int index) {
-    if (Cycle.isTailCyc(lo) || 0 <= index && index <= length(lo)) {
-        return PgAid._tail(lo, index);
+public static Lot lotTail(@NotNull Lot lt, int index) {
+    if (Cycle.isTailCyc(lt) || 0 <= index && index <= length(lt)) {
+        return PgAid._tail(lt, index);
     } else {
         throw new IndexOutOfBoundsException
-              (String.format("index %d is out of range for lot %s", index, lo));
+              (String.format("index %d is out of range for lot %s", index, lt));
     }
 }
 
-public static Lot copy(@NotNull Lot lo) {
-    if (isNull(lo)) {
+public static Lot copy(@NotNull Lot lt) {
+    if (isNull(lt)) {
         return lot();
     } else {
-        return cons(car(lo), copy(cdr(lo)));
+        return cons(car(lt), copy(cdr(lt)));
     }
 }
 
@@ -316,16 +316,16 @@ public static @NotNull Few copy(@NotNull Few fw) {
 
 
 //region Transformer
-public static @NotNull Few lotToFew(@NotNull Lot lo) {
-    if (Cycle.isTailCyc(lo)) {
+public static @NotNull Few lotToFew(@NotNull Lot lt) {
+    if (Cycle.isTailCyc(lt)) {
         throw new IllegalArgumentException
-              (String.format("error: lot is circular\n%s", lo));
+              (String.format("error: lot is circular\n%s", lt));
     } else {
-        int sz = length(lo);
+        int sz = length(lt);
         Few fw = makeFew(sz);
         for (int i = 0; i < sz; i = i + 1) {
-            fewSet(fw, i, car(lo));
-            lo = cdr(lo);
+            fewSet(fw, i, car(lt));
+            lt = cdr(lt);
         }
         return fw;
     }
@@ -345,22 +345,22 @@ public static @NotNull Lot fewToLot(@NotNull Few fw) {
 
 
 //region Traversal
-public static Lot filter(Has pred, Lot lo) {
-    if (isNull(lo)) {
+public static Lot filter(Has pred, Lot lt) {
+    if (isNull(lt)) {
         return lot();
-    } else if (pred.apply(car(lo))) {
-        return cons(car(lo), filter(pred, cdr(lo)));
+    } else if (pred.apply(car(lt))) {
+        return cons(car(lt), filter(pred, cdr(lt)));
     } else {
-        return filter(pred, cdr(lo));
+        return filter(pred, cdr(lt));
     }
 }
 
-public static Lot lotMap(Do func, Lot lo) {
-    if (isNull(lo)) {
+public static Lot lotMap(Do func, Lot lt) {
+    if (isNull(lt)) {
         return lot();
     } else {
-        Object o = func.apply(car(lo));
-        return cons(o, lotMap(func, cdr(lo)));
+        Object o = func.apply(car(lt));
+        return cons(o, lotMap(func, cdr(lt)));
     }
 }
 
