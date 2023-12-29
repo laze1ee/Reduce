@@ -1,11 +1,11 @@
 package share.progressive;
 
-import share.utility.Ut;
+import share.utility.RBTree;
 
 
 public class Symbol {
 
-static Few rbTree = Ut.emptyRBTree();
+static Few rbTree = RBTree.initialize();
 static int count = 0;
 
 final String name;
@@ -14,11 +14,11 @@ int id;
 
 Symbol(String name) {
     this.name = name;
-    if (Ut.isKeyExistInRBTree(rbTree, this.name)) {
-        id = (int) Ut.refRBTree(rbTree, this.name);
+    if (RBTree.isPresent(rbTree, this.name)) {
+        id = (int) RBTree.ref(rbTree, this.name);
     } else {
         id = count;
-        Ut.insertRBTree(rbTree, this.name, id);
+        RBTree.insert(rbTree, this.name, id);
         count = count + 1;
     }
 }

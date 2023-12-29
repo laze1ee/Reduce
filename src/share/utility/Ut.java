@@ -1,6 +1,5 @@
 package share.utility;
 
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import share.progressive.Few;
 import share.progressive.Lot;
@@ -50,13 +49,13 @@ public static boolean isBelong(Eqv pred, Object o, Lot lt) {
     }
 }
 
-public static Lot noDup(Lot lt) {
+public static Lot removeDup(Lot lt) {
     if (isNull(lt)) {
         return lot();
     } else if (isBelong(car(lt), cdr(lt))) {
-        return noDup(cdr(lt));
+        return removeDup(cdr(lt));
     } else {
-        return cons(car(lt), noDup(cdr(lt)));
+        return cons(car(lt), removeDup(cdr(lt)));
     }
 }
 
@@ -73,116 +72,18 @@ public static Lot remove(Object o, Lot lt) {
 
 
 //region Few
-public static int atFew(Eqv pred, Object o, Few fw) {
+public static int fewIndex(Eqv pred, Object o, Few fw) {
     int sz = length(fw);
-    for (int i = 0; i < sz; i = i + 1) {
-        if (pred.apply(o, fewRef(fw, i))) {
-            return i;
-        }
+    int i = 0;
+    while (i < sz &&
+           !pred.apply(o, fewRef(fw, i))) {
+        i = i + 1;
     }
-    return -1;
-}
-//endregion
-
-
-//region Red-Black-Tree
-@Contract(" -> new")
-public static @NotNull Few emptyRBTree() {
-    return few(RBTree.emptyNode());
-}
-
-public static boolean isEmptyRBTree(Few rbTree) {
-    if (length(rbTree) == 1 && ref0(rbTree) instanceof Few node) {
-        return RBTree.isEmptyNode(node);
+    if (i == sz) {
+        return -1;
     } else {
-        return false;
+        return i;
     }
-}
-
-public static boolean isRBTree(Few rbTree) {
-    if (length(rbTree) == 1 && ref0(rbTree) instanceof Few node) {
-        return RBTree.isNode(node);
-    } else {
-        return false;
-    }
-}
-
-public static void insertRBTree(Few rbTree, Object key, Object value) {
-    RBTree.$Finder moo = new RBTree.$Finder(key, (Few) ref0(rbTree));
-    Lot path = moo.process();
-    Few node = (Few) car(path);
-    if (RBTree.isEmptyNode(node)) {
-        RBTree.setKey(node, key);
-        RBTree.setValue(node, value);
-        RBTree.setColor(node, RBTree.RED);
-        RBTree.setLeft(node, RBTree.emptyNode());
-        RBTree.setRight(node, RBTree.emptyNode());
-        RBTree.$InsertFixer fixer = new RBTree.$InsertFixer(rbTree, path);
-        fixer.process();
-    } else {
-        throw new RuntimeException
-              (String.format("insert same key %s for tree %s", key, stringOfRBTree(rbTree)));
-    }
-}
-
-public static boolean isKeyExistInRBTree(Few rbTree, Object key) {
-    RBTree.$Finder moo = new RBTree.$Finder(key, (Few) ref0(rbTree));
-    Lot path = moo.process();
-    return !RBTree.isEmptyNode((Few) car(path));
-}
-
-public static Object refRBTree(Few rbTree, Object key) {
-    RBTree.$Finder moo = new RBTree.$Finder(key, (Few) ref0(rbTree));
-    Lot path = moo.process();
-    Few node = (Few) car(path);
-    if (RBTree.isEmptyNode(node)) {
-        throw new RuntimeException
-              (String.format("key %s is not existed in tree %s", key, stringOfRBTree(rbTree)));
-    } else {
-        return RBTree.getValue(node);
-    }
-}
-
-public static void setRBTree(Few rbTree, Object key, Object value) {
-    RBTree.$Finder moo = new RBTree.$Finder(key, (Few) ref0(rbTree));
-    Lot path = moo.process();
-    Few node = (Few) car(path);
-    if (RBTree.isEmptyNode(node)) {
-        throw new RuntimeException
-              (String.format("key %s is not existed in tree %s", key, stringOfRBTree(rbTree)));
-    } else {
-        RBTree.setValue(node, value);
-    }
-}
-
-public static void deleteRBTree(Object key, Few tree) {
-    if (isEmptyRBTree(tree)) {
-        throw new RuntimeException("empty tree");
-    } else {
-        RBTree.delete(key, tree);
-    }
-}
-
-public static Object minOfRBTree(Few tree) {
-    Lot path = RBTree.minimum((Few) ref0(tree), lot());
-    if (isNull(path)) {
-        throw new RuntimeException("empty tree");
-    } else {
-        return RBTree.getValue((Few) car(path));
-    }
-}
-
-public static Object maxOfRBTree(Few tree) {
-    Lot path = RBTree.maximum((Few) ref0(tree), lot());
-    if (isNull(path)) {
-        throw new RuntimeException("empty tree");
-    } else {
-        return RBTree.getValue((Few) car(path));
-    }
-}
-
-public static String stringOfRBTree(Few tree) {
-    return String.format("<RBTree %s>", RBTree.stringOfNode((Few) ref0(tree)));
 }
 //endregion
 }

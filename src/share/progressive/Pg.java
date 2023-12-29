@@ -234,8 +234,8 @@ public static void fill(@NotNull Few fw, Object value) {
 
 
 //region Connection
-public static @NotNull Lot cons(@NotNull Object obj, @NotNull Lot lt) {
-    Pair pair = new Pair(obj, lt.pair);
+public static @NotNull Lot cons(@NotNull Object datum, @NotNull Lot lt) {
+    Pair pair = new Pair(datum, lt.pair);
     return new Lot(pair);
 }
 

@@ -56,7 +56,7 @@ private static final Few char_name =
 few("nul", "alarm", "backspace", "tab", "newline", "vtab", "page", "return", "esc", "space", "delete");
 
 static String stringOfChar(char c) {
-    int i = Ut.atFew(Cmp::eq, (int) c, char_code);
+    int i = Ut.fewIndex(Cmp::eq, (int) c, char_code);
     if (0 <= i) {
         return String.format("#\\%s", fewRef(char_name, i));
     } else if (Character.isISOControl(c)) {
