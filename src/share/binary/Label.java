@@ -1,6 +1,6 @@
 package share.binary;
 
-class BinaryLabel {
+class Label {
 
 static final byte BOOL = (byte) 0xA0;
 static final byte INT = (byte) 0xA1;

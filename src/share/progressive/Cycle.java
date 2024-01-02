@@ -4,21 +4,21 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static share.progressive.Cmp.eq;
+import static share.progressive.Comparison.eq;
 import static share.progressive.Pg.*;
 import static share.utility.Ut.isBelong;
 
 
 class Cycle {
 
-private static class $Detect {
+private static class DetectCycle {
     Lot cycle;     // Lot of Lots
 
-    $Detect() {
+    DetectCycle() {
         cycle = lot();
     }
 
-    Lot detect(Object datum) {
+    Lot process(Object datum) {
         _detect(datum, lot());
         return cycle;
     }
@@ -81,21 +81,21 @@ private static class $Detect {
 }
 
 static Lot detect(Object datum) {
-    $Detect d = new $Detect();
-    return d.detect(datum);
+    DetectCycle d = new DetectCycle();
+    return d.process(datum);
 }
 
 
-private static class $Label {
+private static class LabelCycle {
     final Lot attached_cycle;      // lot of Few
     int count;
 
-    $Label(Lot cycle) {
-        attached_cycle = _map(cycle);
+    LabelCycle(Lot cycle) {
+        attached_cycle = lotMap(LabelCycle::doing, cycle);
         count = -1;
     }
 
-    Object processing(Object datum) {
+    Object process(Object datum) {
         if (datum instanceof Few fw) {
             return _processFex(fw.array);
         } else if (datum instanceof Lot lt) {
@@ -130,7 +130,7 @@ private static class $Label {
         int sz = arr.length;
         Object[] tmp = new Object[sz];
         for (int i = 0; i < sz; i = i + 1) {
-            tmp[i] = processing(arr[i]);
+            tmp[i] = process(arr[i]);
         }
         return tmp;
     }
@@ -139,7 +139,7 @@ private static class $Label {
     @NotNull Pair _processLot(Pair pair) {
         Few cyc = _find(pair, attached_cycle);
         if (cyc == null) {
-            return new PairHead(processing(pair.data), _processCdr(pair.next));
+            return new PairHead(process(pair.data), _processCdr(pair.next));
         } else if ((boolean) ref1(cyc)) {
             return new PairCyc(null, null, (int) ref2(cyc));
         } else {
@@ -147,7 +147,7 @@ private static class $Label {
             set1(cyc, true);
             set2(cyc, count);
             return new PairCyc
-                   (processing(pair.data), _processCdr(pair.next), (int) ref2(cyc));
+                   (process(pair.data), _processCdr(pair.next), (int) ref2(cyc));
         }
     }
 
@@ -157,7 +157,7 @@ private static class $Label {
         } else {
             Few cyc = _find(pair, attached_cycle);
             if (cyc == null) {
-                return new Pair(processing(pair.data), _processCdr(pair.next));
+                return new Pair(process(pair.data), _processCdr(pair.next));
             } else if ((boolean) ref1(cyc)) {
                 return new PairCycTail(null, null, (int) ref2(cyc));
             } else {
@@ -165,62 +165,57 @@ private static class $Label {
                 set1(cyc, true);
                 set2(cyc, count);
                 return new PairCycTail
-                       (processing(pair.data), _processCdr(pair.next), (int) ref2(cyc));
+                       (process(pair.data), _processCdr(pair.next), (int) ref2(cyc));
             }
         }
 
     }
 
-    static Lot _map(Lot cycle) {
-        if (isNull(cycle)) {
-            return lot();
-        } else {
-            // 0 -> cycle pair, 1 -> found, 2 -> count
-            return cons(few(car(cycle), false, -1), _map(cdr(cycle)));
-        }
+    @Contract(value = "_ -> new", pure = true)
+    static @NotNull Object doing(Object datum) {
+        return few(datum, false, -1);
     }
 
-    static @Nullable Few _find(Object datum, Lot cycle) {
-        if (isNull(cycle)) {
+    @Nullable Few _find(Object datum, Lot cycle) {
+        Lot moo = cycle;
+        while (!isNull(moo) &&
+               !eq(datum, ref0((Few) car(moo)))) {
+            moo = cdr(moo);
+        }
+        if (isNull(moo)) {
             return null;
-        } else if (eq(datum, ref0((Few) car(cycle)))) {
-            return (Few) car(cycle);
         } else {
-            return _find(datum, cdr(cycle));
+            return (Few) car(moo);
         }
     }
 }
 
-static Object labeling(Object datum, Lot cycle) {
-    $Label label = new $Label(cycle);
-    return label.processing(datum);
+static Object label(Object datum, Lot cycle) {
+    LabelCycle l = new LabelCycle(cycle);
+    return l.process(datum);
 }
 
 static String stringOf(Object datum) {
     Lot cycle = Cycle.detect(datum);
     Object another;
     if (Pg.isNull(cycle)) {
-        another = PgAid.isolate(datum);
+        another = Aid.isolate(datum);
         return another.toString();
     } else {
-        another = labeling(datum, cycle);
+        another = label(datum, cycle);
         return String.format("[Warning in print: cycle detected]\n%s", another);
     }
 }
 
 
-// col: lot of Pair
-private static boolean _isTailCyc(Pair pair, Lot col) {
-    if (pair == null) {
-        return false;
-    } else if (isBelong(pair.next, col)) {
-        return true;
-    } else {
-        return _isTailCyc(pair.next, cons(pair, col));
+static boolean isTailCircular(@NotNull Lot lt) {
+    Pair pair = lt.pair;
+    Lot col = lot();
+    while (pair != null &&
+           !isBelong(pair.next, col)) {
+        col = cons(pair, col);
+        pair = pair.next;
     }
-}
-
-static boolean isTailCyc(@NotNull Lot lt) {
-    return _isTailCyc(lt.pair, lot());
+    return pair != null;
 }
 }

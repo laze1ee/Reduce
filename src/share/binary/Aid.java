@@ -22,6 +22,7 @@ import static share.progressive.Pg.*;
 
 class Aid {
 
+@SuppressWarnings("SpellCheckingInspection")
 private static final char[] HEX_STR = "0123456789ABCDEF".toCharArray();
 
 @Contract(pure = true)
@@ -32,7 +33,7 @@ static @NotNull String hex(byte by) {
 //region Coding
 static @NotNull Febyte codeBool(boolean b) {
     Febyte bin = makeFebyte(2);
-    feSet(bin, 0, BinaryLabel.BOOL);
+    feSet(bin, 0, Label.BOOL);
     if (b) {
         feSet(bin, 1, (byte) 1);
     }
@@ -41,28 +42,28 @@ static @NotNull Febyte codeBool(boolean b) {
 
 static @NotNull Febyte codeInt(int n) {
     Febyte bin = makeFebyte(5);
-    feSet(bin, 0, BinaryLabel.INT);
+    feSet(bin, 0, Label.INT);
     feCopyInto(Binary.codeInt(n), 0, bin, 1, 4);
     return bin;
 }
 
 static @NotNull Febyte codeLong(long n) {
     Febyte bin = makeFebyte(9);
-    feSet(bin, 0, BinaryLabel.LONG);
+    feSet(bin, 0, Label.LONG);
     feCopyInto(Binary.codeLong(n), 0, bin, 1, 8);
     return bin;
 }
 
 static @NotNull Febyte codeDouble(double n) {
     Febyte bin = makeFebyte(9);
-    feSet(bin, 0, BinaryLabel.DOUBLE);
+    feSet(bin, 0, Label.DOUBLE);
     feCopyInto(Binary.codeDouble(n), 0, bin, 1, 8);
     return bin;
 }
 
 static @NotNull Febyte codeChar(char c) {
     Febyte bin = makeFebyte(5);
-    feSet(bin, 0, BinaryLabel.CHAR);
+    feSet(bin, 0, Label.CHAR);
     feCopyInto(Binary.codeInt(c), 0, bin, 1, 4);
     return bin;
 }
@@ -70,7 +71,7 @@ static @NotNull Febyte codeChar(char c) {
 static @NotNull Febyte codeString(@NotNull String str) {
     Febyte b_str = febyte(str.getBytes(StandardCharsets.UTF_8));
     Febyte bin = makeFebyte(feLength(b_str) + 2);
-    feSet(bin, 0, BinaryLabel.STRING);
+    feSet(bin, 0, Label.STRING);
     feCopyInto(b_str, 0, bin, 1, feLength(b_str));
     return bin;
 }
@@ -78,12 +79,12 @@ static @NotNull Febyte codeString(@NotNull String str) {
 static @NotNull Febyte codeFebool(Febool bs) {
     if (feLength(bs) == 0) {
         Febyte bin = makeFebyte(5);
-        feSet(bin, 0, BinaryLabel.FEBOOL);
+        feSet(bin, 0, Label.FEBOOL);
         return bin;
     } else {
         int sz = feLength(bs);
         Febyte bin = makeFebyte(5 + sz / 8 + 1);
-        feSet(bin, 0, BinaryLabel.FEBOOL);
+        feSet(bin, 0, Label.FEBOOL);
         feCopyInto(Binary.codeInt(sz), 0, bin, 1, 4);
         for (int i = 0; i < sz; i = i + 1) {
             if (feRef(bs, i)) {
@@ -99,12 +100,12 @@ static @NotNull Febyte codeFebool(Febool bs) {
 static @NotNull Febyte codeFeint(@NotNull Feint ins) {
     if (feLength(ins) == 0) {
         Febyte bin = makeFebyte(5);
-        feSet(bin, 0, BinaryLabel.FEINT);
+        feSet(bin, 0, Label.FEINT);
         return bin;
     } else {
         int sz = feLength(ins);
         Febyte bin = makeFebyte(5 + sz * 4);
-        feSet(bin, 0, BinaryLabel.FEINT);
+        feSet(bin, 0, Label.FEINT);
         feCopyInto(Binary.codeInt(sz), 0, bin, 1, 4);
         for (int i = 0; i < sz; i = i + 1) {
             Febyte tmp = Binary.codeInt(feRef(ins, i));
@@ -117,12 +118,12 @@ static @NotNull Febyte codeFeint(@NotNull Feint ins) {
 static @NotNull Febyte codeFelong(@NotNull Felong ls) {
     if (feLength(ls) == 0) {
         Febyte bin = makeFebyte(5);
-        feSet(bin, 0, BinaryLabel.FELONG);
+        feSet(bin, 0, Label.FELONG);
         return bin;
     } else {
         int sz = feLength(ls);
         Febyte bin = makeFebyte(5 + sz * 8);
-        feSet(bin, 0, BinaryLabel.FELONG);
+        feSet(bin, 0, Label.FELONG);
         feCopyInto(Binary.codeInt(sz), 0, bin, 1, 4);
         for (int i = 0; i < sz; i = i + 1) {
             Febyte tmp = Binary.codeLong(feRef(ls, i));
@@ -135,12 +136,12 @@ static @NotNull Febyte codeFelong(@NotNull Felong ls) {
 static @NotNull Febyte codeFedouble(@NotNull Fedouble ds) {
     if (feLength(ds) == 0) {
         Febyte bin = makeFebyte(5);
-        feSet(bin, 0, BinaryLabel.FEDOUBLE);
+        feSet(bin, 0, Label.FEDOUBLE);
         return bin;
     } else {
         int sz = feLength(ds);
         Febyte bin = makeFebyte(5 + sz * 8);
-        feSet(bin, 0, BinaryLabel.FEDOUBLE);
+        feSet(bin, 0, Label.FEDOUBLE);
         feCopyInto(Binary.codeInt(sz), 0, bin, 1, 4);
         for (int i = 0; i < sz; i = i + 1) {
             Febyte tmp = Binary.codeDouble(feRef(ds, i));
@@ -152,7 +153,7 @@ static @NotNull Febyte codeFedouble(@NotNull Fedouble ds) {
 
 static @NotNull Febyte codeTime(@NotNull Time t) {
     Febyte bin = makeFebyte(17);
-    feSet(bin, 0, BinaryLabel.TIME);
+    feSet(bin, 0, Label.TIME);
     Febyte b_sec = Binary.codeLong(t.second());
     feCopyInto(b_sec, 0, bin, 1, 8);
     Febyte b_nsec = Binary.codeLong(t.nano());
@@ -173,7 +174,7 @@ static @NotNull Febyte codeDate(@NotNull Date d) {
     Febyte bs = codeFeint(ins);
     int sz = feLength(bs);
     Febyte bin = makeFebyte(1 + sz);
-    feSet(bin, 0, BinaryLabel.DATE);
+    feSet(bin, 0, Label.DATE);
     feCopyInto(bs, 0, bin, 1, sz);
     return bin;
 }
@@ -203,13 +204,13 @@ private static void merge(Lot store, Febyte bin, int pos, byte CONS, byte END) {
 
 static @NotNull Febyte codeLot(Lot datum) {
     if (isNull(datum)) {
-        return febyte(BinaryLabel.LEST_BEGIN, BinaryLabel.LEST_END);
+        return febyte(Label.LEST_BEGIN, Label.LEST_END);
     } else {
         Lot store = _map(datum);
         int sz = size(store, 0) + length(store) + 1;
         Febyte bin = makeFebyte(sz);
-        feSet(bin, 0, BinaryLabel.LEST_BEGIN);
-        merge(store, bin, 1, BinaryLabel.LEST_CONS, BinaryLabel.LEST_END);
+        feSet(bin, 0, Label.LEST_BEGIN);
+        merge(store, bin, 1, Label.LEST_CONS, Label.LEST_END);
         return bin;
     }
 }
@@ -250,13 +251,13 @@ static @NotNull Febyte codeFew(Few datum) {
     int sz = length(datum);
     if (sz == 0) {
         Febyte bin = makeFebyte(5);
-        feSet(bin, 0, BinaryLabel.FEX);
+        feSet(bin, 0, Label.FEX);
         return bin;
     } else {
         Few store = _map(datum);
         int sz_bin = 5 + size(store);
         Febyte bin = makeFebyte(sz_bin);
-        feSet(bin, 0, BinaryLabel.FEX);
+        feSet(bin, 0, Label.FEX);
         merge(store, bin);
         return bin;
     }
@@ -391,28 +392,28 @@ private static Object dePrimitive(Febyte bin, Feint pos) {
     int i = feRef(pos, 0) ;
     byte label = feRef(bin, i);
     switch (label) {
-        case BinaryLabel.BOOL -> {
+        case Label.BOOL -> {
             feSet(pos, 0, i + 2);
             byte by = feRef(bin, i + 1);
             return deBool(by);
         }
-        case BinaryLabel.INT -> {
+        case Label.INT -> {
             feSet(pos, 0, i + 5);
             return Binary.deInt(bin, i + 1);
         }
-        case BinaryLabel.LONG -> {
+        case Label.LONG -> {
             feSet(pos, 0, i + 9);
             return Binary.deLong(bin, i + 1);
         }
-        case BinaryLabel.DOUBLE -> {
+        case Label.DOUBLE -> {
             feSet(pos, 0, i + 9);
             return Binary.deDouble(bin, i + 1);
         }
-        case BinaryLabel.CHAR -> {
+        case Label.CHAR -> {
             feSet(pos, 0, i + 5);
             return (char) Binary.deInt(bin, i + 1);
         }
-        case BinaryLabel.STRING -> {
+        case Label.STRING -> {
             int bound = endingString(bin, i + 1);
             int sz = bound - i - 1;
             feSet(pos, 0, bound + 1);
@@ -420,24 +421,24 @@ private static Object dePrimitive(Febyte bin, Feint pos) {
             feCopyInto(bin, i + 1, str, 0, sz);
             return deString(str);
         }
-        case BinaryLabel.FEBOOL -> {
+        case Label.FEBOOL -> {
             feSet(pos, 0, i + 1);
             return deFebool(bin, pos);
         }
-        case BinaryLabel.FEINT -> {
+        case Label.FEINT -> {
             feSet(pos, 0, i + 1);
             return deFeint(bin, pos);
         }
-        case BinaryLabel.FELONG -> {
+        case Label.FELONG -> {
             feSet(pos, 0, i + 1);
             return deFelong(bin, pos);
         }
-        case BinaryLabel.FEDOUBLE -> {
+        case Label.FEDOUBLE -> {
             feSet(pos, 0, i + 1);
             return deFedouble(bin, pos);
         }
         default -> throw new IllegalArgumentException
-                         (String.format("invalid primitive type label %s in position %d",
+                         (String.format("invalid code.primitive type label %s in position %d",
                          hex(label), feRef(pos, 0) ));
     }
 }
@@ -454,17 +455,17 @@ private static Object deWrapped(Febyte bin, Feint pos) {
     int i = feRef(pos, 0) ;
     byte label = feRef(bin, i);
     switch (label) {
-        case BinaryLabel.TIME -> {
+        case Label.TIME -> {
             feSet(pos, 0, i + 1);
             return deTime(bin, pos);
         }
-        case BinaryLabel.DATE -> {
+        case Label.DATE -> {
             feSet(pos, 0, i + 2);
             Feint data = deFeint(bin, pos);
             return deDate(data);
         }
-        case BinaryLabel.LEST_BEGIN -> {
-            if (feRef(bin, i + 1) == BinaryLabel.LEST_END) {
+        case Label.LEST_BEGIN -> {
+            if (feRef(bin, i + 1) == Label.LEST_END) {
                 feSet(pos, 0, i + 2);
                 return lot();
             } else {
@@ -473,16 +474,16 @@ private static Object deWrapped(Febyte bin, Feint pos) {
                 return cons(o, (Lot) deDatum(bin, pos));
             }
         }
-        case BinaryLabel.LEST_CONS -> {
+        case Label.LEST_CONS -> {
             feSet(pos, 0, i + 1);
             Object o = deDatum(bin, pos);
             return cons(o, (Lot) deDatum(bin, pos));
         }
-        case BinaryLabel.LEST_END -> {
+        case Label.LEST_END -> {
             feSet(pos, 0, i + 1);
             return lot();
         }
-        case BinaryLabel.FEX -> {
+        case Label.FEX -> {
             int sz = Binary.deInt(bin, i + 1);
             Few fw = makeFew(sz, 0);
             feSet(pos, 0, i + 5);

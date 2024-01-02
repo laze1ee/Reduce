@@ -5,11 +5,11 @@ import share.utility.RBTree;
 
 public class Symbol {
 
-static Few rbTree = RBTree.initialize();
+static final Few rbTree = RBTree.initialize();
 static int count = 0;
 
 final String name;
-int id;
+final int id;
 
 
 Symbol(String name) {
@@ -47,14 +47,14 @@ public String display() {
         StringBuilder str = new StringBuilder();
         int sz = name.length();
         char c = name.charAt(0);
-        if (Character.isDigit(c) || PgAid.charExist(c, PgAid.occupant1) || PgAid.isScalar(c)) {
+        if (Character.isDigit(c) || Aid.charExist(c, Aid.occupant1) || Aid.isScalar(c)) {
             str.append(String.format("\\u%X;", (int) c));
         } else {
             str.append(c);
         }
         for (int i = 1; i < sz; i = i + 1) {
             c = name.charAt(i);
-            if (PgAid.isScalar(c)) {
+            if (Aid.isScalar(c)) {
                 str.append(String.format("\\u%X;", (int) c));
             } else {
                 str.append(c);

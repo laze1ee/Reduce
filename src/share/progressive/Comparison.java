@@ -3,7 +3,7 @@ package share.progressive;
 import org.jetbrains.annotations.NotNull;
 
 
-public class Cmp {
+public class Comparison {
 
 public static boolean less(Object o1, Object o2) {
     if (o1 instanceof Number n1 && o2 instanceof Number n2) {

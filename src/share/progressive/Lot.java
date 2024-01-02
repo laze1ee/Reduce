@@ -1,5 +1,8 @@
 package share.progressive;
 
+import org.jetbrains.annotations.NotNull;
+
+
 public class Lot {
 
 final Pair pair;
@@ -8,12 +11,11 @@ Lot(Pair pair) {
     this.pair = pair;
 }
 
-Lot(Object[] args) {
+Lot(Object @NotNull [] args) {
     if (args.length == 0) {
         pair = null;
     } else {
-        pair = new Pair(args[0], null);
-        PgAid.initLot(1, pair, args);
+        pair = Aid.initLot(args);
     }
 }
 
@@ -23,12 +25,12 @@ public boolean equals(Object datum) {
         Lot c1 = Cycle.detect(this);
         Lot c2 = Cycle.detect(lt);
         if (Pg.isNull(c1) && Pg.isNull(c2)) {
-            Object o1 = PgAid.isolate(this);
-            Object o2 = PgAid.isolate(lt);
+            Object o1 = Aid.isolate(this);
+            Object o2 = Aid.isolate(lt);
             return o1.equals(o2);
         } else if (Pg.length(c1) == Pg.length(c2)) {
-            Object o1 = Cycle.labeling(this, c1);
-            Object o2 = Cycle.labeling(lt, c2);
+            Object o1 = Cycle.label(this, c1);
+            Object o2 = Cycle.label(lt, c2);
             return o1.equals(o2);
         } else {
             return false;

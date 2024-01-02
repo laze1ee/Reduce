@@ -7,12 +7,13 @@ import share.refmethod.Eqv;
 
 import java.util.Random;
 
-import static share.progressive.Cmp.eq;
+import static share.progressive.Comparison.eq;
 import static share.progressive.Pg.*;
 
 
 public class Ut {
 
+@SuppressWarnings("SpellCheckingInspection")
 private static final char[] CHARS_SET =
 "_-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
 
@@ -29,54 +30,44 @@ public static @NotNull String randomString(int length) {
 
 
 //region Lot
-public static boolean isBelong(Object o, Lot lt) {
-    if (isNull(lt)) {
-        return false;
-    } else if (eq(o, car(lt))) {
-        return true;
-    } else {
-        return isBelong(o, cdr(lt));
+public static boolean isBelong(Object datum, Lot lt) {
+    Lot moo = lt;
+    while (!isNull(moo) &&
+           !eq(datum, car(moo))) {
+        moo = cdr(moo);
     }
+    return !isNull(moo);
 }
 
-public static boolean isBelong(Eqv pred, Object o, Lot lt) {
-    if (isNull(lt)) {
-        return false;
-    } else if (pred.apply(o, car(lt))) {
-        return true;
-    } else {
-        return isBelong(pred, o, cdr(lt));
+public static boolean isBelong(Eqv pred, Object datum, Lot lt) {
+    Lot moo = lt;
+    while (!isNull(moo) &&
+           !pred.apply(datum, car(moo))) {
+        moo = cdr(moo);
     }
+    return !isNull(moo);
 }
 
 public static Lot removeDup(Lot lt) {
-    if (isNull(lt)) {
-        return lot();
-    } else if (isBelong(car(lt), cdr(lt))) {
-        return removeDup(cdr(lt));
-    } else {
-        return cons(car(lt), removeDup(cdr(lt)));
+    Lot moo = lt;
+    Lot xoo = lot();
+    while (!isNull(moo)) {
+        if (!isBelong(car(moo), cdr(moo))) {
+            xoo = cons(car(moo), xoo);
+        }
+        moo = cdr(moo);
     }
-}
-
-public static Lot remove(Object o, Lot lt) {
-    if (isNull(lt)) {
-        return lot();
-    } else if (eq(o, car(lt))) {
-        return cdr(lt);
-    } else {
-        return cons(car(lt), remove(o, cdr(lt)));
-    }
+    return reverse(xoo);
 }
 //endregion
 
 
 //region Few
-public static int fewIndex(Eqv pred, Object o, Few fw) {
+public static int fewIndex(Eqv pred, Object datum, Few fw) {
     int sz = length(fw);
     int i = 0;
     while (i < sz &&
-           !pred.apply(o, fewRef(fw, i))) {
+           !pred.apply(datum, fewRef(fw, i))) {
         i = i + 1;
     }
     if (i == sz) {

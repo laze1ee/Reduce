@@ -9,6 +9,7 @@ import java.util.Arrays;
 public class Pm {
 
 //region Constructor
+
 @Contract(value = "_ -> new", pure = true)
 public static @NotNull Febool febool(boolean... args) {
     return new Febool(args);

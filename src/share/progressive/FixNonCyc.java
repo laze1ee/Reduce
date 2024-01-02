@@ -11,7 +11,7 @@ FixNonCyc(Object[] array) {
 @Override
 public boolean equals(Object datum) {
     if (datum instanceof FixNonCyc fn) {
-        return Cmp.isArraysEq(array, fn.array);
+        return Comparison.isArraysEq(array, fn.array);
     } else {
         return false;
     }
@@ -19,6 +19,6 @@ public boolean equals(Object datum) {
 
 @Override
 public String toString() {
-    return String.format("#(%s)", PgAid.stringOfArray(array));
+    return String.format("#(%s)", Aid.stringOfArray(array));
 }
 }

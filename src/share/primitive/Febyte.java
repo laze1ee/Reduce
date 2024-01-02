@@ -40,10 +40,10 @@ public String toString() {
         int sz = data.length - 1;
         int i;
         for (i = 0; i < sz; i = i + 1) {
-            str.append(PmAid._hex(data[i]));
+            str.append(Aid._hex(data[i]));
             str.append(" ");
         }
-        str.append(PmAid._hex(data[i]));
+        str.append(Aid._hex(data[i]));
         str.append(")");
         return str.toString();
     }

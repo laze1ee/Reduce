@@ -14,7 +14,7 @@ FixCyc(Object[] array, int count) {
 public boolean equals(Object datum) {
     if (datum instanceof FixCyc fc) {
         return count == fc.count &&
-               Cmp.isArraysEq(array, fc.array);
+               Comparison.isArraysEq(array, fc.array);
     } else {
         return false;
     }
@@ -22,6 +22,6 @@ public boolean equals(Object datum) {
 
 @Override
 public String toString() {
-    return String.format("#%d=#(%s)", count, PgAid.stringOfArray(array));
+    return String.format("#%d=#(%s)", count, Aid.stringOfArray(array));
 }
 }

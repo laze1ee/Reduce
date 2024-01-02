@@ -71,7 +71,7 @@ are as follows:
 ## Wrapped primitive array type
 
 To address the limitations of primitive arrays (e.g., `boolean[]`, `int[]`), which do not directly
-extend Object and cannot be used as generic type arguments, I have introduced a new data type to
+extend `Object` and cannot be used as generic type arguments, I have introduced a new data type to
 facilitate type-checking. The procedures for `boolean[]` and `int[]` are outlined below, with
 similar procedures available for other types.
 

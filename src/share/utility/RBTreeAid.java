@@ -5,14 +5,14 @@ import org.jetbrains.annotations.NotNull;
 import share.progressive.Few;
 import share.progressive.Lot;
 
-import static share.progressive.Cmp.*;
+import static share.progressive.Comparison.*;
 import static share.progressive.Pg.*;
 
 
 class RBTreeAid {
 
-static boolean RED = true;
-static boolean BLACK = false;
+static final boolean RED = true;
+static final boolean BLACK = false;
 
 
 //region constructor
@@ -44,48 +44,47 @@ static Few getRight(Few node) {
     return (Few) ref4(node);
 }
 
-static class $Finder {
-    Object key;
-    Few node;
-
-    $Finder(Object key, Few node) {
-        this.key = key;
-        this.node = node;
-    }
-
-    Lot process() {
+record Finder(Object key, Few node) {
+    @NotNull Lot process() {
         return _aid(node, lot());
     }
 
-    Lot _aid(Few node, Lot path) {
-        if (isEmptyNode(node)) {
-            return cons(node, path);
-        } else if (less(key, getKey(node))) {
-            return _aid(getLeft(node), cons(node, path));
-        } else if (greater(key, getKey(node))) {
-            return _aid(getRight(node), cons(node, path));
-        } else {
-            return cons(node, path);
+    @NotNull Lot _aid(Few node, Lot path) {
+        Few moo = node;
+        Lot xoo = path;
+        while (!isEmptyNode(moo)) {
+            if (less(key, getKey(moo))) {
+                xoo = cons(moo, xoo);
+                moo = getLeft(moo);
+            } else if (greater(key, getKey(moo))) {
+                xoo = cons(moo, xoo);
+                moo = getRight(moo);
+            } else {
+                return cons(moo, xoo);
+            }
         }
+        return cons(moo, xoo);
     }
 }
 
 static Lot minimum(Few node, Lot path) {
-    if (isEmptyNode(node)) {
-        return path;
-    } else {
-        Few left = getLeft(node);
-        return minimum(left, cons(node, path));
+    Few moo = node;
+    Lot xoo = path;
+    while (!isEmptyNode(moo)) {
+        xoo = cons(moo, xoo);
+        moo = getLeft(moo);
     }
+    return xoo;
 }
 
 static Lot maximum(Few node, Lot path) {
-    if (isEmptyNode(node)) {
-        return path;
-    } else {
-        Few right = getRight(node);
-        return maximum(right, cons(node, path));
+    Few moo = node;
+    Lot xoo = path;
+    while (!isEmptyNode(moo)) {
+        xoo = cons(moo, xoo);
+        moo = getRight(moo);
     }
+    return xoo;
 }
 
 static String stringOfNode(Few node) {
@@ -94,13 +93,13 @@ static String stringOfNode(Few node) {
     } else {
         return
         String.format
-              ("(%s %s %s %s %s)", getKey(node), getValue(node), _colorToString(getColor(node)),
-              stringOfNode(getLeft(node)), stringOfNode(getRight(node)));
+              ("(%s %s %s %s %s)", getKey(node), getValue(node), colorToString(getColor(node)),
+               stringOfNode(getLeft(node)), stringOfNode(getRight(node)));
     }
 }
 
 @Contract(pure = true)
-private static @NotNull String _colorToString(boolean color) {
+private static @NotNull String colorToString(boolean color) {
     if (color) {
         return "red";
     } else {
@@ -213,14 +212,7 @@ static void rightRotate(Few tree, Lot path) {
     }
 }
 
-static class $InsertFixer {
-    Few tree;
-    Lot path;
-
-    $InsertFixer(Few tree, Lot path) {
-        this.tree = tree;
-        this.path = path;
-    }
+record InsertFixer(Few tree, Lot path) {
 
     void process() {
         _aid(path);
@@ -282,7 +274,7 @@ static void transplant(Few tree, Lot path, Few node) {
 }
 
 static void delete(Object key, Few tree) {
-    $Finder moo = new $Finder(key, (Few) ref0(tree));
+    Finder moo = new Finder(key, (Few) ref0(tree));
     Lot path = moo.process();
     Few deleted = (Few) car(path);
     if (isEmptyNode(deleted)) {
@@ -321,8 +313,8 @@ static void delete(Object key, Few tree) {
 }
 
 static class $DeleteFixer {
-    Few tree;
-    Lot path;
+    final Few tree;
+    final Lot path;
     Few x;
 
     $DeleteFixer(Few tree, Lot path) {

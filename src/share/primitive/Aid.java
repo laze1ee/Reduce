@@ -4,7 +4,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 
-class PmAid {
+class Aid {
 
 @Contract(pure = true)
 static @NotNull String _display_bool(boolean b) {
@@ -15,6 +15,7 @@ static @NotNull String _display_bool(boolean b) {
     }
 }
 
+@SuppressWarnings("SpellCheckingInspection")
 private static final char[] HEX_STR = "0123456789ABCDEF".toCharArray();
 
 @Contract(pure = true)

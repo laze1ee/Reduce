@@ -32,7 +32,7 @@ public static boolean isRBTree(Few tree) {
 }
 
 public static void insert(Few tree, Object key, Object value) {
-    RBTreeAid.$Finder moo = new RBTreeAid.$Finder(key, (Few) ref0(tree));
+    RBTreeAid.Finder moo = new RBTreeAid.Finder(key, (Few) ref0(tree));
     Lot path = moo.process();
     Few node = (Few) car(path);
     if (RBTreeAid.isEmptyNode(node)) {
@@ -41,7 +41,7 @@ public static void insert(Few tree, Object key, Object value) {
         RBTreeAid.setColor(node, RBTreeAid.RED);
         RBTreeAid.setLeft(node, RBTreeAid.emptyNode());
         RBTreeAid.setRight(node, RBTreeAid.emptyNode());
-        RBTreeAid.$InsertFixer fixer = new RBTreeAid.$InsertFixer(tree, path);
+        RBTreeAid.InsertFixer fixer = new RBTreeAid.InsertFixer(tree, path);
         fixer.process();
     } else {
         throw new RuntimeException
@@ -50,13 +50,13 @@ public static void insert(Few tree, Object key, Object value) {
 }
 
 public static boolean isPresent(Few tree, Object key) {
-    RBTreeAid.$Finder moo = new RBTreeAid.$Finder(key, (Few) ref0(tree));
-    Lot path = moo.process();
+    RBTreeAid.Finder f = new RBTreeAid.Finder(key, (Few) ref0(tree));
+    Lot path = f.process();
     return !RBTreeAid.isEmptyNode((Few) car(path));
 }
 
 public static Object ref(Few tree, Object key) {
-    RBTreeAid.$Finder moo = new RBTreeAid.$Finder(key, (Few) ref0(tree));
+    RBTreeAid.Finder moo = new RBTreeAid.Finder(key, (Few) ref0(tree));
     Lot path = moo.process();
     Few node = (Few) car(path);
     if (RBTreeAid.isEmptyNode(node)) {
@@ -68,7 +68,7 @@ public static Object ref(Few tree, Object key) {
 }
 
 public static void set(Few tree, Object key, Object value) {
-    RBTreeAid.$Finder moo = new RBTreeAid.$Finder(key, (Few) ref0(tree));
+    RBTreeAid.Finder moo = new RBTreeAid.Finder(key, (Few) ref0(tree));
     Lot path = moo.process();
     Few node = (Few) car(path);
     if (RBTreeAid.isEmptyNode(node)) {
@@ -79,7 +79,7 @@ public static void set(Few tree, Object key, Object value) {
     }
 }
 
-public static void delete(Object key, Few tree) {
+public static void delete(Few tree, Object key) {
     if (isEmpty(tree)) {
         throw new RuntimeException("empty tree");
     } else {

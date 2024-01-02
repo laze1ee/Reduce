@@ -7,30 +7,17 @@ import share.utility.Ut;
 import static share.progressive.Pg.*;
 
 
-class PgAid {
+class Aid {
 
-static void initLot(int i, Pair pair, Object[] args) {
-    if (i < args.length) {
-        Pair tmp = new Pair(args[i], null);
-        pair.next = tmp;
-        initLot(i + 1, tmp, args);
+static @NotNull Pair initLot(Object @NotNull [] args) {
+    Pair pair = new Pair(args[0], null);
+    Pair moo = pair;
+    int n = args.length;
+    for (int i = 1; i < n; i = i + 1) {
+        moo.next = new Pair(args[i], null);
+        moo = moo.next;
     }
-}
-
-static Lot _head(Lot lt, int i) {
-    if (i == 0) {
-        return lot();
-    } else {
-        return cons(car(lt), _head(cdr(lt), i - 1));
-    }
-}
-
-static Lot _tail(Lot lt, int i) {
-    if (i == 0) {
-        return lt;
-    } else {
-        return _tail(cdr(lt), i - 1);
-    }
+    return pair;
 }
 
 
@@ -56,7 +43,7 @@ private static final Few char_name =
 few("nul", "alarm", "backspace", "tab", "newline", "vtab", "page", "return", "esc", "space", "delete");
 
 static String stringOfChar(char c) {
-    int i = Ut.fewIndex(Cmp::eq, (int) c, char_code);
+    int i = Ut.fewIndex(Comparison::eq, (int) c, char_code);
     if (0 <= i) {
         return String.format("#\\%s", fewRef(char_name, i));
     } else if (Character.isISOControl(c)) {
