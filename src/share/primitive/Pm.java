@@ -104,67 +104,62 @@ public static @NotNull Fedouble makeFedouble(int amount) {
 
 //region Visitor
 public static int feLength(@NotNull Febool bs) {
-    return bs.data.length;
+    return bs.arr.length;
 }
 
 public static int feLength(@NotNull Febyte bs) {
-    return bs.data.length;
+    return bs.arr.length;
 }
 
 public static int feLength(@NotNull Feint ins) {
-    return ins.data.length;
+    return ins.arr.length;
 }
 
 public static int feLength(@NotNull Felong ls) {
-    return ls.data.length;
+    return ls.arr.length;
 }
 
 public static int feLength(@NotNull Fedouble ds) {
-    return ds.data.length;
+    return ds.arr.length;
 }
 
 public static boolean feRef(Febool bs, int index) {
     if (0 <= index && index < feLength(bs)) {
-        return bs.data[index];
+        return bs.arr[index];
     } else {
-        throw new ArrayIndexOutOfBoundsException
-              (String.format("index %d is out of range for febool[%d %d)", index, 0, feLength(bs)));
+        throw new RuntimeException(String.format(Shop.BOOL_OUT, index, bs.forErr()));
     }
 }
 
 public static byte feRef(Febyte bs, int index) {
     if (0 <= index && index < feLength(bs)) {
-        return bs.data[index];
+        return bs.arr[index];
     } else {
-        throw new ArrayIndexOutOfBoundsException
-              (String.format("index %d is out of range for febyte[%d %d)", index, 0, feLength(bs)));
+        throw new RuntimeException(String.format(Shop.BYTE_OUT, index, bs.forErr()));
     }
 }
 
 public static int feRef(Feint ins, int index) {
     if (0 <= index && index < feLength(ins)) {
-        return ins.data[index];
+        return ins.arr[index];
     } else {
-        throw new ArrayIndexOutOfBoundsException
-              (String.format("index %d is out of range for feint[%d %d)", index, 0, feLength(ins)));
+        throw new RuntimeException(String.format(Shop.INT_OUT, index, ins.forErr()));
     }
 }
 
 public static long feRef(Felong ls, int index) {
     if (0 <= index && index < feLength(ls)) {
-        return ls.data[index];
+        return ls.arr[index];
     } else {
-        throw new ArrayIndexOutOfBoundsException
-              (String.format("index %d is out of range for felong[%d %d)", index, 0, feLength(ls)));
+        throw new RuntimeException(String.format(Shop.LONG_OUT, index, ls.forErr()));
     }
 }
 
 public static double feRef(Fedouble ds, int index) {
     if (0 <= index && index < feLength(ds)) {
-        return ds.data[index];
+        return ds.arr[index];
     } else {
-        throw new ArrayIndexOutOfBoundsException
-              (String.format("index %d is out of range for fedouble[%d %d)", index, 0, feLength(ds)));
+        throw new RuntimeException(String.format(Shop.DOUBLE_OUT, index, ds.forErr()));
     }
 }
 //endregion
@@ -173,67 +168,62 @@ public static double feRef(Fedouble ds, int index) {
 //region Setter
 public static void feSet(@NotNull Febool bs, int index, boolean value) {
     if (0 <= index && index < feLength(bs)) {
-        bs.data[index] = value;
+        bs.arr[index] = value;
     } else {
-        throw new ArrayIndexOutOfBoundsException
-              (String.format("index %d is out of range for febool[%d %d)", index, 0, feLength(bs)));
+        throw new RuntimeException(String.format(Shop.BOOL_OUT, index, bs.forErr()));
     }
 }
 
 public static void feSet(@NotNull Febyte bs, int index, byte value) {
     if (0 <= index && index < feLength(bs)) {
-        bs.data[index] = value;
+        bs.arr[index] = value;
     } else {
-        throw new ArrayIndexOutOfBoundsException
-              (String.format("index %d is out of range for febyte[%d %d)", index, 0, feLength(bs)));
+        throw new RuntimeException(String.format(Shop.BYTE_OUT, index, bs.forErr()));
     }
 }
 
 public static void feSet(@NotNull Feint ins, int index, int value) {
     if (0 <= index && index < feLength(ins)) {
-        ins.data[index] = value;
+        ins.arr[index] = value;
     } else {
-        throw new ArrayIndexOutOfBoundsException
-              (String.format("index %d is out of range for feint[%d %d)", index, 0, feLength(ins)));
+        throw new RuntimeException(String.format(Shop.INT_OUT, index, ins.forErr()));
     }
 }
 
 public static void feSet(@NotNull Felong ls, int index, long value) {
     if (0 <= index && index < feLength(ls)) {
-        ls.data[index] = value;
+        ls.arr[index] = value;
     } else {
-        throw new ArrayIndexOutOfBoundsException
-              (String.format("index %d is out of range for felong[%d %d)", index, 0, feLength(ls)));
+        throw new RuntimeException(String.format(Shop.LONG_OUT, index, ls.forErr()));
     }
 }
 
 public static void feSet(@NotNull Fedouble ds, int index, double value) {
     if (0 <= index && index < feLength(ds)) {
-        ds.data[index] = value;
+        ds.arr[index] = value;
     } else {
-        throw new ArrayIndexOutOfBoundsException
-              (String.format("index %d is out of range for fedouble[%d %d)", index, 0, feLength(ds)));
+        throw new RuntimeException(String.format(Shop.DOUBLE_OUT, index, ds.forErr()));
     }
 }
 
 public static void feFill(@NotNull Febool bs, boolean value) {
-    Arrays.fill(bs.data, value);
+    Arrays.fill(bs.arr, value);
 }
 
 public static void feFill(@NotNull Febyte bs, byte value) {
-    Arrays.fill(bs.data, value);
+    Arrays.fill(bs.arr, value);
 }
 
 public static void feFill(@NotNull Feint ins, int value) {
-    Arrays.fill(ins.data, value);
+    Arrays.fill(ins.arr, value);
 }
 
 public static void feFill(@NotNull Felong ls, long value) {
-    Arrays.fill(ls.data, value);
+    Arrays.fill(ls.arr, value);
 }
 
 public static void feFill(@NotNull Fedouble ds, double value) {
-    Arrays.fill(ds.data, value);
+    Arrays.fill(ds.arr, value);
 }
 //endregion
 
@@ -241,27 +231,27 @@ public static void feFill(@NotNull Fedouble ds, double value) {
 //region Copy
 public static void feCopyInto(@NotNull Febool src, int src_pos, @NotNull Febool dest,
                               int dest_pos, int amount) {
-    System.arraycopy(src.data, src_pos, dest.data, dest_pos, amount);
+    System.arraycopy(src.arr, src_pos, dest.arr, dest_pos, amount);
 }
 
 public static void feCopyInto(@NotNull Febyte src, int src_pos, @NotNull Febyte dest,
                               int dest_pos, int amount) {
-    System.arraycopy(src.data, src_pos, dest.data, dest_pos, amount);
+    System.arraycopy(src.arr, src_pos, dest.arr, dest_pos, amount);
 }
 
 public static void feCopyInto(@NotNull Feint src, int src_pos, @NotNull Feint dest,
                               int dest_pos, int amount) {
-    System.arraycopy(src.data, src_pos, dest.data, dest_pos, amount);
+    System.arraycopy(src.arr, src_pos, dest.arr, dest_pos, amount);
 }
 
 public static void feCopyInto(@NotNull Felong src, int src_pos, @NotNull Felong dest,
                               int dest_pos, int amount) {
-    System.arraycopy(src.data, src_pos, dest.data, dest_pos, amount);
+    System.arraycopy(src.arr, src_pos, dest.arr, dest_pos, amount);
 }
 
 public static void feCopyInto(@NotNull Fedouble src, int src_pos, @NotNull Fedouble dest,
                               int dest_pos, int amount) {
-    System.arraycopy(src.data, src_pos, dest.data, dest_pos, amount);
+    System.arraycopy(src.arr, src_pos, dest.arr, dest_pos, amount);
 }
 //endregion
 

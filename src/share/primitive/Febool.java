@@ -1,28 +1,24 @@
 package share.primitive;
 
+
 public class Febool {
 
-final boolean[] data;
+final boolean[] arr;
 
 Febool(boolean... args) {
-    data = args;
+    arr = args;
 }
 
 @Override
 public String toString() {
-    if (data.length == 0) {
-        return "#1()";
+    return String.format("#1(%s)", Aid.display(arr, arr.length));
+}
+
+public String forErr() {
+    if (arr.length <= 5) {
+        return String.format("%s", this);
     } else {
-        StringBuilder b_str = new StringBuilder("#1(");
-        int sz = data.length - 1;
-        int i;
-        for (i = 0; i < sz; i = i + 1) {
-            b_str.append(Aid._display_bool(data[i]));
-            b_str.append(" ");
-        }
-        b_str.append(Aid._display_bool(data[i]));
-        b_str.append(")");
-        return b_str.toString();
+        return String.format("#1(%s...)", Aid.errDisplay(arr));
     }
 }
 }

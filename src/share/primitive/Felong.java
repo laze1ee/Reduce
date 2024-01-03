@@ -2,28 +2,23 @@ package share.primitive;
 
 public class Felong {
 
-final long[] data;
+final long[] arr;
 
 Felong(long... args) {
-    data = args;
+    arr = args;
 }
 
+
 @Override
-@SuppressWarnings("Duplicates")
 public String toString() {
-    if (data.length == 0) {
-        return "#i64()";
+    return String.format("#i64(%s)", Aid.display(arr, arr.length));
+}
+
+public String forErr() {
+    if (arr.length <= 5) {
+        return String.format("%s", this);
     } else {
-        StringBuilder b_str = new StringBuilder("#i64(");
-        int sz = data.length - 1;
-        int i;
-        for (i = 0; i < sz; i = i + 1) {
-            b_str.append(data[i]);
-            b_str.append(" ");
-        }
-        b_str.append(data[i]);
-        b_str.append(")");
-        return b_str.toString();
+        return String.format("#i64(%s...)", Aid.errDisplay(arr));
     }
 }
 }

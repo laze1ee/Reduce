@@ -67,8 +67,7 @@ public static boolean isNull(@NotNull Lot lt) {
 //region Visitor
 public static int length(@NotNull Lot lt) {
     if (Cycle.isTailCircular(lt)) {
-        throw new IllegalArgumentException
-              (String.format("%s is circular", lt));
+        throw new RuntimeException(String.format(Shop.CIRCULAR, lt));
     } else {
         int n = 0;
         while (!isNull(lt)) {
@@ -85,7 +84,7 @@ public static int length(@NotNull Few fw) {
 
 public static Object car(@NotNull Lot lt) {
     if (isNull(lt)) {
-        throw new IllegalArgumentException("() is not a pair");
+        throw new RuntimeException(Shop.LOT_NULL);
     } else {
         return lt.pair.data;
     }
@@ -94,7 +93,7 @@ public static Object car(@NotNull Lot lt) {
 public static Object caar(Lot lt) {
     Lot tmp = (Lot) car(lt);
     if (isNull(tmp)) {
-        throw new IllegalArgumentException("() is not a pair");
+        throw new RuntimeException(Shop.LOT_NULL);
     } else {
         return tmp.pair.data;
     }
@@ -103,7 +102,7 @@ public static Object caar(Lot lt) {
 @Contract("_ -> new")
 public static @NotNull Lot cdr(@NotNull Lot lt) {
     if (isNull(lt)) {
-        throw new IllegalArgumentException("() is not a pair");
+        throw new RuntimeException(Shop.LOT_NULL);
     } else {
         return new Lot(lt.pair.next);
     }
@@ -117,7 +116,7 @@ public static Object cadr(Lot lt) {
 public static @NotNull Lot cdar(Lot lt) {
     Lot tmp = (Lot) car(lt);
     if (isNull(lt)) {
-        throw new IllegalArgumentException("() is not a pair");
+        throw new RuntimeException(Shop.LOT_NULL);
     } else {
         return new Lot(tmp.pair.next);
     }
@@ -137,8 +136,7 @@ public static Object lotRef(@NotNull Lot lt, int index) {
         }
         return car(lt);
     } else {
-        throw new IndexOutOfBoundsException
-              (String.format("index %d is out of range for lot %s", index, lt));
+        throw new RuntimeException(String.format(Shop.LOT_INDEX_OUT, index, lt));
     }
 }
 
@@ -146,8 +144,7 @@ public static Object fewRef(Few fw, int index) {
     if (0 <= index && index < length(fw)) {
         return fw.array[index];
     } else {
-        throw new IndexOutOfBoundsException
-              (String.format("index %d is out of range for few %s", index, fw));
+        throw new RuntimeException(String.format(Shop.FEW_INDEX_OUT, index, fw));
     }
 }
 
@@ -180,7 +177,7 @@ public static Object ref5(Few fw) {
 //region Setter
 public static void setCar(@NotNull Lot lt, @NotNull Object datum) {
     if (isNull(lt)) {
-        throw new IllegalArgumentException("() is not a pair");
+        throw new RuntimeException(Shop.LOT_NULL);
     } else {
         lt.pair.data = datum;
     }
@@ -188,7 +185,7 @@ public static void setCar(@NotNull Lot lt, @NotNull Object datum) {
 
 public static void setCdr(@NotNull Lot lt, @NotNull Lot datum) {
     if (isNull(lt)) {
-        throw new IllegalArgumentException("() is not a pair");
+        throw new RuntimeException(Shop.LOT_NULL);
     } else {
         lt.pair.next = datum.pair;
     }
@@ -198,8 +195,7 @@ public static void fewSet(Few fw, int index, Object datum) {
     if (0 <= index && index < length(fw)) {
         fw.array[index] = datum;
     } else {
-        throw new IndexOutOfBoundsException
-              (String.format("index %d is out of range for few %s", index, fw));
+        throw new RuntimeException(String.format(Shop.FEW_INDEX_OUT, index, fw));
     }
 }
 
@@ -261,7 +257,7 @@ public static Lot reverse(Lot lt) {
     if (isNull(lt)) {
         return lt;
     } else if (Cycle.isTailCircular(lt)) {
-        throw new IllegalArgumentException(String.format("%s is circular", lt));
+        throw new RuntimeException(String.format(Shop.CIRCULAR, lt));
     } else {
         Pair pair = new Pair(lt.pair.data, null);
         Lot moo = cdr(lt);
@@ -284,8 +280,7 @@ public static Lot lotHead(Lot lt, int amount) {
         }
         return reverse(xoo);
     } else {
-        throw new IndexOutOfBoundsException
-              (String.format("index %d is out of range for lot %s", amount, lt));
+        throw new RuntimeException(String.format(Shop.LOT_INDEX_OUT, amount, lt));
     }
 }
 
@@ -298,8 +293,7 @@ public static Lot lotTail(Lot lt, int amount) {
         }
         return moo;
     } else {
-        throw new IndexOutOfBoundsException
-              (String.format("index %d is out of range for lot %s", amount, lt));
+        throw new RuntimeException(String.format(Shop.LOT_INDEX_OUT, amount, lt));
     }
 }
 
@@ -307,7 +301,7 @@ public static Lot copy(Lot lt) {
     if (isNull(lt)) {
         return lt;
     } else if (Cycle.isTailCircular(lt)) {
-        throw new IllegalArgumentException(String.format("%s is circular", lt));
+        throw new RuntimeException(String.format(Shop.CIRCULAR, lt));
     } else {
         Pair pair = new Pair(lt.pair.data, null);
         Pair bair = pair;
@@ -338,7 +332,7 @@ public static @NotNull Few copy(@NotNull Few fw) {
 //region Transformer
 public static @NotNull Few lotToFew(@NotNull Lot lt) {
     if (Cycle.isTailCircular(lt)) {
-        throw new IllegalArgumentException(String.format("%s is circular", lt));
+        throw new RuntimeException(String.format("%s is circular", lt));
     } else {
         Lot moo = lt;
         int sz = length(moo);

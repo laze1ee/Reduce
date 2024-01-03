@@ -20,17 +20,17 @@ Primitive Type
     5 String            A5
 
 Primitive Array
-    0 BoolArray         A6
-    2 IntArray          A7
-    3 LongArray         A8
-    4 DoubleArray       A9
+    0 Febool            A6
+    2 Feint             A7
+    3 Felong            A8
+    4 Fedouble          A9
 
 
 Wrapped Types
     0 Time              B0
     1 Date              B1
     ...
-    8  Lot-Begin       B8
-       Lot-Cons        B9
-       Lot-End         BA
-    12 Fex              BC
+    8  Lot-Begin        B8
+       Lot-Cons         B9
+       Lot-End          BA
+    12 Few              BC

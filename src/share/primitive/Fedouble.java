@@ -2,28 +2,23 @@ package share.primitive;
 
 public class Fedouble {
 
-final double[] data;
+final double[] arr;
 
 Fedouble(double... args) {
-    data = args;
+    arr = args;
 }
 
+
 @Override
-@SuppressWarnings("Duplicates")
 public String toString() {
-    if (data.length == 0) {
-        return "#r64()";
+    return String.format("#r64(%s)", Aid.display(arr, arr.length));
+}
+
+public String forErr() {
+    if (arr.length <= 5) {
+        return String.format("%s", this);
     } else {
-        StringBuilder b_str = new StringBuilder("#r64(");
-        int sz = data.length - 1;
-        int i;
-        for (i = 0; i < sz; i = i + 1) {
-            b_str.append(data[i]);
-            b_str.append(" ");
-        }
-        b_str.append(data[i]);
-        b_str.append(")");
-        return b_str.toString();
+        return String.format("#r64(%s...)", Aid.errDisplay(arr));
     }
 }
 }
