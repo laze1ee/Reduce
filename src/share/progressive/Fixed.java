@@ -1,5 +1,6 @@
 package share.progressive;
 
+
 class Fixed extends Fix {
 
 final int count;

@@ -1,5 +1,7 @@
 package share.binary;
 
+
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import share.datetime.Date;
 import share.datetime.Time;
@@ -30,6 +32,26 @@ public static @NotNull Febyte codeInt(int n, boolean little_endian) {
     return bin;
 }
 
+
+@Contract(pure = true)
+public static byte @NotNull [] codeInt2(int n, boolean little_endian) {
+    byte[] bin = new byte[4];
+    int moo = n;
+    if (little_endian) {
+        for (int i = 0; i < 4; i = i + 1) {
+            bin[i] = (byte) moo;
+            moo = moo >>> 8;
+        }
+    } else {
+        for (int i = 3; i != -1; i = i - 1) {
+            bin[i] = (byte) moo;
+            moo = moo >>> 8;
+        }
+    }
+    return bin;
+}
+
+
 /**
  * @return a byte array that applied big-endian by default.
  */
@@ -42,7 +64,7 @@ public static int deInt(@NotNull Febyte bin, int start, boolean little_endian) {
     if (feLength(bin) < bound) {
         throw new IllegalArgumentException
               (String.format("range [%d %d) is out of febyte range [0 %d)",
-              start, bound, feLength(bin)));
+                             start, bound, feLength(bin)));
     } else {
         int n = 0;
         if (little_endian) {
@@ -94,7 +116,7 @@ public static long deLong(@NotNull Febyte bin, int start, boolean little_endian)
     if (feLength(bin) < bound) {
         throw new IllegalArgumentException
               (String.format("range [%d %d) is out of febyte range [0 %d)",
-              start, bound, feLength(bin)));
+                             start, bound, feLength(bin)));
     } else {
         long n = 0;
         if (little_endian) {
@@ -127,7 +149,7 @@ public static double deDouble(@NotNull Febyte bin, int start) {
     if (feLength(bin) < bound) {
         throw new IllegalArgumentException
               (String.format("range [%d %d) is out of febyte range [0 %d)",
-              start, bound, feLength(bin)));
+                             start, bound, feLength(bin)));
     } else {
         long bits = deLong(bin, start);
         return Double.longBitsToDouble(bits);

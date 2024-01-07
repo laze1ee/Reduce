@@ -68,7 +68,7 @@ public int offset() {
 @Override
 public String toString() {
     return String.format("#<date %s %d-%02d-%02d %s %02d:%02d:%02d>",
-    Aid.stringOffset(feRef(arr, 8)), feRef(arr, 0), feRef(arr, 1), feRef(arr, 2),
-    Aid.stringWeek(feRef(arr, 3)), feRef(arr, 4), feRef(arr, 5), feRef(arr, 6));
+                         Aid.stringOffset(feRef(arr, 8)), feRef(arr, 0), feRef(arr, 1), feRef(arr, 2),
+                         Aid.stringWeek(feRef(arr, 3)), feRef(arr, 4), feRef(arr, 5), feRef(arr, 6));
 }
 }

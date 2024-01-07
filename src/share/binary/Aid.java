@@ -1,5 +1,6 @@
 package share.binary;
 
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import share.datetime.Date;
@@ -286,11 +287,11 @@ static @NotNull String deString(@NotNull Febyte bin) {
 }
 
 static @NotNull Febool deFebool(Febyte bin, Feint pos) {
-    int start = feRef(pos, 0) ;
+    int start = feRef(pos, 0);
     if (feLength(bin) < start + 4) {
         throw new IllegalArgumentException
               (String.format("range [%d %d) is out of febyte range [0 %d)",
-              start, start + 4, feLength(bin)));
+                             start, start + 4, feLength(bin)));
     } else {
         int sz = Binary.deInt(bin, start);
         if (sz == 0) {
@@ -312,11 +313,11 @@ static @NotNull Febool deFebool(Febyte bin, Feint pos) {
 }
 
 static @NotNull Feint deFeint(@NotNull Febyte bin, Feint pos) {
-    int start = feRef(pos, 0) ;
+    int start = feRef(pos, 0);
     if (feLength(bin) < start + 4) {
         throw new IllegalArgumentException
               (String.format("range [%d %d) is out of febyte range [0 %d)",
-              start, start + 4, feLength(bin)));
+                             start, start + 4, feLength(bin)));
     } else {
         int sz = Binary.deInt(bin, start);
         Feint ins = makeFeint(sz);
@@ -332,11 +333,11 @@ static @NotNull Feint deFeint(@NotNull Febyte bin, Feint pos) {
 }
 
 static @NotNull Felong deFelong(@NotNull Febyte bin, Feint pos) {
-    int start = feRef(pos, 0) ;
+    int start = feRef(pos, 0);
     if (feLength(bin) < start + 4) {
         throw new IllegalArgumentException
               (String.format("range [%d %d) is out of febyte range [0 %d)",
-              start, start + 4, feLength(bin)));
+                             start, start + 4, feLength(bin)));
     } else {
         int sz = Binary.deInt(bin, start);
         Felong ls = makeFelong(sz);
@@ -352,11 +353,11 @@ static @NotNull Felong deFelong(@NotNull Febyte bin, Feint pos) {
 }
 
 static @NotNull Fedouble deFedouble(@NotNull Febyte bin, Feint pos) {
-    int start = feRef(pos, 0) ;
+    int start = feRef(pos, 0);
     if (feLength(bin) < start + 4) {
         throw new IllegalArgumentException
               (String.format("range [%d %d) is out of febyte range [0 %d)",
-              start, start + 4, feLength(bin)));
+                             start, start + 4, feLength(bin)));
     } else {
         int sz = Binary.deInt(bin, start);
         Fedouble ds = makeFedouble(sz);
@@ -372,7 +373,7 @@ static @NotNull Fedouble deFedouble(@NotNull Febyte bin, Feint pos) {
 }
 
 static @NotNull Time deTime(Febyte bin, Feint pos) {
-    int start = feRef(pos, 0) ;
+    int start = feRef(pos, 0);
     long sec = Binary.deLong(bin, start);
     long nsec = Binary.deLong(bin, start + 8);
     feSet(pos, 0, start + 16);
@@ -382,14 +383,14 @@ static @NotNull Time deTime(Febyte bin, Feint pos) {
 static @NotNull Date deDate(Feint ins) {
     return makeDate
            (feRef(ins, 0), feRef(ins, 1), feRef(ins, 2), feRef(ins, 3), feRef(ins, 4), feRef(ins, 5),
-           feRef(ins, 6), feRef(ins, 7));
+            feRef(ins, 6), feRef(ins, 7));
 }
 //endregion
 
 
 //region Decoding
 private static Object dePrimitive(Febyte bin, Feint pos) {
-    int i = feRef(pos, 0) ;
+    int i = feRef(pos, 0);
     byte label = feRef(bin, i);
     switch (label) {
         case Label.BOOL -> {
@@ -439,7 +440,7 @@ private static Object dePrimitive(Febyte bin, Feint pos) {
         }
         default -> throw new IllegalArgumentException
                          (String.format("invalid code.primitive type label %s in position %d",
-                         hex(label), feRef(pos, 0) ));
+                                        hex(label), feRef(pos, 0)));
     }
 }
 
@@ -452,7 +453,7 @@ private static int endingString(Febyte bin, int start) {
 }
 
 private static Object deWrapped(Febyte bin, Feint pos) {
-    int i = feRef(pos, 0) ;
+    int i = feRef(pos, 0);
     byte label = feRef(bin, i);
     switch (label) {
         case Label.TIME -> {
@@ -495,12 +496,12 @@ private static Object deWrapped(Febyte bin, Feint pos) {
         }
         default -> throw new IllegalArgumentException
                          (String.format("invalid wrapped type label %s in position %d",
-                         hex(label), feRef(pos, 0) ));
+                                        hex(label), feRef(pos, 0)));
     }
 }
 
 static Object deDatum(Febyte bin, Feint pos) {
-    int label = feRef(bin, feRef(pos, 0) ) & 0xFF;
+    int label = feRef(bin, feRef(pos, 0)) & 0xFF;
     if (0xA0 <= label && label <= 0xAF) {
         return dePrimitive(bin, pos);
     } else if (0xB0 <= label && label <= 0xBF) {
@@ -508,7 +509,7 @@ static Object deDatum(Febyte bin, Feint pos) {
     } else {
         throw new IllegalArgumentException
               (String.format("invalid datum type label %s in position %d",
-              hex((byte) label), feRef(pos, 0) ));
+                             hex((byte) label), feRef(pos, 0)));
     }
 }
 //endregion

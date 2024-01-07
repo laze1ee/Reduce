@@ -1,5 +1,6 @@
 package share.progressive;
 
+
 class FixCyc extends Fix {
 
 final Object[] array;
@@ -22,6 +23,6 @@ public boolean equals(Object datum) {
 
 @Override
 public String toString() {
-    return String.format("#%d=#(%s)", count, Aid.stringOfArray(array));
+    return String.format("#%d=#(%s)", count, Aid.consObjectArr(array));
 }
 }

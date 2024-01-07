@@ -1,5 +1,6 @@
 package share.binary;
 
+
 class Label {
 
 static final byte BOOL = (byte) 0xA0;

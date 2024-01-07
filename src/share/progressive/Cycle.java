@@ -1,5 +1,6 @@
 package share.progressive;
 
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -195,7 +196,7 @@ static Object label(Object datum, Lot cycle) {
     return l.process(datum);
 }
 
-static String stringOf(Object datum) {
+static String stringOfCycle(Object datum) {
     Lot cycle = Cycle.detect(datum);
     Object another;
     if (Pg.isNull(cycle)) {

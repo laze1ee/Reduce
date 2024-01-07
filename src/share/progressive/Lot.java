@@ -1,5 +1,6 @@
 package share.progressive;
 
+
 import org.jetbrains.annotations.NotNull;
 
 
@@ -42,6 +43,6 @@ public boolean equals(Object datum) {
 
 @Override
 public String toString() {
-    return Cycle.stringOf(this);
+    return Cycle.stringOfCycle(this);
 }
 }

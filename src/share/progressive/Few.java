@@ -1,5 +1,6 @@
 package share.progressive;
 
+
 public class Few {
 
 final Object[] array;
@@ -31,6 +32,6 @@ public boolean equals(Object datum) {
 
 @Override
 public String toString() {
-    return Cycle.stringOf(this);
+    return Cycle.stringOfCycle(this);
 }
 }

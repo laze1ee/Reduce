@@ -1,5 +1,6 @@
 package share.primitive;
 
+
 class Shop {
 
 static final String BOOL_OUT = "index %d is out of range in febool %s";

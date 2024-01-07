@@ -1,5 +1,6 @@
 package share.primitive;
 
+
 public class Febyte {
 
 final byte[] arr;

@@ -1,5 +1,6 @@
 package share.datetime;
 
+
 public enum TimeType {
     /**
      * The time elapsed since the "epoch:" 1970-01-01 00:00:00 UTC.

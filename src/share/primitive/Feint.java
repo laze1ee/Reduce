@@ -1,5 +1,6 @@
 package share.primitive;
 
+
 public class Feint {
 
 final int[] arr;

@@ -1,5 +1,6 @@
 package share.datetime;
 
+
 public class Time {
 
 private final long sec;

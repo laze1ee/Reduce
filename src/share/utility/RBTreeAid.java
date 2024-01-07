@@ -1,5 +1,6 @@
 package share.utility;
 
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import share.progressive.Few;
@@ -259,6 +260,7 @@ record InsertFixer(Few tree, Lot path) {
         }
     }
 }
+
 
 static void transplant(Few tree, Lot path, Few node) {
     if (1 == length(path)) {

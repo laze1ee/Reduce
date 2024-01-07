@@ -1,5 +1,9 @@
 package share.progressive;
 
+
+import static share.utility.Ut.stringOf;
+
+
 class PairHead extends Pair {
 
 PairHead(Object data, Pair next) {
@@ -30,9 +34,9 @@ public boolean equals(Object datum) {
 @Override
 public String toString() {
     if (next == null) {
-        return String.format("(%s)", Pg.stringOf(data));
+        return String.format("(%s)", stringOf(data));
     } else {
-        return String.format("(%s %s)", Pg.stringOf(data), next);
+        return String.format("(%s %s)", stringOf(data), next);
     }
 }
 }

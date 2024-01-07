@@ -1,5 +1,6 @@
 package share.datetime;
 
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
@@ -190,7 +191,7 @@ public static @NotNull Date timeToDate(@NotNull Time t, int offset) {
     } else {
         throw new IllegalArgumentException(
         String.format("the time converted to date, must be in range [%d %d]",
-        Aid.UTC_MIN, Aid.UTC_MAX));
+                      Aid.UTC_MIN, Aid.UTC_MAX));
     }
 }
 

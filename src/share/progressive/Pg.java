@@ -1,5 +1,6 @@
 package share.progressive;
 
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import share.refmethod.Do;
@@ -9,23 +10,6 @@ import java.util.Arrays;
 
 
 public class Pg {
-
-public static String stringOf(Object datum) {
-    if (datum instanceof Boolean bool) {
-        if (bool) {
-            return "#t";
-        } else {
-            return "#f";
-        }
-    } else if (datum instanceof Character) {
-        return Aid.stringOfChar((char) datum);
-    } else if (datum instanceof String) {
-        return String.format("\"%s\"", datum);
-    } else {
-        return datum.toString();
-    }
-}
-
 
 //region Constructor
 @Contract("_ -> new")

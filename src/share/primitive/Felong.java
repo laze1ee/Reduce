@@ -1,5 +1,6 @@
 package share.primitive;
 
+
 public class Felong {
 
 final long[] arr;

@@ -1,5 +1,9 @@
 package share.progressive;
 
+
+import static share.utility.Ut.stringOf;
+
+
 class PairCycTail extends PairCyc {
 
 PairCycTail(Object data, Pair next, int count) {
@@ -36,7 +40,7 @@ public String toString() {
     if (next == null) {
         return String.format(". #%d#", count);
     } else {
-        return String.format(". #%d=(%s %s)", count, Pg.stringOf(data), next);
+        return String.format(". #%d=(%s %s)", count, stringOf(data), next);
     }
 }
 }

@@ -1,5 +1,6 @@
 package share.refmethod;
 
+
 @FunctionalInterface
 public interface Eqv {
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")

@@ -1,10 +1,11 @@
 package share.progressive;
 
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import share.utility.Ut;
 
-import static share.progressive.Pg.*;
+import static share.progressive.Pg.isNull;
+import static share.utility.Ut.stringOf;
 
 
 class Aid {
@@ -22,36 +23,22 @@ static @NotNull Pair initLot(Object @NotNull [] args) {
 
 
 //region StringOf
-static @NotNull String stringOfArray(Object @NotNull [] arr) {
-    int sz = arr.length - 1;
-    if (sz == -1) {
+static @NotNull String consObjectArr(Object @NotNull [] arr) {
+    int n = arr.length;
+    if (n == 0) {
         return "";
     } else {
         StringBuilder str = new StringBuilder();
-        for (int i = 0; i < sz; i = i + 1) {
+        n = n - 1;
+        for (int i = 0; i < n; i = i + 1) {
             str.append(stringOf(arr[i]));
             str.append(" ");
         }
-        str.append(stringOf(arr[sz]));
+        str.append(stringOf(arr[n]));
         return str.toString();
     }
 }
 
-private static final Few char_code =
-few(0, 7, 8, 9, 0xA, 0xB, 0xC, 0xD, 0x1B, 0x20, 0x7F);
-private static final Few char_name =
-few("nul", "alarm", "backspace", "tab", "newline", "vtab", "page", "return", "esc", "space", "delete");
-
-static String stringOfChar(char c) {
-    int i = Ut.fewIndex(Comparison::eq, (int) c, char_code);
-    if (0 <= i) {
-        return String.format("#\\%s", fewRef(char_name, i));
-    } else if (Character.isISOControl(c)) {
-        return String.format("#\\u%X", (int) c);
-    } else {
-        return String.format("#\\%c", c);
-    }
-}
 
 static Object isolate(Object datum) {
     if (datum instanceof Few fw) {
