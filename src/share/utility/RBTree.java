@@ -46,7 +46,7 @@ public static void insert(Few tree, Object key, Object value) {
         fixer.process();
     } else {
         throw new RuntimeException
-              (String.format("insert same key %s for tree %s", key, stringOf(tree)));
+              (String.format("insert same key %s for tree %s", key, stringify(tree)));
     }
 }
 
@@ -62,7 +62,7 @@ public static Object ref(Few tree, Object key) {
     Few node = (Few) car(path);
     if (RBTreeAid.isEmptyNode(node)) {
         throw new RuntimeException
-              (String.format("key %s is not present in tree %s", key, stringOf(tree)));
+              (String.format("key %s is not present in tree %s", key, stringify(tree)));
     } else {
         return RBTreeAid.getValue(node);
     }
@@ -74,7 +74,7 @@ public static void set(Few tree, Object key, Object value) {
     Few node = (Few) car(path);
     if (RBTreeAid.isEmptyNode(node)) {
         throw new RuntimeException
-              (String.format("key %s is not present in tree %s", key, stringOf(tree)));
+              (String.format("key %s is not present in tree %s", key, stringify(tree)));
     } else {
         RBTreeAid.setValue(node, value);
     }
@@ -106,7 +106,7 @@ public static Object maxOf(Few tree) {
     }
 }
 
-public static String stringOf(Few tree) {
+public static String stringify(Few tree) {
     return String.format("<RBTree %s>", RBTreeAid.stringOfNode((Few) ref0(tree)));
 }
 }

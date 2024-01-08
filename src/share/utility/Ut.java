@@ -60,7 +60,6 @@ public static @NotNull String hexOfBytes(byte @NotNull [] bs) {
         for (int i = 0; i < n; i = i + 1) {
             str.append(Aid.hex(bs[i]));
             str.append(" ");
-            i = i + 1;
         }
         str.append(Aid.hex(bs[n]));
         str.append(")");

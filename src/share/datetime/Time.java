@@ -3,37 +3,42 @@ package share.datetime;
 
 public class Time {
 
-private final long sec;
-private final long nsec;
+private final long second;
+private final int nanosecond;
 
-
-Time(long second, long nanosecond) {
-    if (0 < second && nanosecond < 0) {
-        sec = second - 1;
-        nsec = Aid.NANO_SEC + nanosecond;
-    } else if (0 > second && nanosecond > 0) {
-        sec = second + 1;
-        nsec = nanosecond - Aid.NANO_SEC;
-    } else {
-        sec = second;
-        nsec = nanosecond;
+public Time(long second, int nanosecond) {
+    if (second < 0) {
+        throw new RuntimeException(String.format(Shop.INVALID_SEC, second));
+    } else if (nanosecond < 0 ||
+               1000_000_000 <= nanosecond) {
+        throw new RuntimeException(String.format(Shop.INVALID_NANO, nanosecond));
     }
+    this.second = second;
+    this.nanosecond = nanosecond;
 }
 
-public long second() {
-    return sec;
-}
 
-public long nano() {
-    return nsec;
+@Override
+public boolean equals(Object datum) {
+    if (datum instanceof Time t) {
+        return second == t.second &&
+               nanosecond == t.nanosecond;
+    } else {
+        return false;
+    }
 }
 
 @Override
 public String toString() {
-    if (sec < 0 || nsec < 0) {
-        return String.format("#<time -%d.%09d", sec * -1, nsec * -1);
-    } else {
-        return String.format("#<time %d.%09d>", sec, nsec);
-    }
+    return String.format("#<time %d.%09d>", second, nanosecond);
+}
+
+
+public long second() {
+    return second;
+}
+
+public int nanosecond() {
+    return nanosecond;
 }
 }

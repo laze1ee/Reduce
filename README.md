@@ -67,35 +67,3 @@ are as follows:
 * `cadr(Lot)` ⇒ `Any`
 * `cdar(Lot)` ⇒ `Lot`
 * `cddr(Lot)` ⇒ `Lot`
-
-## Wrapped primitive array type
-
-To address the limitations of primitive arrays (e.g., `boolean[]`, `int[]`), which do not directly
-extend `Object` and cannot be used as generic type arguments, I have introduced a new data type to
-facilitate type-checking. The procedures for `boolean[]` and `int[]` are outlined below, with
-similar procedures available for other types.
-
-All procedures related to wrapped primitive array types are contained within the class
-`share.primitive.Pm`.
-
-#### Wrap `boolean[]` to `Febool`
-
-|                                `febool(Boolean ...)` ⇒ `Febool` |
-|----------------------------------------------------------------:|
-|                        `makeFebool(Natural Boolean)` ⇒ `Febool` |
-|                                  `feLength(Febool)` ⇒ `Natural` |
-|                             `feRef(Febool Natural)` ⇒ `Boolean` |
-|                      `feSet(Febool Natural Boolean)` ⇒ `<void>` |
-|                             `feFill(Febool Boolean)` ⇒ `<void>` |
-|  `feCopyInto(Febool Natural Febool Natural Natural)` ⇒ `<void>` |
-
-#### Wrap `int[]` to `Feint`
-
-|                                `feint(Integer ...)` ⇒ `Feint` |
-|--------------------------------------------------------------:|
-|                        `makeFeint(Natural Integer)` ⇒ `Feint` |
-|                                 `feLength(Feint)` ⇒ `Natural` |
-|                                    `feRef(Feint)` ⇒ `Integer` |
-|                     `feSet(Feint Natural Integer)` ⇒ `<void>` |
-|                            `feFill(Feint Integer)` ⇒ `<void>` |
-|  `feCopyInto(FeInt Natural FeInt Natural Natural)` ⇒ `<void>` |

@@ -48,7 +48,7 @@ public String display() {
         StringBuilder str = new StringBuilder();
         int sz = name.length();
         char c = name.charAt(0);
-        if (Character.isDigit(c) || Aid.charExist(c, Aid.occupant1) || Aid.isScalar(c)) {
+        if (Character.isDigit(c) || Aid.isCharPresent(c, Aid.occupant1) || Aid.isScalar(c)) {
             str.append(String.format("\\u%X;", (int) c));
         } else {
             str.append(c);

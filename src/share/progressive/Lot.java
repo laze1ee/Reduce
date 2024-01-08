@@ -20,6 +20,7 @@ Lot(Object @NotNull [] args) {
     }
 }
 
+
 @Override
 public boolean equals(Object datum) {
     if (datum instanceof Lot lt) {

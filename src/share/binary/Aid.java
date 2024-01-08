@@ -5,511 +5,481 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import share.datetime.Date;
 import share.datetime.Time;
-import share.primitive.Febool;
-import share.primitive.Febyte;
-import share.primitive.Fedouble;
-import share.primitive.Feint;
-import share.primitive.Felong;
 import share.progressive.Few;
 import share.progressive.Lot;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
-import static share.datetime.Dt.makeDate;
-import static share.datetime.Dt.makeTime;
-import static share.primitive.Pm.*;
 import static share.progressive.Pg.*;
 
 
 class Aid {
 
-@SuppressWarnings("SpellCheckingInspection")
-private static final char[] HEX_STR = "0123456789ABCDEF".toCharArray();
+//region Share
+@Contract(pure = true)
+static byte @NotNull [] intToBin(int n) {
+    byte[] bin = new byte[4];
+    int moo = n;
+    for (int i = 3; i >= 0; i = i - 1) {
+        bin[i] = (byte) moo;
+        moo = moo >>> 8;
+    }
+    return bin;
+}
+
+static int binToInt(byte[] bin, int start) {
+    int bound = start + 4;
+    int n = 0;
+    for (int i = start; i < bound; i = i + 1) {
+        n = n << 8;
+        n = n | (bin[i] & 0xFF);
+    }
+    return n;
+}
 
 @Contract(pure = true)
-static @NotNull String hex(byte by) {
-    return new String(new char[]{HEX_STR[(by >> 4) & 0xF], HEX_STR[by & 0xF]});
-}
-
-//region Coding
-static @NotNull Febyte codeBool(boolean b) {
-    Febyte bin = makeFebyte(2);
-    feSet(bin, 0, Label.BOOL);
-    if (b) {
-        feSet(bin, 1, (byte) 1);
+static byte @NotNull [] longToBin(long n) {
+    byte[] bin = new byte[8];
+    long moo = n;
+    for (int i = 7; i >= 0; i = i - 1) {
+        bin[i] = (byte) moo;
+        moo = moo >>> 8;
     }
     return bin;
 }
 
-static @NotNull Febyte codeInt(int n) {
-    Febyte bin = makeFebyte(5);
-    feSet(bin, 0, Label.INT);
-    feCopyInto(Binary.codeInt(n), 0, bin, 1, 4);
-    return bin;
-}
-
-static @NotNull Febyte codeLong(long n) {
-    Febyte bin = makeFebyte(9);
-    feSet(bin, 0, Label.LONG);
-    feCopyInto(Binary.codeLong(n), 0, bin, 1, 8);
-    return bin;
-}
-
-static @NotNull Febyte codeDouble(double n) {
-    Febyte bin = makeFebyte(9);
-    feSet(bin, 0, Label.DOUBLE);
-    feCopyInto(Binary.codeDouble(n), 0, bin, 1, 8);
-    return bin;
-}
-
-static @NotNull Febyte codeChar(char c) {
-    Febyte bin = makeFebyte(5);
-    feSet(bin, 0, Label.CHAR);
-    feCopyInto(Binary.codeInt(c), 0, bin, 1, 4);
-    return bin;
-}
-
-static @NotNull Febyte codeString(@NotNull String str) {
-    Febyte b_str = febyte(str.getBytes(StandardCharsets.UTF_8));
-    Febyte bin = makeFebyte(feLength(b_str) + 2);
-    feSet(bin, 0, Label.STRING);
-    feCopyInto(b_str, 0, bin, 1, feLength(b_str));
-    return bin;
-}
-
-static @NotNull Febyte codeFebool(Febool bs) {
-    if (feLength(bs) == 0) {
-        Febyte bin = makeFebyte(5);
-        feSet(bin, 0, Label.FEBOOL);
-        return bin;
-    } else {
-        int sz = feLength(bs);
-        Febyte bin = makeFebyte(5 + sz / 8 + 1);
-        feSet(bin, 0, Label.FEBOOL);
-        feCopyInto(Binary.codeInt(sz), 0, bin, 1, 4);
-        for (int i = 0; i < sz; i = i + 1) {
-            if (feRef(bs, i)) {
-                int i_bv = 5 + i / 8;
-                byte by = (byte) (feRef(bin, i_bv) | (1 << (i % 8)));
-                feSet(bin, i_bv, by);
-            }
-        }
-        return bin;
+static long binToLong(byte[] bin, int start) {
+    int bound = start + 8;
+    long n = 0;
+    for (int i = start; i < bound; i = i + 1) {
+        n = n << 8;
+        n = n | (bin[i] & 0xFF);
     }
+    return n;
 }
 
-static @NotNull Febyte codeFeint(@NotNull Feint ins) {
-    if (feLength(ins) == 0) {
-        Febyte bin = makeFebyte(5);
-        feSet(bin, 0, Label.FEINT);
-        return bin;
-    } else {
-        int sz = feLength(ins);
-        Febyte bin = makeFebyte(5 + sz * 4);
-        feSet(bin, 0, Label.FEINT);
-        feCopyInto(Binary.codeInt(sz), 0, bin, 1, 4);
-        for (int i = 0; i < sz; i = i + 1) {
-            Febyte tmp = Binary.codeInt(feRef(ins, i));
-            feCopyInto(tmp, 0, bin, 5 + i * 4, 4);
-        }
-        return bin;
-    }
+static byte @NotNull [] doubleToBin(double n) {
+    long bits = Double.doubleToLongBits(n);
+    return longToBin(bits);
 }
 
-static @NotNull Febyte codeFelong(@NotNull Felong ls) {
-    if (feLength(ls) == 0) {
-        Febyte bin = makeFebyte(5);
-        feSet(bin, 0, Label.FELONG);
-        return bin;
-    } else {
-        int sz = feLength(ls);
-        Febyte bin = makeFebyte(5 + sz * 8);
-        feSet(bin, 0, Label.FELONG);
-        feCopyInto(Binary.codeInt(sz), 0, bin, 1, 4);
-        for (int i = 0; i < sz; i = i + 1) {
-            Febyte tmp = Binary.codeLong(feRef(ls, i));
-            feCopyInto(tmp, 0, bin, 5 + i * 8, 8);
-        }
-        return bin;
-    }
-}
-
-static @NotNull Febyte codeFedouble(@NotNull Fedouble ds) {
-    if (feLength(ds) == 0) {
-        Febyte bin = makeFebyte(5);
-        feSet(bin, 0, Label.FEDOUBLE);
-        return bin;
-    } else {
-        int sz = feLength(ds);
-        Febyte bin = makeFebyte(5 + sz * 8);
-        feSet(bin, 0, Label.FEDOUBLE);
-        feCopyInto(Binary.codeInt(sz), 0, bin, 1, 4);
-        for (int i = 0; i < sz; i = i + 1) {
-            Febyte tmp = Binary.codeDouble(feRef(ds, i));
-            feCopyInto(tmp, 0, bin, 5 + i * 8, 8);
-        }
-        return bin;
-    }
-}
-
-static @NotNull Febyte codeTime(@NotNull Time t) {
-    Febyte bin = makeFebyte(17);
-    feSet(bin, 0, Label.TIME);
-    Febyte b_sec = Binary.codeLong(t.second());
-    feCopyInto(b_sec, 0, bin, 1, 8);
-    Febyte b_nsec = Binary.codeLong(t.nano());
-    feCopyInto(b_nsec, 0, bin, 9, 8);
-    return bin;
-}
-
-static @NotNull Febyte codeDate(@NotNull Date d) {
-    Feint ins = makeFeint(8);
-    feSet(ins, 0, d.year());
-    feSet(ins, 1, d.month());
-    feSet(ins, 2, d.dayOfMonth());
-    feSet(ins, 3, d.hour());
-    feSet(ins, 4, d.minute());
-    feSet(ins, 5, d.second());
-    feSet(ins, 6, d.nano());
-    feSet(ins, 7, d.offset());
-    Febyte bs = codeFeint(ins);
-    int sz = feLength(bs);
-    Febyte bin = makeFebyte(1 + sz);
-    feSet(bin, 0, Label.DATE);
-    feCopyInto(bs, 0, bin, 1, sz);
-    return bin;
-}
-
-// store: lot of Febyte
-private static int size(Lot store, int n) {
-    if (isNull(store)) {
-        return n;
-    } else {
-        return size(cdr(store), feLength((Febyte) car(store)) + n);
-    }
-}
-
-// store: lot of Febyte
-private static void merge(Lot store, Febyte bin, int pos, byte CONS, byte END) {
-    if (isNull(cdr(store))) {
-        int sz = feLength((Febyte) car(store));
-        feCopyInto((Febyte) car(store), 0, bin, pos, sz);
-        feSet(bin, pos + sz, END);
-    } else {
-        int sz = feLength((Febyte) car(store));
-        feCopyInto((Febyte) car(store), 0, bin, pos, sz);
-        feSet(bin, pos + sz, CONS);
-        merge(cdr(store), bin, pos + sz + 1, CONS, END);
-    }
-}
-
-static @NotNull Febyte codeLot(Lot datum) {
-    if (isNull(datum)) {
-        return febyte(Label.LEST_BEGIN, Label.LEST_END);
-    } else {
-        Lot store = _map(datum);
-        int sz = size(store, 0) + length(store) + 1;
-        Febyte bin = makeFebyte(sz);
-        feSet(bin, 0, Label.LEST_BEGIN);
-        merge(store, bin, 1, Label.LEST_CONS, Label.LEST_END);
-        return bin;
-    }
-}
-
-private static Lot _map(Lot lt) {
-    if (isNull(lt)) {
-        return lot();
-    } else {
-        Febyte bin = Binary.codeDatum(car(lt));
-        return cons(bin, _map(cdr(lt)));
-    }
-}
-
-// bins: fex of Febyte
-private static int size(Few bins) {
-    int bound = length(bins);
-    int sz = 0;
-    for (int i = 0; i < bound; i = i + 1) {
-        sz = sz + feLength((Febyte) fewRef(bins, i));
-    }
-    return sz;
-}
-
-// bins: fex of Febyte
-private static void merge(Few bins, Febyte bin) {
-    int sz = length(bins);
-    feCopyInto(Binary.codeInt(sz), 0, bin, 1, 4);
-    int pos = 5;
-    for (int i = 0; i < sz; i = i + 1) {
-        Febyte bs = (Febyte) fewRef(bins, i);
-        int len = feLength(bs);
-        feCopyInto(bs, 0, bin, pos, len);
-        pos = pos + len;
-    }
-}
-
-static @NotNull Febyte codeFew(Few datum) {
-    int sz = length(datum);
-    if (sz == 0) {
-        Febyte bin = makeFebyte(5);
-        feSet(bin, 0, Label.FEX);
-        return bin;
-    } else {
-        Few store = _map(datum);
-        int sz_bin = 5 + size(store);
-        Febyte bin = makeFebyte(sz_bin);
-        feSet(bin, 0, Label.FEX);
-        merge(store, bin);
-        return bin;
-    }
-}
-
-// return: fex of Febyte
-private static @NotNull Few _map(Few fw) {
-    int sz = length(fw);
-    Few bins = makeFew(sz, null);
-    for (int i = 0; i < sz; i = i + 1) {
-        Febyte bin = Binary.codeDatum(fewRef(fw, i));
-        fewSet(bins, i, bin);
-    }
-    return bins;
+static double binToDouble(byte[] bin, int start) {
+    long bits = binToLong(bin, start);
+    return Double.longBitsToDouble(bits);
 }
 //endregion
 
 
-//region Decoding Aid
-static boolean deBool(byte by) {
-    return (by & 1) == 1;
+//region Coding
+@Contract(pure = true)
+static byte @NotNull [] codeBoolean(boolean b) {
+    byte[] bin = new byte[2];
+    bin[0] = Label.BOOLEAN;
+    if (b) {
+        bin[1] = (byte) 1;
+    }
+    return bin;
 }
 
-static @NotNull String deString(@NotNull Febyte bin) {
-    return new String(bin.toRaw(), StandardCharsets.UTF_8);
+static byte @NotNull [] codeInt(int n) {
+    byte[] bin = new byte[5];
+    bin[0] = Label.INT;
+    System.arraycopy(intToBin(n), 0, bin, 1, 4);
+    return bin;
 }
 
-static @NotNull Febool deFebool(Febyte bin, Feint pos) {
-    int start = feRef(pos, 0);
-    if (feLength(bin) < start + 4) {
-        throw new IllegalArgumentException
-              (String.format("range [%d %d) is out of febyte range [0 %d)",
-                             start, start + 4, feLength(bin)));
+static byte @NotNull [] codeLong(long n) {
+    byte[] bin = new byte[9];
+    bin[0] = Label.LONG;
+    System.arraycopy(longToBin(n), 0, bin, 1, 8);
+    return bin;
+}
+
+static byte @NotNull [] codeDouble(double n) {
+    byte[] bin = new byte[9];
+    bin[0] = Label.DOUBLE;
+    System.arraycopy(doubleToBin(n), 0, bin, 1, 8);
+    return bin;
+}
+
+static byte @NotNull [] codeChar(char c) {
+    byte[] bin = new byte[5];
+    bin[0] = Label.CHAR;
+    System.arraycopy(intToBin(c), 0, bin, 1, 4);
+    return bin;
+}
+
+static byte @NotNull [] codeString(@NotNull String str) {
+    byte[] b_str = str.getBytes(StandardCharsets.UTF_8);
+    byte[] bin = new byte[b_str.length + 2];
+    bin[0] = Label.STRING;
+    System.arraycopy(b_str, 0, bin, 1, b_str.length);
+    return bin;
+}
+
+static byte @NotNull [] codeBooleanArray(boolean @NotNull [] bs) {
+    if (bs.length == 0) {
+        byte[] bin = new byte[5];
+        bin[0] = Label.BOOLEAN_ARR;
+        return bin;
     } else {
-        int sz = Binary.deInt(bin, start);
-        if (sz == 0) {
-            feSet(pos, 0, start + 4);
-            return makeFebool(0);
-        }
-
-        Febool bl = makeFebool(sz);
-        for (int i = 0; i < sz; i = i + 1) {
-            int i_bin = start + 4 + i / 8;
-            int r = feRef(bin, i_bin) & (1 << (i % 8));
-            if (r != 0) {
-                feSet(bl, i, true);
+        int n = bs.length;
+        byte[] bin = new byte[5 + n / 8 + 1];
+        bin[0] = Label.BOOLEAN_ARR;
+        System.arraycopy(intToBin(n), 0, bin, 1, 4);
+        for (int i = 0; i < n; i = i + 1) {
+            if (bs[i]) {
+                int index_bs = 5 + i / 8;
+                bin[index_bs] = (byte) (bin[index_bs] | (1 << (7 - i % 8)));
             }
         }
-        feSet(pos, 0, start + 4 + 1 + sz / 8);
-        return bl;
+        return bin;
     }
 }
 
-static @NotNull Feint deFeint(@NotNull Febyte bin, Feint pos) {
-    int start = feRef(pos, 0);
-    if (feLength(bin) < start + 4) {
-        throw new IllegalArgumentException
-              (String.format("range [%d %d) is out of febyte range [0 %d)",
-                             start, start + 4, feLength(bin)));
+static byte @NotNull [] codeIntArray(int @NotNull [] ins) {
+    if (ins.length == 0) {
+        byte[] bin = new byte[5];
+        bin[0] = Label.INT_ARR;
+        return bin;
     } else {
-        int sz = Binary.deInt(bin, start);
-        Feint ins = makeFeint(sz);
-        int i_bin = start + 4;
-        for (int i = 0; i < sz; i = i + 1) {
-            int tmp = Binary.deInt(bin, i_bin);
-            i_bin = i_bin + 4;
-            feSet(ins, i, tmp);
+        int n = ins.length;
+        byte[] bin = new byte[5 + n * 4];
+        bin[0] = Label.INT_ARR;
+        System.arraycopy(intToBin(n), 0, bin, 1, 4);
+        for (int i = 0; i < n; i = i + 1) {
+            System.arraycopy(intToBin(ins[i]), 0, bin, 5 + i * 4, 4);
         }
-        feSet(pos, 0, start + 4 + sz * 4);
-        return ins;
+        return bin;
     }
 }
 
-static @NotNull Felong deFelong(@NotNull Febyte bin, Feint pos) {
-    int start = feRef(pos, 0);
-    if (feLength(bin) < start + 4) {
-        throw new IllegalArgumentException
-              (String.format("range [%d %d) is out of febyte range [0 %d)",
-                             start, start + 4, feLength(bin)));
+static byte @NotNull [] codeLongArray(long @NotNull [] ls) {
+    if (ls.length == 0) {
+        byte[] bin = new byte[5];
+        bin[0] = Label.LONG_ARR;
+        return bin;
     } else {
-        int sz = Binary.deInt(bin, start);
-        Felong ls = makeFelong(sz);
-        int i_bin = start + 4;
-        for (int i = 0; i < sz; i = i + 1) {
-            long tmp = Binary.deLong(bin, i_bin);
-            i_bin = i_bin + 8;
-            feSet(ls, i, tmp);
+        int n = ls.length;
+        byte[] bin = new byte[5 + n * 8];
+        bin[0] = Label.LONG_ARR;
+        System.arraycopy(intToBin(n), 0, bin, 1, 4);
+        for (int i = 0; i < n; i = i + 1) {
+            System.arraycopy(longToBin(ls[i]), 0, bin, 5 + i * 8, 8);
         }
-        feSet(pos, 0, start + 4 + sz * 8);
-        return ls;
+        return bin;
     }
 }
 
-static @NotNull Fedouble deFedouble(@NotNull Febyte bin, Feint pos) {
-    int start = feRef(pos, 0);
-    if (feLength(bin) < start + 4) {
-        throw new IllegalArgumentException
-              (String.format("range [%d %d) is out of febyte range [0 %d)",
-                             start, start + 4, feLength(bin)));
+static byte @NotNull [] codeDoubleArray(double @NotNull [] ds) {
+    if (ds.length == 0) {
+        byte[] bin = new byte[5];
+        bin[0] = Label.DOUBLE_ARR;
+        return bin;
     } else {
-        int sz = Binary.deInt(bin, start);
-        Fedouble ds = makeFedouble(sz);
-        int i_bin = start + 4;
-        for (int i = 0; i < sz; i = i + 1) {
-            double tmp = Binary.deDouble(bin, i_bin);
-            i_bin = i_bin + 8;
-            feSet(ds, i, tmp);
+        int n = ds.length;
+        byte[] bin = new byte[5 + n * 8];
+        bin[0] = Label.DOUBLE_ARR;
+        System.arraycopy(intToBin(n), 0, bin, 1, 4);
+        for (int i = 0; i < n; i = i + 1) {
+            System.arraycopy(doubleToBin(ds[i]), 0, bin, 5 + i * 8, 8);
         }
-        feSet(pos, 0, start + 4 + sz * 8);
-        return ds;
+        return bin;
     }
 }
 
-static @NotNull Time deTime(Febyte bin, Feint pos) {
-    int start = feRef(pos, 0);
-    long sec = Binary.deLong(bin, start);
-    long nsec = Binary.deLong(bin, start + 8);
-    feSet(pos, 0, start + 16);
-    return makeTime(sec, nsec);
+
+static byte @NotNull [] codeLot(Lot lt) {
+    if (isNull(lt)) {
+        return new byte[]{Label.LOT_BEGIN, Label.LOT_END};
+    } else {
+        Lot moo = lot();
+        Lot xoo = lt;
+        while (!isNull(xoo)) {
+            moo = cons(Binary.codeDatum(car(xoo)), moo);
+            xoo = cdr(xoo);
+        }
+        moo = reverse(moo);
+        return connectLot(moo);
+    }
 }
 
-static @NotNull Date deDate(Feint ins) {
-    return makeDate
-           (feRef(ins, 0), feRef(ins, 1), feRef(ins, 2), feRef(ins, 3), feRef(ins, 4), feRef(ins, 5),
-            feRef(ins, 6), feRef(ins, 7));
+static byte @NotNull [] connectLot(Lot lt_bytes) {
+    int sz = sizeOf(lt_bytes) + length(lt_bytes) + 1;
+    byte[] bin = new byte[sz];
+    bin[0] = Label.LOT_BEGIN;
+    bin[sz - 1] = Label.LOT_END;
+
+    int i = 1;
+    Lot moo = lt_bytes;
+    while (!isNull(cdr(moo))) {
+        byte[] bs = (byte[]) car(moo);
+        System.arraycopy(bs, 0, bin, i, bs.length);
+        i = i + bs.length;
+        bin[i] = Label.LOT_CONS;
+        i = i + 1;
+        moo = cdr(moo);
+    }
+    byte[] bs = (byte[]) car(moo);
+    System.arraycopy(bs, 0, bin, i, bs.length);
+    return bin;
+}
+
+static int sizeOf(Lot lt_bytes) {
+    Lot moo = lt_bytes;
+    int n = 0;
+    while (!isNull(moo)) {
+        byte[] bs = (byte[]) car(moo);
+        n = n + bs.length;
+        moo = cdr(moo);
+    }
+    return n;
+}
+
+
+static byte @NotNull [] codeFew(Few fw) {
+    if (length(fw) == 0) {
+        byte[] bin = new byte[5];
+        bin[0] = Label.FEW;
+        return bin;
+    } else {
+        Lot moo = lot();
+        int n = length(fw);
+        for (int i = 0; i < n; i = i + 1) {
+            moo = cons(Binary.codeDatum(fewRef(fw, i)), moo);
+        }
+        moo = reverse(moo);
+        return connectFew(moo);
+    }
+}
+
+static byte @NotNull [] connectFew(Lot lt_bytes) {
+    int sz = sizeOf(lt_bytes) + 5;
+    byte[] bin = new byte[sz];
+    bin[0] = Label.FEW;
+    int n = length(lt_bytes);
+    System.arraycopy(intToBin(n), 0, bin, 1, 4);
+
+    int i = 5;
+    Lot moo = lt_bytes;
+    while (!isNull(moo)) {
+        byte[] bs = (byte[]) car(moo);
+        System.arraycopy(bs, 0, bin, i, bs.length);
+        i = i + bs.length;
+        moo = cdr(moo);
+    }
+    return bin;
+}
+
+
+static byte @NotNull [] codeTime(@NotNull Time t) {
+    byte[] bin = new byte[13];
+    bin[0] = Label.TIME;
+    byte[] b_sec = longToBin(t.second());
+    System.arraycopy(b_sec, 0, bin, 1, 8);
+    byte[] b_nano = intToBin(t.nanosecond());
+    System.arraycopy(b_nano, 0, bin, 9, 4);
+    return bin;
+}
+
+static byte @NotNull [] codeDate(@NotNull Date d) {
+    byte[] bin = new byte[19];
+    bin[0] = Label.DATE;
+    byte[] moo = intToBin(d.year());
+    System.arraycopy(moo, 0, bin, 1, 4);
+    bin[5] = (byte) d.month();
+    bin[6] = (byte) d.dayOfMonth();
+    bin[7] = (byte) d.dayOfWeek();
+    bin[8] = (byte) d.hour();
+    bin[9] = (byte) d.minute();
+    bin[10] = (byte) d.second();
+    moo = intToBin(d.nanosecond());
+    System.arraycopy(moo, 0, bin, 11, 4);
+    moo = intToBin(d.offset());
+    System.arraycopy(moo, 0, bin, 15, 4);
+    return bin;
 }
 //endregion
 
 
 //region Decoding
-private static Object dePrimitive(Febyte bin, Feint pos) {
-    int i = feRef(pos, 0);
-    byte label = feRef(bin, i);
-    switch (label) {
-        case Label.BOOL -> {
-            feSet(pos, 0, i + 2);
-            byte by = feRef(bin, i + 1);
-            return deBool(by);
-        }
-        case Label.INT -> {
-            feSet(pos, 0, i + 5);
-            return Binary.deInt(bin, i + 1);
-        }
-        case Label.LONG -> {
-            feSet(pos, 0, i + 9);
-            return Binary.deLong(bin, i + 1);
-        }
-        case Label.DOUBLE -> {
-            feSet(pos, 0, i + 9);
-            return Binary.deDouble(bin, i + 1);
-        }
-        case Label.CHAR -> {
-            feSet(pos, 0, i + 5);
-            return (char) Binary.deInt(bin, i + 1);
-        }
-        case Label.STRING -> {
-            int bound = endingString(bin, i + 1);
-            int sz = bound - i - 1;
-            feSet(pos, 0, bound + 1);
-            Febyte str = makeFebyte(sz);
-            feCopyInto(bin, i + 1, str, 0, sz);
-            return deString(str);
-        }
-        case Label.FEBOOL -> {
-            feSet(pos, 0, i + 1);
-            return deFebool(bin, pos);
-        }
-        case Label.FEINT -> {
-            feSet(pos, 0, i + 1);
-            return deFeint(bin, pos);
-        }
-        case Label.FELONG -> {
-            feSet(pos, 0, i + 1);
-            return deFelong(bin, pos);
-        }
-        case Label.FEDOUBLE -> {
-            feSet(pos, 0, i + 1);
-            return deFedouble(bin, pos);
-        }
-        default -> throw new IllegalArgumentException
-                         (String.format("invalid code.primitive type label %s in position %d",
-                                        hex(label), feRef(pos, 0)));
-    }
+static boolean decodeBoolean(byte by) {
+    return by != 0;
 }
 
-private static int endingString(Febyte bin, int start) {
-    int i = start;
-    while (feRef(bin, i) != 0) {
-        i = i + 1;
-    }
-    return i;
+static char decodeChar(byte[] bin, int start) {
+    int c = binToInt(bin, start);
+    return (char) c;
 }
 
-private static Object deWrapped(Febyte bin, Feint pos) {
-    int i = feRef(pos, 0);
-    byte label = feRef(bin, i);
-    switch (label) {
-        case Label.TIME -> {
-            feSet(pos, 0, i + 1);
-            return deTime(bin, pos);
-        }
-        case Label.DATE -> {
-            feSet(pos, 0, i + 2);
-            Feint data = deFeint(bin, pos);
-            return deDate(data);
-        }
-        case Label.LEST_BEGIN -> {
-            if (feRef(bin, i + 1) == Label.LEST_END) {
-                feSet(pos, 0, i + 2);
-                return lot();
-            } else {
-                feSet(pos, 0, i + 1);
-                Object o = deDatum(bin, pos);
-                return cons(o, (Lot) deDatum(bin, pos));
+@Contract(pure = true)
+static boolean @NotNull [] decodeBooleanArray(byte[] bin, int start, int sz) {
+    boolean[] bs = new boolean[sz];
+    for (int i = 0; i < sz; i = i + 1) {
+        int j = start + i / 8;
+        byte by = (byte) (bin[j] & (1 << (7 - i % 8)));
+        bs[i] = by != 0;
+    }
+    return bs;
+}
+
+@Contract(pure = true)
+static int @NotNull [] decodeIntArray(byte[] bin, int start, int sz) {
+    int[] ins = new int[sz];
+    for (int i = 0, j = start; i < sz; i = i + 1, j = j + 4) {
+        ins[i] = binToInt(bin, j);
+    }
+    return ins;
+}
+
+@Contract(pure = true)
+static long @NotNull [] decodeLongArray(byte[] bin, int start, int sz) {
+    long[] ls = new long[sz];
+    for (int i = 0, j = start; i < sz; i = i + 1, j = j + 8) {
+        ls[i] = binToLong(bin, j);
+    }
+    return ls;
+}
+
+static double @NotNull [] decodeDoubleArray(byte[] bin, int start, int sz) {
+    double[] ds = new double[sz];
+    for (int i = 0, j = start; i < sz; i = i + 1, j = j + 8) {
+        ds[i] = binToDouble(bin, j);
+    }
+    return ds;
+}
+
+@Contract("_, _ -> new")
+static @NotNull Time decodeTime(byte[] bin, int start) {
+    long second = binToLong(bin, start + 1);
+    int nanosecond = binToInt(bin, start + 9);
+    return new Time(second, nanosecond);
+}
+
+@Contract("_, _ -> new")
+static @NotNull Date decodeDate(byte[] bin, int start) {
+    int year = binToInt(bin, start + 1);
+    int nanosecond = binToInt(bin, start + 11);
+    int offset = binToInt(bin, start + 15);
+    return new Date(year, bin[start + 5], bin[start + 6], bin[start + 8], bin[start + 9],
+                    bin[start + 10], nanosecond, offset);
+}
+
+static class Decoding {
+    final byte[] bin;
+    int pos;
+
+    Decoding(byte[] bin) {
+        this.bin = bin;
+        pos = 0;
+    }
+
+    Object process() {
+        Object datum;
+        switch (bin[pos]) {
+            case Label.BOOLEAN -> {
+                pos = pos + 1;
+                datum = decodeBoolean(bin[pos]);
+                pos = pos + 1;
             }
-        }
-        case Label.LEST_CONS -> {
-            feSet(pos, 0, i + 1);
-            Object o = deDatum(bin, pos);
-            return cons(o, (Lot) deDatum(bin, pos));
-        }
-        case Label.LEST_END -> {
-            feSet(pos, 0, i + 1);
-            return lot();
-        }
-        case Label.FEX -> {
-            int sz = Binary.deInt(bin, i + 1);
-            Few fw = makeFew(sz, 0);
-            feSet(pos, 0, i + 5);
-            for (int k = 0; k < sz; k = k + 1) {
-                Object o = deDatum(bin, pos);
-                fewSet(fw, k, o);
+            case Label.INT -> {
+                pos = pos + 1;
+                datum = binToInt(bin, pos);
+                pos = pos + 4;
             }
-            return fw;
+            case Label.LONG -> {
+                pos = pos + 1;
+                datum = binToLong(bin, pos);
+                pos = pos + 8;
+            }
+            case Label.DOUBLE -> {
+                pos = pos + 1;
+                datum = binToDouble(bin, pos);
+                pos = pos + 8;
+            }
+            case Label.CHAR -> {
+                pos = pos + 1;
+                datum = decodeChar(bin, pos);
+                pos = pos + 4;
+            }
+            case Label.STRING -> {
+                int start = pos + 1;
+                while (bin[pos] != 0) {
+                    pos = pos + 1;
+                }
+                byte[] bs_str = Arrays.copyOfRange(bin, start, pos);
+                datum = new String(bs_str, StandardCharsets.UTF_8);
+                pos = pos + 1;
+            }
+            case Label.BOOLEAN_ARR -> {
+                pos = pos + 1;
+                int sz = binToInt(bin, pos);
+                pos = pos + 4;
+                datum = decodeBooleanArray(bin, pos, sz);
+                pos = pos + (sz + 7) / 8;
+            }
+            case Label.INT_ARR -> {
+                pos = pos + 1;
+                int sz = binToInt(bin, pos);
+                pos = pos + 4;
+                datum = decodeIntArray(bin, pos, sz);
+                pos = pos + sz * 4;
+            }
+            case Label.LONG_ARR -> {
+                pos = pos + 1;
+                int sz = binToInt(bin, pos);
+                pos = pos + 4;
+                datum = decodeLongArray(bin, pos, sz);
+                pos = pos + sz * 8;
+            }
+            case Label.DOUBLE_ARR -> {
+                pos = pos + 1;
+                int sz = binToInt(bin, pos);
+                pos = pos + 4;
+                datum = decodeDoubleArray(bin, pos, sz);
+                pos = pos + sz * 8;
+            }
+            case Label.LOT_BEGIN -> {
+                pos = pos + 1;
+                if (bin[pos] == Label.LOT_END) {
+                    datum = lot();
+                    pos = pos + 1;
+                } else {
+                    Object moo = process();
+                    datum = cons(moo, (Lot) process());
+                }
+            }
+            case Label.LOT_CONS -> {
+                pos = pos + 1;
+                Object moo = process();
+                datum = cons(moo, (Lot) process());
+            }
+            case Label.LOT_END -> {
+                pos = pos + 1;
+                datum = lot();
+            }
+            case Label.FEW -> {
+                pos = pos + 1;
+                int sz = binToInt(bin, pos);
+                pos = pos + 4;
+                datum = makeFew(sz, 0);
+                for (int i = 0; i < sz; i = i + 1) {
+                    Object moo = process();
+                    fewSet((Few) datum, i, moo);
+                }
+            }
+            case Label.TIME -> {
+                datum = decodeTime(bin, pos);
+                pos = pos + 13;
+            }
+            case Label.DATE -> {
+                datum = decodeDate(bin, pos);
+                pos = pos + 19;
+            }
+            default -> throw new RuntimeException(String.format(Shop.UNMATCHED, bin[pos]));
         }
-        default -> throw new IllegalArgumentException
-                         (String.format("invalid wrapped type label %s in position %d",
-                                        hex(label), feRef(pos, 0)));
-    }
-}
-
-static Object deDatum(Febyte bin, Feint pos) {
-    int label = feRef(bin, feRef(pos, 0)) & 0xFF;
-    if (0xA0 <= label && label <= 0xAF) {
-        return dePrimitive(bin, pos);
-    } else if (0xB0 <= label && label <= 0xBF) {
-        return deWrapped(bin, pos);
-    } else {
-        throw new IllegalArgumentException
-              (String.format("invalid datum type label %s in position %d",
-                             hex((byte) label), feRef(pos, 0)));
+        return datum;
     }
 }
 //endregion

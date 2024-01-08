@@ -3,25 +3,23 @@ package share.binary;
 
 class Label {
 
-static final byte BOOL = (byte) 0xA0;
-static final byte INT = (byte) 0xA1;
-static final byte LONG = (byte) 0xA2;
-static final byte DOUBLE = (byte) 0xA3;
-static final byte CHAR = (byte) 0xA4;
-static final byte STRING = (byte) 0xA5;
+static final byte BOOLEAN = (byte) 0x80;
+static final byte INT = (byte) 0x81;
+static final byte LONG = (byte) 0x82;
+static final byte DOUBLE = (byte) 0x83;
+static final byte CHAR = (byte) 0x84;
+static final byte STRING = (byte) 0x85;
 
-static final byte FEBOOL = (byte) 0xA6;
-static final byte FEINT = (byte) 0xA7;
-static final byte FELONG = (byte) 0xA8;
-static final byte FEDOUBLE = (byte) 0xA9;
+static final byte BOOLEAN_ARR = (byte) 0x87;
+static final byte INT_ARR = (byte) 0x88;
+static final byte LONG_ARR = (byte) 0x89;
+static final byte DOUBLE_ARR = (byte) 0x8A;
 
+static final byte LOT_BEGIN = (byte) 0x8C;
+static final byte LOT_CONS = (byte) 0x8D;
+static final byte LOT_END = (byte) 0x8E;
+static final byte FEW = (byte) 0x8F;
 
-static final byte TIME = (byte) 0xB0;
-static final byte DATE = (byte) 0xB1;
-
-
-static final byte LEST_BEGIN = (byte) 0xB8;
-static final byte LEST_CONS = (byte) 0xB9;
-static final byte LEST_END = (byte) 0xBA;
-static final byte FEX = (byte) 0xBC;
+static final byte TIME = (byte) 0x91;
+static final byte DATE = (byte) 0x92;
 }

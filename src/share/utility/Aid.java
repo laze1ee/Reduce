@@ -33,17 +33,16 @@ static String stringOfChar(char c) {
 
 
 static @NotNull String consPrimitiveArray(Object arr, int sz) {
-    int n = Array.getLength(arr);
-    if (n == 0) {
+    if (sz == 0) {
         return "";
     } else {
         StringBuilder str = new StringBuilder();
-        n = n - 1;
-        for (int i = 0; i < n; i = i + 1) {
+        sz = sz - 1;
+        for (int i = 0; i < sz; i = i + 1) {
             str.append(stringOf(Array.get(arr, i)));
             str.append(" ");
         }
-        str.append(stringOf(Array.get(arr, n)));
+        str.append(stringOf(Array.get(arr, sz)));
         return str.toString();
     }
 }

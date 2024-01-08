@@ -12,7 +12,7 @@ FixNonCyc(Object[] array) {
 @Override
 public boolean equals(Object datum) {
     if (datum instanceof FixNonCyc fn) {
-        return Comparison.isArraysEq(array, fn.array);
+        return Comparison.isObjectArrayEqual(array, fn.array);
     } else {
         return false;
     }
@@ -20,6 +20,6 @@ public boolean equals(Object datum) {
 
 @Override
 public String toString() {
-    return String.format("#(%s)", Aid.consObjectArr(array));
+    return String.format("#(%s)", Aid.consObjectArray(array));
 }
 }

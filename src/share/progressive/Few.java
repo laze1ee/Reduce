@@ -9,6 +9,7 @@ Few(Object[] array) {
     this.array = array;
 }
 
+
 @Override
 public boolean equals(Object datum) {
     if (datum instanceof Few fw) {

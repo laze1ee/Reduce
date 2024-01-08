@@ -16,22 +16,23 @@ PairCyc(Object data, Pair next, int count) {
 @Override
 public boolean equals(Object datum) {
     if (datum instanceof PairCyc pair) {
-        if (data == null && next == null) {
+        if (data == null &&
+            next == null) {
             return pair.data == null &&
                    pair.next == null &&
                    count == pair.count;
         } else if (data == null) {
             return pair.data == null &&
                    count == pair.count &&
-                   next.equals(pair.next);
+                   Comparison.equal(next, pair.next);
         } else if (next == null) {
             return pair.next == null &&
                    count == pair.count &&
-                   data.equals(pair.data);
+                   Comparison.equal(data, pair.data);
         } else {
             return count == pair.count &&
-                   data.equals(pair.data) &&
-                   next.equals(pair.next);
+                   Comparison.equal(data, pair.data) &&
+                   Comparison.equal(next, pair.next);
         }
     } else {
         return false;

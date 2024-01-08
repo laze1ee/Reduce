@@ -17,18 +17,19 @@ Pair(Object data, Pair next) {
 @Override
 public boolean equals(Object datum) {
     if (datum instanceof Pair pair) {
-        if (data == null && next == null) {
+        if (data == null &&
+            next == null) {
             return pair.data == null &&
                    pair.next == null;
         } else if (data == null) {
             return pair.data == null &&
-                   next.equals(pair.next);
+                   Comparison.equal(next, pair.next);
         } else if (next == null) {
             return pair.next == null &&
-                   data.equals(pair.data);
+                   Comparison.equal(data, pair.data);
         } else {
-            return data.equals(pair.data) &&
-                   next.equals(pair.next);
+            return Comparison.equal(data, pair.data) &&
+                   Comparison.equal(next, pair.next);
         }
     } else {
         return false;

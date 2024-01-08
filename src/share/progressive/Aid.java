@@ -22,8 +22,7 @@ static @NotNull Pair initLot(Object @NotNull [] args) {
 }
 
 
-//region StringOf
-static @NotNull String consObjectArr(Object @NotNull [] arr) {
+static @NotNull String consObjectArray(Object @NotNull [] arr) {
     int n = arr.length;
     if (n == 0) {
         return "";
@@ -42,7 +41,7 @@ static @NotNull String consObjectArr(Object @NotNull [] arr) {
 
 static Object isolate(Object datum) {
     if (datum instanceof Few fw) {
-        return isolateFex(fw.array);
+        return isolateFew(fw.array);
     } else if (datum instanceof Lot lt) {
         if (isNull(lt)) {
             return new PairNull();
@@ -55,7 +54,7 @@ static Object isolate(Object datum) {
 }
 
 @Contract("_ -> new")
-private static @NotNull Fix isolateFex(Object @NotNull [] arr) {
+private static @NotNull Fix isolateFew(Object @NotNull [] arr) {
     int sz = arr.length;
     Object[] moo = new Object[sz];
     for (int i = 0; i < sz; i = i + 1) {
@@ -66,24 +65,22 @@ private static @NotNull Fix isolateFex(Object @NotNull [] arr) {
 
 @Contract("_ -> new")
 private static @NotNull Pair isolateLot(@NotNull Pair pair) {
-    return new PairHead(isolate(pair.data), _processCdr(pair.next));
+    return new PairHead(isolate(pair.data), processCdr(pair.next));
 }
 
-private static Pair _processCdr(Pair pair) {
+private static Pair processCdr(Pair pair) {
     if (pair == null) {
         return null;
     } else {
-        return new Pair(isolate(pair.data), _processCdr(pair.next));
+        return new Pair(isolate(pair.data), processCdr(pair.next));
     }
 }
-//endregion
 
 
-//region For Symbol
 static final char[] occupant1 = "+-.@".toCharArray();
 static final char[] occupant2 = "\"#'(),;[\\]{|}".toCharArray();
 
-static boolean charExist(char c, char @NotNull [] charset) {
+static boolean isCharPresent(char c, char @NotNull [] charset) {
     int sz = charset.length;
     int i = 0;
     while (i < sz && c != charset[i]) {
@@ -93,7 +90,6 @@ static boolean charExist(char c, char @NotNull [] charset) {
 }
 
 static boolean isScalar(char c) {
-    return c <= 0x1F || Character.isWhitespace(c) || charExist(c, occupant2);
+    return c <= 0x1F || Character.isWhitespace(c) || isCharPresent(c, occupant2);
 }
-//endregion
 }
