@@ -15,6 +15,32 @@ private final int offset;
 
 public Date(int year, int month, int day_of_month, int hour, int minute, int second,
             int nanosecond, int offset) {
+    if (year < 0 || 2000000000 < year) {
+        throw new RuntimeException(String.format(Shop.OUT_YEAR, year));
+    }
+    if (month < 1 || 12 < month) {
+        throw new RuntimeException(String.format(Shop.OUT_MONTH, month));
+    }
+    if (!Aid.checkDayMonth(year, month, day_of_month)) {
+        throw new RuntimeException(String.format(Shop.OUT_DAY, year, month, day_of_month));
+    }
+    if (hour < 0 || 23 < hour) {
+        throw new RuntimeException(String.format(Shop.OUT_HOUR, hour));
+    }
+    if (minute < 0 || 59 < minute) {
+        throw new RuntimeException(String.format(Shop.OUT_MINUTE, minute));
+    }
+    if (second < 0 || 59 < second) {
+        throw new RuntimeException(String.format(Shop.OUT_SEC, second));
+    }
+    if (nanosecond < 0 || 999999999 < nanosecond) {
+        throw new RuntimeException(
+        String.format(Shop.OUT_NANO, nanosecond));
+    }
+    if (offset < -64800 || 64800 < offset) {
+        throw new RuntimeException(String.format(Shop.OUT_OFFSET, offset));
+    }
+
     this.year = year;
     this.month = (byte) month;
     this.day_of_month = (byte) day_of_month;

@@ -1,9 +1,7 @@
 package share.utility;
 
 
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import share.progressive.Few;
 import share.progressive.Lot;
 
 import static share.progressive.Pg.*;
@@ -11,102 +9,101 @@ import static share.progressive.Pg.*;
 
 public class RBTree {
 
-@Contract(" -> new")
-public static @NotNull Few initialize() {
-    return few(RBTreeAid.emptyNode());
+RBNode root;
+
+
+public RBTree() {
+    root = new RBNode();
 }
 
-public static boolean isEmpty(Few tree) {
-    if (length(tree) == 1 && ref0(tree) instanceof Few node) {
-        return RBTreeAid.isEmptyNode(node);
+
+@Override
+public boolean equals(Object datum) {
+    if (datum instanceof RBTree tree) {
+        return root.equals(tree.root);
     } else {
         return false;
     }
 }
 
-public static boolean isRBTree(Few tree) {
-    if (length(tree) == 1 && ref0(tree) instanceof Few node) {
-        return RBTreeAid.isNode(node);
-    } else {
-        return false;
-    }
+@Override
+public String toString() {
+    return String.format("(Red-Black-Tree %s)", root);
 }
 
-public static void insert(Few tree, Object key, Object value) {
-    RBTreeAid.Finder moo = new RBTreeAid.Finder(key, (Few) ref0(tree));
-    Lot path = moo.process();
-    Few node = (Few) car(path);
-    if (RBTreeAid.isEmptyNode(node)) {
-        RBTreeAid.setKey(node, key);
-        RBTreeAid.setValue(node, value);
-        RBTreeAid.setColor(node, RBTreeAid.RED);
-        RBTreeAid.setLeft(node, RBTreeAid.emptyNode());
-        RBTreeAid.setRight(node, RBTreeAid.emptyNode());
+
+public boolean isEmpty() {
+    return root.isEmpty();
+}
+
+
+public static void insert(@NotNull RBTree tree, Object key, Object value) {
+    Lot path = RBTreeAid.pathOf(tree.root, key);
+    RBNode node = (RBNode) car(path);
+    if (node.isEmpty()) {
+        node.key = key;
+        node.value = value;
+        node.color = true;
+        node.left = new RBNode();
+        node.right = new RBNode();
         RBTreeAid.InsertFixer fixer = new RBTreeAid.InsertFixer(tree, path);
         fixer.process();
     } else {
-        throw new RuntimeException
-              (String.format("insert same key %s for tree %s", key, stringify(tree)));
+        throw new RuntimeException(String.format("same key %s is present in tree %s", key, tree));
     }
 }
 
-public static boolean isPresent(Few tree, Object key) {
-    RBTreeAid.Finder f = new RBTreeAid.Finder(key, (Few) ref0(tree));
-    Lot path = f.process();
-    return !RBTreeAid.isEmptyNode((Few) car(path));
+public static boolean isPresent(@NotNull RBTree tree, Object key) {
+    Lot path = RBTreeAid.pathOf(tree.root, key);
+    RBNode node = (RBNode) car(path);
+    return !node.isEmpty();
 }
 
-public static Object ref(Few tree, Object key) {
-    RBTreeAid.Finder moo = new RBTreeAid.Finder(key, (Few) ref0(tree));
-    Lot path = moo.process();
-    Few node = (Few) car(path);
-    if (RBTreeAid.isEmptyNode(node)) {
-        throw new RuntimeException
-              (String.format("key %s is not present in tree %s", key, stringify(tree)));
+public static Object ref(@NotNull RBTree tree, Object key) {
+    Lot path = RBTreeAid.pathOf(tree.root, key);
+    RBNode node = (RBNode) car(path);
+    if (node.isEmpty()) {
+        throw new RuntimeException(String.format("key %s is not present in tree %s", key, tree));
     } else {
-        return RBTreeAid.getValue(node);
+        return node.value;
     }
 }
 
-public static void set(Few tree, Object key, Object value) {
-    RBTreeAid.Finder moo = new RBTreeAid.Finder(key, (Few) ref0(tree));
-    Lot path = moo.process();
-    Few node = (Few) car(path);
-    if (RBTreeAid.isEmptyNode(node)) {
-        throw new RuntimeException
-              (String.format("key %s is not present in tree %s", key, stringify(tree)));
+public static void set(@NotNull RBTree tree, Object key, Object new_value) {
+    Lot path = RBTreeAid.pathOf(tree.root, key);
+    RBNode node = (RBNode) car(path);
+    if (node.isEmpty()) {
+        throw new RuntimeException(String.format("key %s is not present in tree %s", key, tree));
     } else {
-        RBTreeAid.setValue(node, value);
+        node.value = new_value;
     }
 }
 
-public static void delete(Few tree, Object key) {
-    if (isEmpty(tree)) {
+public static void delete(@NotNull RBTree tree, Object key) {
+    if (tree.isEmpty()) {
         throw new RuntimeException("empty tree");
     } else {
-        RBTreeAid.delete(key, tree);
+        RBTreeAid.delete(tree, key);
     }
 }
 
-public static Object minOf(Few tree) {
-    Lot path = RBTreeAid.minimum((Few) ref0(tree), lot());
+public static Object minOf(@NotNull RBTree tree) {
+    Lot path = RBTreeAid.minimum(tree.root, lot());
     if (isNull(path)) {
         throw new RuntimeException("empty tree");
     } else {
-        return RBTreeAid.getValue((Few) car(path));
+        RBNode node = (RBNode) car(path);
+        return node.value;
     }
 }
 
-public static Object maxOf(Few tree) {
-    Lot path = RBTreeAid.maximum((Few) ref0(tree), lot());
+public static Object maxOf(@NotNull RBTree tree) {
+    Lot path = RBTreeAid.maximum(tree.root, lot());
     if (isNull(path)) {
         throw new RuntimeException("empty tree");
     } else {
-        return RBTreeAid.getValue((Few) car(path));
+        RBNode node = (RBNode) car(path);
+        return node.value;
     }
-}
-
-public static String stringify(Few tree) {
-    return String.format("<RBTree %s>", RBTreeAid.stringOfNode((Few) ref0(tree)));
 }
 }

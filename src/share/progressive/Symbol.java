@@ -6,7 +6,7 @@ import share.utility.RBTree;
 
 public class Symbol {
 
-static final Few rbTree = RBTree.initialize();
+static final RBTree tree = new RBTree();
 static int count = 0;
 
 final String name;
@@ -15,11 +15,11 @@ final int id;
 
 Symbol(String name) {
     this.name = name;
-    if (RBTree.isPresent(rbTree, this.name)) {
-        id = (int) RBTree.ref(rbTree, this.name);
+    if (RBTree.isPresent(tree, this.name)) {
+        id = (int) RBTree.ref(tree, this.name);
     } else {
         id = count;
-        RBTree.insert(rbTree, this.name, id);
+        RBTree.insert(tree, this.name, id);
         count = count + 1;
     }
 }

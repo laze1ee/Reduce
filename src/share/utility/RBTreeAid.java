@@ -3,258 +3,158 @@ package share.utility;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import share.progressive.Few;
 import share.progressive.Lot;
 
 import static share.progressive.Comparison.*;
 import static share.progressive.Pg.*;
 
 
+@SuppressWarnings("SuspiciousNameCombination")
 class RBTreeAid {
 
-static final boolean RED = true;
-static final boolean BLACK = false;
-
-
-//region constructor
-@Contract(value = " -> new", pure = true)
-static @NotNull Few emptyNode() {
-    return few(false, 0, false, few(), few());
-}
-//endregion
-
-
-//region visitor
-static Object getKey(Few node) {
-    return ref0(node);
-}
-
-static Object getValue(Few node) {
-    return ref1(node);
-}
-
-static boolean getColor(Few node) {
-    return (boolean) ref2(node);
-}
-
-static Few getLeft(Few node) {
-    return (Few) ref3(node);
-}
-
-static Few getRight(Few node) {
-    return (Few) ref4(node);
-}
-
-record Finder(Object key, Few node) {
-    @NotNull Lot process() {
-        return _aid(node, lot());
-    }
-
-    @NotNull Lot _aid(Few node, Lot path) {
-        Few moo = node;
-        Lot xoo = path;
-        while (!isEmptyNode(moo)) {
-            if (less(key, getKey(moo))) {
-                xoo = cons(moo, xoo);
-                moo = getLeft(moo);
-            } else if (greater(key, getKey(moo))) {
-                xoo = cons(moo, xoo);
-                moo = getRight(moo);
-            } else {
-                return cons(moo, xoo);
-            }
-        }
-        return cons(moo, xoo);
-    }
-}
-
-static Lot minimum(Few node, Lot path) {
-    Few moo = node;
-    Lot xoo = path;
-    while (!isEmptyNode(moo)) {
-        xoo = cons(moo, xoo);
-        moo = getLeft(moo);
-    }
-    return xoo;
-}
-
-static Lot maximum(Few node, Lot path) {
-    Few moo = node;
-    Lot xoo = path;
-    while (!isEmptyNode(moo)) {
-        xoo = cons(moo, xoo);
-        moo = getRight(moo);
-    }
-    return xoo;
-}
-
-static String stringOfNode(Few node) {
-    if (isEmptyNode(node)) {
-        return "nil";
-    } else {
-        return
-        String.format
-              ("(%s %s %s %s %s)", getKey(node), getValue(node), colorToString(getColor(node)),
-               stringOfNode(getLeft(node)), stringOfNode(getRight(node)));
-    }
-}
-
 @Contract(pure = true)
-private static @NotNull String colorToString(boolean color) {
+static @NotNull String stringOfColor(boolean color) {
     if (color) {
         return "red";
     } else {
         return "black";
     }
 }
-//endregion
 
 
-//region predictor
-static boolean isEmptyNode(Few node) {
-    return 5 == length(node) &&
-           getKey(node) instanceof Boolean &&
-           isBlack(getColor(node)) &&
-           0 == length(getLeft(node)) &&
-           0 == length(getRight(node));
-}
-
-static boolean isNode(Few node) {
-    if (isEmptyNode(node)) {
-        return true;
-    } else {
-        return isNode(getLeft(node)) &&
-               isNode(getRight(node));
+static @NotNull Lot pathOf(RBNode node, Object key) {
+    Lot path = lot();
+    RBNode moo = node;
+    while (!moo.isEmpty()) {
+        if (less(key, moo.key)) {
+            path = cons(moo, path);
+            moo = moo.left;
+        } else if (greater(key, moo.key)) {
+            path = cons(moo, path);
+            moo = moo.right;
+        } else {
+            return cons(moo, path);
+        }
     }
+    return cons(moo, path);
 }
 
-static boolean isRed(boolean color) {
-    return color;
+static boolean isLeftOf(Object node1, @NotNull RBNode node2) {
+    return eq(node1, node2.left);
 }
 
-static boolean isBlack(boolean color) {
-    return !color;
+static boolean isRightOf(Object node1, @NotNull RBNode node2) {
+    return eq(node1, node2.right);
 }
 
-static boolean isLeft(Few node, Object branch) {
-    return eq(getLeft(node), branch);
-}
-
-static boolean isRight(Few node, Object branch) {
-    return eq(getRight(node), branch);
-}
-//endregion
-
-
-//region  setter
-static void setKey(Few node, Object key) {
-    set0(node, key);
-}
-
-static void setValue(Few node, Object value) {
-    set1(node, value);
-}
-
-static void setColor(Few node, boolean color) {
-    set2(node, color);
-}
-
-static void setLeft(Few node, Few branch) {
-    set3(node, branch);
-}
-
-static void setRight(Few node, Few branch) {
-    set4(node, branch);
-}
-
-static void leftRotate(Few tree, Lot path) {
-    Few x = (Few) car(path);
-    Few y = getRight(x);
-    if (isEmptyNode(y)) {
-        throw new RuntimeException(String.format("right branch is empty in %s", x));
+static void leftRotate(RBTree tree, Lot path) {
+    RBNode x = (RBNode) car(path);
+    RBNode y = x.right;
+    if (y.isEmpty()) {
+        throw new RuntimeException(String.format("right branch is empty in node %s", x));
     }
-    Few b = getLeft(y);
+    RBNode b = y.left;
 
-    setLeft(y, x);
-    setRight(x, b);
+    y.left = x;
+    x.right = b;
 
     if (isNull(cdr(path))) {
-        set0(tree, y);
+        tree.root = y;
     } else {
-        Few p = (Few) cadr(path);
-        if (isLeft(p, x)) {
-            setLeft(p, y);
+        RBNode p = (RBNode) cadr(path);
+        if (isLeftOf(x, p)) {
+            p.left = y;
         } else {
-            setRight(p, y);
+            p.right = y;
         }
     }
 }
 
-static void rightRotate(Few tree, Lot path) {
-    Few y = (Few) car(path);
-    Few x = getLeft(y);
-    if (isEmptyNode(x)) {
-        throw new RuntimeException(String.format("left branch is empty in %s", y));
+static void rightRotate(RBTree tree, Lot path) {
+    RBNode x = (RBNode) car(path);
+    RBNode y = x.left;
+    if (y.isEmpty()) {
+        throw new RuntimeException(String.format("left branch is empty in node %s", x));
     }
-    Few b = getRight(x);
+    RBNode b = y.right;
 
-    setRight(x, y);
-    setLeft(y, b);
+    y.right = x;
+    x.left = b;
 
     if (isNull(cdr(path))) {
-        set0(tree, x);
+        tree.root = y;
     } else {
-        Few p = (Few) cadr(path);
-        if (isRight(p, y)) {
-            setRight(p, x);
+        RBNode p = (RBNode) cadr(path);
+        if (isLeftOf(x, p)) {
+            p.left = y;
         } else {
-            setLeft(p, x);
+            p.right = y;
         }
     }
 }
 
-record InsertFixer(Few tree, Lot path) {
+
+static Lot minimum(RBNode node, Lot path) {
+    RBNode moo = node;
+    while (!moo.isEmpty()) {
+        path = cons(moo, path);
+        moo = moo.left;
+    }
+    return path;
+}
+
+static Lot maximum(RBNode node, Lot path) {
+    RBNode moo = node;
+    while (!moo.isEmpty()) {
+        path = cons(moo, path);
+        moo = moo.right;
+    }
+    return path;
+}
+
+
+record InsertFixer(RBTree tree, Lot path) {
 
     void process() {
         _aid(path);
-        setColor((Few) ref0(tree), BLACK);
+        tree.root.color = false;
     }
 
     void _aid(Lot path) {
-        if (2 < length(path) && isRed(getColor((Few) lotRef(path, 1)))) {
-            Few p = (Few) lotRef(path, 1);
-            Few pp = (Few) lotRef(path, 2);
-            if (isLeft(pp, p)) {
-                Few u = getRight(pp);
-                if (isRed(getColor(u))) {
-                    setColor(p, BLACK);
-                    setColor(u, BLACK);
-                    setColor(pp, RED);
+        if (2 < length(path) && ((RBNode) cadr(path)).isRed()) {
+            RBNode p = (RBNode) lotRef(path, 1);
+            RBNode pp = (RBNode) lotRef(path, 2);
+            if (isLeftOf(p, pp)) {
+                RBNode u = pp.right;
+                if (u.isRed()) {
+                    p.color = false;
+                    u.color = false;
+                    pp.color = true;
                     _aid(cddr(path));
                 } else {
-                    if (isRight(p, car(path))) {
+                    if (isRightOf(car(path), p)) {
                         leftRotate(tree, cdr(path));
-                        p = (Few) car(path);
+                        p = (RBNode) car(path);
                     }
                     rightRotate(tree, cddr(path));
-                    setColor(p, BLACK);
-                    setColor(pp, RED);
+                    p.color = false;
+                    pp.color = true;
                 }
             } else {
-                Few u = getLeft(pp);
-                if (isRed(getColor(u))) {
-                    setColor(p, BLACK);
-                    setColor(u, BLACK);
-                    setColor(pp, RED);
+                RBNode u = pp.left;
+                if (u.isRed()) {
+                    p.color = false;
+                    u.color = false;
+                    pp.color = true;
                     _aid(cddr(path));
                 } else {
-                    if (isLeft(p, car(path))) {
+                    if (isLeftOf(car(path), p)) {
                         rightRotate(tree, cdr(path));
-                        p = (Few) car(path);
+                        p = (RBNode) car(path);
                     }
                     leftRotate(tree, cddr(path));
-                    setColor(p, BLACK);
-                    setColor(pp, RED);
+                    p.color = false;
+                    pp.color = true;
                 }
             }
         }
@@ -262,131 +162,127 @@ record InsertFixer(Few tree, Lot path) {
 }
 
 
-static void transplant(Few tree, Lot path, Few node) {
+static void transplant(RBTree tree, Lot path, RBNode node) {
     if (1 == length(path)) {
-        set0(tree, node);
+        tree.root = node;
     } else {
-        Few p = (Few) lotRef(path, 1);
-        if (isLeft(p, car(path))) {
-            setLeft(p, node);
+        RBNode p = (RBNode) lotRef(path, 1);
+        if (isLeftOf(car(path), p)) {
+            p.left = node;
         } else {
-            setRight(p, node);
+            p.right = node;
         }
     }
 }
 
-static void delete(Object key, Few tree) {
-    Finder moo = new Finder(key, (Few) ref0(tree));
-    Lot path = moo.process();
-    Few deleted = (Few) car(path);
-    if (isEmptyNode(deleted)) {
-        throw new RuntimeException
-              (String.format("key %s is not existed in tree %s", key, tree));
+static void delete(@NotNull RBTree tree, Object key) {
+    Lot path = pathOf(tree.root, key);
+    RBNode deleted = (RBNode) car(path);
+    if (deleted.isEmpty()) {
+        throw new RuntimeException(String.format("key %s is not present in tree %s", key, tree));
     } else {
-        boolean color = getColor(deleted);
-        Few x;
-        if (isEmptyNode(getLeft(deleted))) {
-            x = getRight(deleted);
+        boolean color = deleted.color;
+        RBNode x;
+        if (deleted.left.isEmpty()) {
+            x = deleted.right;
             transplant(tree, path, x);
             path = cons(x, cdr(path));
-        } else if (isEmptyNode(getRight(deleted))) {
-            x = getLeft(deleted);
+        } else if (deleted.right.isEmpty()) {
+            x = deleted.left;
             transplant(tree, path, x);
             path = cons(x, cdr(path));
         } else {
-            Lot path2 = minimum(getRight(deleted), lot());
-            Few alternate = (Few) car(path2);
-            color = getColor(alternate);
-            x = getRight(alternate);
-            if (!isRight(deleted, alternate)) {
+            Lot path2 = minimum(deleted.right, lot());
+            RBNode alternate = (RBNode) car(path2);
+            color = alternate.color;
+            x = alternate.right;
+            if (!isRightOf(alternate, deleted)) {
                 transplant(tree, path2, x);
-                setRight(alternate, getRight(deleted));
+                alternate.right = deleted.right;
             }
             transplant(tree, path, alternate);
-            setLeft(alternate, getLeft(deleted));
-            setColor(alternate, getColor(deleted));
+            alternate.left = deleted.left;
+            alternate.color = deleted.color;
             path = append(cons(x, cdr(path2)), cons(alternate, cdr(path)));
         }
-        if (isBlack(color)) {
-            $DeleteFixer fixer = new $DeleteFixer(tree, path);
+        if (!color) {       // is the deleted color black?
+            DeleteFixer fixer = new DeleteFixer(tree, path);
             fixer.process();
         }
     }
 }
 
-static class $DeleteFixer {
-    final Few tree;
+static class DeleteFixer {
+    final RBTree tree;
     final Lot path;
-    Few x;
+    RBNode x;
 
-    $DeleteFixer(Few tree, Lot path) {
+    DeleteFixer(RBTree tree, Lot path) {
         this.tree = tree;
         this.path = path;
     }
 
     void process() {
-        x = (Few) car(path);
+        x = (RBNode) car(path);
         _aid(cdr(path));
-        setColor(x, BLACK);
+        x.color = false;
     }
 
     void _aid(Lot path) {
-        if (!isNull(path) && isBlack(getColor(x))) {
-            Few p = (Few) car(path);
-            if (isLeft(p, x)) {
-                Few s = getRight(p);
-                if (isRed(getColor(s))) {
+        if (!isNull(path) && x.isBlack()) {
+            RBNode p = (RBNode) car(path);
+            if (isLeftOf(x, p)) {
+                RBNode s = p.right;
+                if (s.isRed()) {
                     leftRotate(tree, path);
-                    setColor(s, BLACK);
-                    setColor(p, RED);
+                    s.color = false;
+                    p.color = true;
                     path = cons(p, cons(s, cdr(path)));
-                    s = getRight(p);
+                    s = p.right;
                 }
-                if (isBlack(getColor(getLeft(s))) && isBlack(getColor(getRight(s)))) {
-                    setColor(s, RED);
+                if (s.left.isBlack() && s.right.isBlack()) {
+                    s.color = true;
                     x = p;
                     _aid(cdr(path));
                 } else {
-                    if (isBlack(getColor(getRight(s)))) {
+                    if (s.right.isBlack()) {
                         rightRotate(tree, cons(s, path));
-                        setColor(s, RED);
-                        setColor(getRight(p), BLACK);
-                        s = getRight(p);
+                        s.color = true;
+                        p.right.color = false;
+                        s = p.right;
                     }
                     leftRotate(tree, path);
-                    setColor(s, getColor(p));
-                    setColor(p, BLACK);
-                    setColor(getRight(s), BLACK);
+                    s.color = p.color;
+                    p.color = false;
+                    s.right.color = false;
                 }
             } else {
-                Few s = getLeft(p);
-                if (isRed(getColor(s))) {
+                RBNode s = p.left;
+                if (s.isRed()) {
                     rightRotate(tree, path);
-                    setColor(s, BLACK);
-                    setColor(p, RED);
+                    s.color = false;
+                    p.color = true;
                     path = cons(p, cons(s, cdr(path)));
-                    s = getLeft(p);
+                    s = p.left;
                 }
-                if (isBlack(getColor(getRight(s))) && isBlack(getColor(getLeft(s)))) {
-                    setColor(s, RED);
+                if (s.left.isBlack() && s.right.isBlack()) {
+                    s.color = true;
                     x = p;
                     _aid(cdr(path));
                 } else {
-                    if (isBlack(getColor(getLeft(s)))) {
+                    if (s.left.isBlack()) {
                         leftRotate(tree, cons(s, path));
-                        setColor(s, RED);
-                        setColor(getLeft(p), BLACK);
-                        s = getLeft(p);
+                        s.color = true;
+                        p.left.color = false;
+                        s = p.left;
                     }
                     rightRotate(tree, path);
-                    setColor(s, getColor(p));
-                    setColor(p, BLACK);
-                    setColor(getLeft(s), BLACK);
+                    s.color = p.color;
+                    p.color = false;
+                    s.left.color = false;
                 }
             }
         }
     }
 }
-//endregion
-
 }

@@ -1,20 +1,15 @@
 package share.datetime;
 
 
-public class Time {
+public record Time(long second, int nanosecond) {
 
-private final long second;
-private final int nanosecond;
-
-public Time(long second, int nanosecond) {
+public Time {
     if (second < 0) {
-        throw new RuntimeException(String.format(Shop.INVALID_SEC, second));
+        throw new RuntimeException(String.format(Shop.OUT_SECOND, second));
     } else if (nanosecond < 0 ||
                1000_000_000 <= nanosecond) {
-        throw new RuntimeException(String.format(Shop.INVALID_NANO, nanosecond));
+        throw new RuntimeException(String.format(Shop.OUT_NANO, nanosecond));
     }
-    this.second = second;
-    this.nanosecond = nanosecond;
 }
 
 
@@ -34,11 +29,4 @@ public String toString() {
 }
 
 
-public long second() {
-    return second;
-}
-
-public int nanosecond() {
-    return nanosecond;
-}
 }

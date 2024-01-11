@@ -148,7 +148,7 @@ private static class LabelCycle {
             set1(cyc, true);
             set2(cyc, count);
             return new PairCyc
-                   (process(pair.data), _processCdr(pair.next), (int) ref2(cyc));
+            (process(pair.data), _processCdr(pair.next), (int) ref2(cyc));
         }
     }
 
@@ -166,7 +166,7 @@ private static class LabelCycle {
                 set1(cyc, true);
                 set2(cyc, count);
                 return new PairCycTail
-                       (process(pair.data), _processCdr(pair.next), (int) ref2(cyc));
+                (process(pair.data), _processCdr(pair.next), (int) ref2(cyc));
             }
         }
 
