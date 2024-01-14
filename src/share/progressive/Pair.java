@@ -23,13 +23,13 @@ public boolean equals(Object datum) {
                    pair.next == null;
         } else if (data == null) {
             return pair.data == null &&
-                   Comparison.equal(next, pair.next);
+                   Pg.equal(next, pair.next);
         } else if (next == null) {
             return pair.next == null &&
-                   Comparison.equal(data, pair.data);
+                   Pg.equal(data, pair.data);
         } else {
-            return Comparison.equal(data, pair.data) &&
-                   Comparison.equal(next, pair.next);
+            return Pg.equal(data, pair.data) &&
+                   Pg.equal(next, pair.next);
         }
     } else {
         return false;

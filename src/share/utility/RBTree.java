@@ -7,6 +7,9 @@ import share.progressive.Lot;
 import static share.progressive.Pg.*;
 
 
+/**
+ * Red Black Tree Algorithm
+ */
 public class RBTree {
 
 RBNode root;
@@ -34,6 +37,26 @@ public String toString() {
 
 public boolean isEmpty() {
     return root.isEmpty();
+}
+
+public Object minimum() {
+    Lot path = RBTreeAid.minimum(root, lot());
+    if (isNull(path)) {
+        throw new RuntimeException("empty tree");
+    } else {
+        RBNode node = (RBNode) car(path);
+        return node.value;
+    }
+}
+
+public Object maximum() {
+    Lot path = RBTreeAid.maximum(root, lot());
+    if (isNull(path)) {
+        throw new RuntimeException("empty tree");
+    } else {
+        RBNode node = (RBNode) car(path);
+        return node.value;
+    }
 }
 
 
@@ -84,26 +107,6 @@ public static void delete(@NotNull RBTree tree, Object key) {
         throw new RuntimeException("empty tree");
     } else {
         RBTreeAid.delete(tree, key);
-    }
-}
-
-public static Object minOf(@NotNull RBTree tree) {
-    Lot path = RBTreeAid.minimum(tree.root, lot());
-    if (isNull(path)) {
-        throw new RuntimeException("empty tree");
-    } else {
-        RBNode node = (RBNode) car(path);
-        return node.value;
-    }
-}
-
-public static Object maxOf(@NotNull RBTree tree) {
-    Lot path = RBTreeAid.maximum(tree.root, lot());
-    if (isNull(path)) {
-        throw new RuntimeException("empty tree");
-    } else {
-        RBNode node = (RBNode) car(path);
-        return node.value;
     }
 }
 }

@@ -7,7 +7,7 @@ import share.utility.RBTree;
 public class Symbol {
 
 static final RBTree tree = new RBTree();
-static int count = 0;
+static int count = 1;
 
 final String name;
 final int id;
@@ -32,8 +32,8 @@ public String toString() {
 
 
 @Override
-public boolean equals(Object obj) {
-    if (obj instanceof Symbol sym) {
+public boolean equals(Object datum) {
+    if (datum instanceof Symbol sym) {
         return this.id == sym.id;
     } else {
         return false;

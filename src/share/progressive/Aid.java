@@ -3,6 +3,7 @@ package share.progressive;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import share.datetime.Time;
 
 import static share.progressive.Pg.isNull;
 import static share.utility.Ut.stringOf;
@@ -91,5 +92,30 @@ static boolean isCharPresent(char c, char @NotNull [] charset) {
 
 static boolean isScalar(char c) {
     return c <= 0x1F || Character.isWhitespace(c) || isCharPresent(c, occupant2);
+}
+
+
+static boolean isObjectArrayEqual(Object @NotNull [] arr1, Object @NotNull [] arr2) {
+    if (arr1.length == arr2.length) {
+        int i = 0;
+        while (i < arr1.length &&
+               Pg.equal(arr1[i], arr2[i])) {
+            i = i + 1;
+        }
+        return i == arr1.length;
+    } else {
+        return false;
+    }
+}
+
+
+static boolean timeLessThan(@NotNull Time t1, @NotNull Time t2) {
+    if (t1.second() < t2.second()) {
+        return true;
+    } else if (t1.second() == t2.second()) {
+        return t1.nanosecond() < t2.nanosecond();
+    } else {
+        return false;
+    }
 }
 }

@@ -1,8 +1,8 @@
 package share.utility;
 
 
-import static share.progressive.Comparison.eq;
-import static share.progressive.Comparison.equal;
+import static share.progressive.Pg.eq;
+import static share.progressive.Pg.equal;
 import static share.utility.Ut.stringOf;
 
 

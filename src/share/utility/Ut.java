@@ -8,13 +8,12 @@ import share.refmethod.Eqv;
 
 import java.util.Random;
 
-import static share.progressive.Comparison.eq;
 import static share.progressive.Pg.*;
 
 
 public class Ut {
 
-//region String
+//region String Of
 @SuppressWarnings("SpellCheckingInspection")
 private static final char[] CHARS_SET =
 "_-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
@@ -67,6 +66,7 @@ public static @NotNull String hexOfBytes(byte @NotNull [] bs) {
     }
 }
 //endregion
+
 
 
 //region Lot

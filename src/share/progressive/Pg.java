@@ -3,6 +3,7 @@ package share.progressive;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import share.datetime.Time;
 import share.refmethod.Do;
 import share.refmethod.Has;
 
@@ -368,6 +369,187 @@ public static @NotNull Few fewMap(Do func, Few fw) {
         fewSet(moo, i, datum);
     }
     return moo;
+}
+//endregion
+
+
+//region Comparison
+public static boolean eq(Object o1, Object o2) {
+    if (o1 == o2) {
+        return true;
+    } else if (o1 instanceof Boolean b1 &&
+               o2 instanceof Boolean b2) {
+        return (b1 && b2) ||
+               !(b1 || b2);
+    } else if (o1 instanceof Number &&
+               o2 instanceof Number) {
+        if (o1 instanceof Integer i1 &&
+            o2 instanceof Integer i2) {
+            return ((int) i1) == i2;
+        } else if (o1 instanceof Long l1 &&
+                   o2 instanceof Long l2) {
+            return ((long) l1) == l2;
+        } else if (o1 instanceof Double d1 &&
+                   o2 instanceof Double d2) {
+            return ((double) d1) == d2;
+        } else {
+            return false;
+        }
+    } else if (o1 instanceof Character c1 &&
+               o2 instanceof Character c2) {
+        return ((char) c1) == c2;
+    } else if (o1 instanceof Symbol sym1 &&
+               o2 instanceof Symbol sym2) {
+        return sym1.id == sym2.id;
+    } else if (o1 instanceof Lot lt1 &&
+               o2 instanceof Lot lt2) {
+        return lt1.pair == lt2.pair;
+    } else if (o1 instanceof Few fw1 &&
+               o2 instanceof Few fw2) {
+        return fw1.array == fw2.array;
+    } else {
+        return false;
+    }
+}
+
+public static boolean equal(Object o1, Object o2) {
+    if (eq(o1, o2)) {
+        return true;
+    } else if (o1.getClass().isArray() &&
+               o2.getClass().isArray()) {
+        if (o1 instanceof boolean[] bs1 &&
+            o2 instanceof boolean[] bs2) {
+            int r = Arrays.compare(bs1, bs2);
+            return r == 0;
+        } else if (o1 instanceof byte[] bs1 &&
+                   o2 instanceof byte[] bs2) {
+            int r = Arrays.compare(bs1, bs2);
+            return r == 0;
+        } else if (o1 instanceof int[] ins1 &&
+                   o2 instanceof int[] ins2) {
+            int r = Arrays.compare(ins1, ins2);
+            return r == 0;
+        } else if (o1 instanceof long[] ls1 &&
+                   o2 instanceof long[] ls2) {
+            int r = Arrays.compare(ls1, ls2);
+            return r == 0;
+        } else if (o1 instanceof double[] ds1 &&
+                   o2 instanceof double[] ds2) {
+            int r = Arrays.compare(ds1, ds2);
+            return r == 0;
+        } else {
+            throw new RuntimeException(String.format(Shop.UNSUPPORTED, o1, o2));
+        }
+    } else {
+        return o1.equals(o2);
+    }
+}
+
+public static boolean numberEq(Number n1, Number n2) {
+    if (n1 instanceof Double ||
+        n2 instanceof Double) {
+        return n1.doubleValue() == n2.doubleValue();
+    } else {
+        return n1.longValue() == n2.longValue();
+    }
+}
+
+public static boolean less(Object o1, Object o2) {
+    if (o1 instanceof Symbol sym1 &&
+        o2 instanceof Symbol sym2) {
+        return sym1.id < sym2.id;
+    } else if (o1 instanceof Number n1 &&
+               o2 instanceof Number n2) {
+        if (n1 instanceof Double ||
+            n2 instanceof Double) {
+            return n1.doubleValue() < n2.doubleValue();
+        } else {
+            return n1.longValue() < n2.longValue();
+        }
+    } else if (o1 instanceof String s1 &&
+               o2 instanceof String s2) {
+        int m = s1.compareTo(s2);
+        return m < 0;
+    } else if (o1.getClass().isArray() &&
+               o2.getClass().isArray()) {
+        if (o1 instanceof boolean[] bs1 &&
+            o2 instanceof boolean[] bs2) {
+            int r = Arrays.compare(bs1, bs2);
+            return r < 0;
+        } else if (o1 instanceof byte[] bs1 &&
+                   o2 instanceof byte[] bs2) {
+            int r = Arrays.compare(bs1, bs2);
+            return r < 0;
+        } else if (o1 instanceof int[] ins1 &&
+                   o2 instanceof int[] ins2) {
+            int r = Arrays.compare(ins1, ins2);
+            return r < 0;
+        } else if (o1 instanceof long[] ls1 &&
+                   o2 instanceof long[] ls2) {
+            int r = Arrays.compare(ls1, ls2);
+            return r < 0;
+        } else if (o1 instanceof double[] ds1 &&
+                   o2 instanceof double[] ds2) {
+            int r = Arrays.compare(ds1, ds2);
+            return r < 0;
+        } else {
+            throw new RuntimeException(String.format(Shop.UNSUPPORTED, o1, o2));
+        }
+    } else if (o1 instanceof Time t1 &&
+               o2 instanceof Time t2) {
+        return Aid.timeLessThan(t1, t2);
+    } else {
+        throw new RuntimeException(String.format("%s and %s cannot be compared in size", o1, o2));
+    }
+}
+
+public static boolean greater(Object o1, Object o2) {
+    if (o1 instanceof Symbol sym1 &&
+        o2 instanceof Symbol sym2) {
+        return sym1.id > sym2.id;
+    } else if (o1 instanceof Number n1 &&
+               o2 instanceof Number n2) {
+        if (n1 instanceof Double ||
+            n2 instanceof Double) {
+            return n1.doubleValue() > n2.doubleValue();
+        } else {
+            return n1.longValue() > n2.longValue();
+        }
+    } else if (o1 instanceof String s1 &&
+               o2 instanceof String s2) {
+        int m = s1.compareTo(s2);
+        return m > 0;
+    } else if (o1.getClass().isArray() &&
+               o2.getClass().isArray()) {
+        if (o1 instanceof boolean[] bs1 &&
+            o2 instanceof boolean[] bs2) {
+            int r = Arrays.compare(bs1, bs2);
+            return r > 0;
+        } else if (o1 instanceof byte[] bs1 &&
+                   o2 instanceof byte[] bs2) {
+            int r = Arrays.compare(bs1, bs2);
+            return r > 0;
+        } else if (o1 instanceof int[] ins1 &&
+                   o2 instanceof int[] ins2) {
+            int r = Arrays.compare(ins1, ins2);
+            return r > 0;
+        } else if (o1 instanceof long[] ls1 &&
+                   o2 instanceof long[] ls2) {
+            int r = Arrays.compare(ls1, ls2);
+            return r > 0;
+        } else if (o1 instanceof double[] ds1 &&
+                   o2 instanceof double[] ds2) {
+            int r = Arrays.compare(ds1, ds2);
+            return r > 0;
+        } else {
+            throw new RuntimeException(String.format(Shop.UNSUPPORTED, o1, o2));
+        }
+    } else if (o1 instanceof Time t1 &&
+               o2 instanceof Time t2) {
+        return Aid.timeLessThan(t2, t1);
+    } else {
+        throw new RuntimeException(String.format("%s and %s cannot be compared in size", o1, o2));
+    }
 }
 //endregion
 }

@@ -15,7 +15,7 @@ FixCyc(Object[] array, int count) {
 public boolean equals(Object datum) {
     if (datum instanceof FixCyc fc) {
         return count == fc.count &&
-               Comparison.isObjectArrayEqual(array, fc.array);
+               Aid.isObjectArrayEqual(array, fc.array);
     } else {
         return false;
     }

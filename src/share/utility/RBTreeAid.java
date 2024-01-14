@@ -5,7 +5,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import share.progressive.Lot;
 
-import static share.progressive.Comparison.*;
 import static share.progressive.Pg.*;
 
 

@@ -5,7 +5,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static share.progressive.Comparison.eq;
 import static share.progressive.Pg.*;
 import static share.utility.Ut.isBelong;
 

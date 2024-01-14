@@ -21,15 +21,15 @@ public boolean equals(Object datum) {
         } else if (data == null) {
             return pair.data == null &&
                    count == pair.count &&
-                   Comparison.equal(next, pair.next);
+                   Pg.equal(next, pair.next);
         } else if (next == null) {
             return pair.next == null &&
                    count == pair.count &&
-                   Comparison.equal(data, pair.data);
+                   Pg.equal(data, pair.data);
         } else {
             return count == pair.count &&
-                   Comparison.equal(data, pair.data) &&
-                   Comparison.equal(next, pair.next);
+                   Pg.equal(data, pair.data) &&
+                   Pg.equal(next, pair.next);
         }
     } else {
         return false;
