@@ -1,6 +1,5 @@
 package share.progressive;
 
-
 class FixNonCyc extends Fix {
 
 final Object[] array;

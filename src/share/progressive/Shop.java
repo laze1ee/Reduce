@@ -1,6 +1,5 @@
 package share.progressive;
 
-
 class Shop {
 
 static final String CIRCULAR = "%s is circular";

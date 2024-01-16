@@ -1,10 +1,10 @@
 package share.utility;
 
-
 import org.jetbrains.annotations.NotNull;
 import share.progressive.Lot;
+import share.refmethod.Has;
 
-import static share.progressive.Pg.*;
+import static share.progressive.Pr.*;
 
 
 /**
@@ -108,5 +108,15 @@ public static void delete(@NotNull RBTree tree, Object key) {
     } else {
         RBTreeAid.delete(tree, key);
     }
+}
+
+public static Lot travel(@NotNull RBTree tree) {
+    RBTreeAid.Travel f = new RBTreeAid.Travel();
+    return f.process(tree.root);
+}
+
+public static Lot filter(Has pred, @NotNull RBTree tree) {
+    RBTreeAid.Filter f = new RBTreeAid.Filter(pred);
+    return f.process(tree.root);
 }
 }

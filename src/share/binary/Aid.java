@@ -1,6 +1,5 @@
 package share.binary;
 
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import share.datetime.Date;
@@ -11,7 +10,7 @@ import share.progressive.Lot;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import static share.progressive.Pg.*;
+import static share.progressive.Pr.*;
 
 
 class Aid {
@@ -367,6 +366,7 @@ static @NotNull Date decodeDate(byte[] bin, int start) {
 }
 
 static class Decoding {
+
     final byte[] bin;
     int pos;
 

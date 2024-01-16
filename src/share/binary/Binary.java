@@ -1,6 +1,5 @@
 package share.binary;
 
-
 import share.datetime.Date;
 import share.datetime.Time;
 import share.progressive.Few;

@@ -1,6 +1,5 @@
 package share.progressive;
 
-
 import org.jetbrains.annotations.NotNull;
 
 
@@ -26,11 +25,11 @@ public boolean equals(Object datum) {
     if (datum instanceof Lot lt) {
         Lot c1 = Cycle.detect(this);
         Lot c2 = Cycle.detect(lt);
-        if (Pg.isNull(c1) && Pg.isNull(c2)) {
+        if (Pr.isNull(c1) && Pr.isNull(c2)) {
             Object o1 = Aid.isolate(this);
             Object o2 = Aid.isolate(lt);
             return o1.equals(o2);
-        } else if (Pg.length(c1) == Pg.length(c2)) {
+        } else if (Pr.length(c1) == Pr.length(c2)) {
             Object o1 = Cycle.label(this, c1);
             Object o2 = Cycle.label(lt, c2);
             return o1.equals(o2);

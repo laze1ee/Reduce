@@ -1,11 +1,11 @@
 package share.utility;
 
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import share.progressive.Lot;
+import share.refmethod.Has;
 
-import static share.progressive.Pg.*;
+import static share.progressive.Pr.*;
 
 
 @SuppressWarnings("SuspiciousNameCombination")
@@ -212,6 +212,7 @@ static void delete(@NotNull RBTree tree, Object key) {
 }
 
 static class DeleteFixer {
+
     final RBTree tree;
     final Lot path;
     RBNode x;
@@ -281,6 +282,55 @@ static class DeleteFixer {
                     s.left.color = false;
                 }
             }
+        }
+    }
+}
+
+
+static class Travel {
+
+    Lot col;
+
+    Travel() {
+        col = lot();
+    }
+
+    Lot process(RBNode node) {
+        _aid(node);
+        return col;
+    }
+
+    void _aid(@NotNull RBNode node) {
+        if (!node.isEmpty()) {
+            _aid(node.right);
+            col = cons(node.value, col);
+            _aid(node.left);
+        }
+    }
+}
+
+static class Filter {
+
+    Lot col;
+    final Has pred;
+
+    Filter(Has pred) {
+        col = lot();
+        this.pred = pred;
+    }
+
+    Lot process(RBNode node) {
+        _aid(node);
+        return col;
+    }
+
+    void _aid(@NotNull RBNode node) {
+        if (!node.isEmpty()) {
+            _aid(node.right);
+            if (pred.apply(node.value)) {
+                col = cons(node.value, col);
+            }
+            _aid(node.left);
         }
     }
 }

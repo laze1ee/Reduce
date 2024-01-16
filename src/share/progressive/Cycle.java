@@ -1,17 +1,17 @@
 package share.progressive;
 
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static share.progressive.Pg.*;
+import static share.progressive.Pr.*;
 import static share.utility.Ut.isBelong;
 
 
 class Cycle {
 
 private static class DetectCycle {
+
     Lot cycle;     // Lot of Lots
 
     DetectCycle() {
@@ -87,6 +87,7 @@ static Lot detect(Object datum) {
 
 
 private static class LabelCycle {
+
     final Lot attached_cycle;      // lot of Few
     int count;
 
@@ -147,7 +148,7 @@ private static class LabelCycle {
             set1(cyc, true);
             set2(cyc, count);
             return new PairCyc
-            (process(pair.data), _processCdr(pair.next), (int) ref2(cyc));
+                   (process(pair.data), _processCdr(pair.next), (int) ref2(cyc));
         }
     }
 
@@ -165,7 +166,7 @@ private static class LabelCycle {
                 set1(cyc, true);
                 set2(cyc, count);
                 return new PairCycTail
-                (process(pair.data), _processCdr(pair.next), (int) ref2(cyc));
+                       (process(pair.data), _processCdr(pair.next), (int) ref2(cyc));
             }
         }
 
@@ -198,7 +199,7 @@ static Object label(Object datum, Lot cycle) {
 static String stringOfCycle(Object datum) {
     Lot cycle = Cycle.detect(datum);
     Object another;
-    if (Pg.isNull(cycle)) {
+    if (Pr.isNull(cycle)) {
         another = Aid.isolate(datum);
         return another.toString();
     } else {

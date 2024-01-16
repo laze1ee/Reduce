@@ -1,6 +1,5 @@
 package share.binary;
 
-
 class Label {
 
 static final byte BOOLEAN = (byte) 0x80;

@@ -1,6 +1,5 @@
 package share.progressive;
 
-
 import static share.utility.Ut.stringOf;
 
 
@@ -24,15 +23,15 @@ public boolean equals(Object datum) {
         } else if (data == null) {
             return pair.data == null &&
                    count == pair.count &&
-                   Pg.equal(next, pair.next);
+                   Pr.equal(next, pair.next);
         } else if (next == null) {
             return pair.next == null &&
                    count == pair.count &&
-                   Pg.equal(data, pair.data);
+                   Pr.equal(data, pair.data);
         } else {
             return count == pair.count &&
-                   Pg.equal(data, pair.data) &&
-                   Pg.equal(next, pair.next);
+                   Pr.equal(data, pair.data) &&
+                   Pr.equal(next, pair.next);
         }
     } else {
         return false;

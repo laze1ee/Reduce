@@ -1,6 +1,5 @@
 package share.progressive;
 
-
 class PairNull extends Pair {
 
 PairNull() {

@@ -1,6 +1,5 @@
 package share.datetime;
 
-
 import org.jetbrains.annotations.NotNull;
 
 import java.time.OffsetTime;

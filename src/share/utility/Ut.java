@@ -1,6 +1,5 @@
 package share.utility;
 
-
 import org.jetbrains.annotations.NotNull;
 import share.progressive.Few;
 import share.progressive.Lot;
@@ -8,7 +7,7 @@ import share.refmethod.Eqv;
 
 import java.util.Random;
 
-import static share.progressive.Pg.*;
+import static share.progressive.Pr.*;
 
 
 public class Ut {
@@ -66,7 +65,6 @@ public static @NotNull String hexOfBytes(byte @NotNull [] bs) {
     }
 }
 //endregion
-
 
 
 //region Lot

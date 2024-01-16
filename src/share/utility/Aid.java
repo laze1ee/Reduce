@@ -1,14 +1,13 @@
 package share.utility;
 
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import share.progressive.Few;
-import share.progressive.Pg;
+import share.progressive.Pr;
 
 import java.lang.reflect.Array;
 
-import static share.progressive.Pg.few;
+import static share.progressive.Pr.few;
 import static share.utility.Ut.fewIndex;
 import static share.utility.Ut.stringOf;
 
@@ -21,7 +20,7 @@ private static final String[] char_name = {"nul", "alarm", "backspace", "tab", "
                                            "page", "return", "esc", "space", "delete"};
 
 static String stringOfChar(char c) {
-    int i = fewIndex(Pg::eq, (int) c, char_code);
+    int i = fewIndex(Pr::eq, (int) c, char_code);
     if (0 <= i) {
         return String.format("#\\%s", char_name[i]);
     } else if (Character.isISOControl(c)) {

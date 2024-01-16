@@ -1,6 +1,5 @@
 package share.progressive;
 
-
 import share.utility.RBTree;
 
 

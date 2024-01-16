@@ -1,6 +1,5 @@
 package share.datetime;
 
-
 class Shop {
 
 // Time
