@@ -303,7 +303,7 @@ static class Travel {
     void _aid(@NotNull RBNode node) {
         if (!node.isEmpty()) {
             _aid(node.right);
-            col = cons(node.value, col);
+            col = cons(node.key, col);
             _aid(node.left);
         }
     }
@@ -328,7 +328,7 @@ static class Filter {
         if (!node.isEmpty()) {
             _aid(node.right);
             if (pred.apply(node.value)) {
-                col = cons(node.value, col);
+                col = cons(node.key, col);
             }
             _aid(node.left);
         }

@@ -39,26 +39,6 @@ public boolean isEmpty() {
     return root.isEmpty();
 }
 
-public Object minimum() {
-    Lot path = RBTreeAid.minimum(root, lot());
-    if (isNull(path)) {
-        throw new RuntimeException("empty tree");
-    } else {
-        RBNode node = (RBNode) car(path);
-        return node.value;
-    }
-}
-
-public Object maximum() {
-    Lot path = RBTreeAid.maximum(root, lot());
-    if (isNull(path)) {
-        throw new RuntimeException("empty tree");
-    } else {
-        RBNode node = (RBNode) car(path);
-        return node.value;
-    }
-}
-
 
 public static void insert(@NotNull RBTree tree, Object key, Object value) {
     Lot path = RBTreeAid.pathOf(tree.root, key);
@@ -107,6 +87,26 @@ public static void delete(@NotNull RBTree tree, Object key) {
         throw new RuntimeException("empty tree");
     } else {
         RBTreeAid.delete(tree, key);
+    }
+}
+
+public static Object min(@NotNull RBTree tree) {
+    Lot path = RBTreeAid.minimum(tree.root, lot());
+    if (isNull(path)) {
+        throw new RuntimeException("empty tree");
+    } else {
+        RBNode node = (RBNode) car(path);
+        return node.key;
+    }
+}
+
+public static Object max(@NotNull RBTree tree) {
+    Lot path = RBTreeAid.maximum(tree.root, lot());
+    if (isNull(path)) {
+        throw new RuntimeException("empty tree");
+    } else {
+        RBNode node = (RBNode) car(path);
+        return node.key;
     }
 }
 

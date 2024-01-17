@@ -34,4 +34,9 @@ public boolean equals(Object datum) {
 public String toString() {
     return Cycle.stringOfCycle(this);
 }
+
+
+public Object[] toRaw() {
+    return array;
+}
 }
