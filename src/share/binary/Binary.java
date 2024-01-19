@@ -22,8 +22,6 @@ public static byte[] codeDatum(Object datum) {
     } else if (datum instanceof String s) {
         return Aid.codeString(s);
 
-    } else if (datum instanceof boolean[] bs) {
-        return Aid.codeBooleanArray(bs);
     } else if (datum instanceof int[] ins) {
         return Aid.codeIntArray(ins);
     } else if (datum instanceof long[] ls) {

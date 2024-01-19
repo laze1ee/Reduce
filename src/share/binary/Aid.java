@@ -117,26 +117,6 @@ static byte @NotNull [] codeString(@NotNull String str) {
     return bin;
 }
 
-static byte @NotNull [] codeBooleanArray(boolean @NotNull [] bs) {
-    if (bs.length == 0) {
-        byte[] bin = new byte[5];
-        bin[0] = Label.BOOLEAN_ARR;
-        return bin;
-    } else {
-        int n = bs.length;
-        byte[] bin = new byte[5 + n / 8 + 1];
-        bin[0] = Label.BOOLEAN_ARR;
-        System.arraycopy(intToBin(n), 0, bin, 1, 4);
-        for (int i = 0; i < n; i = i + 1) {
-            if (bs[i]) {
-                int index_bs = 5 + i / 8;
-                bin[index_bs] = (byte) (bin[index_bs] | (1 << (7 - i % 8)));
-            }
-        }
-        return bin;
-    }
-}
-
 static byte @NotNull [] codeIntArray(int @NotNull [] ins) {
     if (ins.length == 0) {
         byte[] bin = new byte[5];
@@ -313,17 +293,6 @@ static char decodeChar(byte[] bin, int start) {
 }
 
 @Contract(pure = true)
-static boolean @NotNull [] decodeBooleanArray(byte[] bin, int start, int sz) {
-    boolean[] bs = new boolean[sz];
-    for (int i = 0; i < sz; i = i + 1) {
-        int j = start + i / 8;
-        byte by = (byte) (bin[j] & (1 << (7 - i % 8)));
-        bs[i] = by != 0;
-    }
-    return bs;
-}
-
-@Contract(pure = true)
 static int @NotNull [] decodeIntArray(byte[] bin, int start, int sz) {
     int[] ins = new int[sz];
     for (int i = 0, j = start; i < sz; i = i + 1, j = j + 4) {
@@ -411,13 +380,6 @@ static class Decoding {
                 byte[] bs_str = Arrays.copyOfRange(bin, start, pos);
                 datum = new String(bs_str, StandardCharsets.UTF_8);
                 pos = pos + 1;
-            }
-            case Label.BOOLEAN_ARR -> {
-                pos = pos + 1;
-                int sz = binToInt(bin, pos);
-                pos = pos + 4;
-                datum = decodeBooleanArray(bin, pos, sz);
-                pos = pos + (sz + 7) / 8;
             }
             case Label.INT_ARR -> {
                 pos = pos + 1;
