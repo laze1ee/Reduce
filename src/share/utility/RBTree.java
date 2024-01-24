@@ -90,8 +90,8 @@ public static void delete(@NotNull RBTree tree, Object key) {
     }
 }
 
-public static Object min(@NotNull RBTree tree) {
-    Lot path = RBTreeAid.minimum(tree.root, lot());
+public Object minimum() {
+    Lot path = RBTreeAid.minimum(root, lot());
     if (isNull(path)) {
         throw new RuntimeException("empty tree");
     } else {
@@ -100,8 +100,8 @@ public static Object min(@NotNull RBTree tree) {
     }
 }
 
-public static Object max(@NotNull RBTree tree) {
-    Lot path = RBTreeAid.maximum(tree.root, lot());
+public Object maximum() {
+    Lot path = RBTreeAid.maximum(root, lot());
     if (isNull(path)) {
         throw new RuntimeException("empty tree");
     } else {

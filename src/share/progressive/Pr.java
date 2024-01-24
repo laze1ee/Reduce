@@ -124,6 +124,22 @@ public static Object lotRef(@NotNull Lot lt, int index) {
     }
 }
 
+public static Object first(Lot lt) {
+    return lotRef(lt, 0);
+}
+
+public static Object second(Lot lt) {
+    return lotRef(lt, 1);
+}
+
+public static Object third(Lot lt) {
+    return lotRef(lt, 2);
+}
+
+public static Object fourth(Lot lt) {
+    return lotRef(lt, 3);
+}
+
 public static Object fewRef(Few fw, int index) {
     if (0 <= index && index < length(fw)) {
         return fw.array[index];
@@ -349,7 +365,7 @@ public static Lot filter(Has pred, Lot lt) {
     return reverse(xoo);
 }
 
-public static Lot lotMap(Do func, Lot lt) {
+public static Lot map(Do func, Lot lt) {
     Lot moo = lt;
     Lot xoo = lot();
     while (!isNull(moo)) {
@@ -360,7 +376,7 @@ public static Lot lotMap(Do func, Lot lt) {
     return reverse(xoo);
 }
 
-public static @NotNull Few fewMap(Do func, Few fw) {
+public static @NotNull Few map(Do func, Few fw) {
     int sz = length(fw);
     Few moo = makeFew(sz);
     for (int i = 0; i < sz; i = i + 1) {
@@ -399,7 +415,7 @@ public static boolean eq(Object o1, Object o2) {
         return ((char) c1) == c2;
     } else if (o1 instanceof Symbol sym1 &&
                o2 instanceof Symbol sym2) {
-        return sym1.id == sym2.id;
+        return sym1.identifier == sym2.identifier;
     } else if (o1 instanceof Lot lt1 &&
                o2 instanceof Lot lt2) {
         return lt1.pair == lt2.pair;
@@ -456,7 +472,7 @@ public static boolean numberEq(Number n1, Number n2) {
 public static boolean less(Object o1, Object o2) {
     if (o1 instanceof Symbol sym1 &&
         o2 instanceof Symbol sym2) {
-        return sym1.id < sym2.id;
+        return sym1.identifier < sym2.identifier;
     } else if (o1 instanceof Number n1 &&
                o2 instanceof Number n2) {
         if (n1 instanceof Double ||

@@ -5,20 +5,20 @@ import share.utility.RBTree;
 
 public class Symbol {
 
-static final RBTree tree = new RBTree();
-static int count = 1;
+private static final RBTree tree = new RBTree();
+private static int count = 1;
 
 final String name;
-final int id;
+final int identifier;
 
 
 Symbol(String name) {
     this.name = name;
     if (RBTree.isPresent(tree, this.name)) {
-        id = (int) RBTree.ref(tree, this.name);
+        identifier = (int) RBTree.ref(tree, this.name);
     } else {
-        id = count;
-        RBTree.insert(tree, this.name, id);
+        identifier = count;
+        RBTree.insert(tree, this.name, identifier);
         count = count + 1;
     }
 }
@@ -33,12 +33,16 @@ public String toString() {
 @Override
 public boolean equals(Object datum) {
     if (datum instanceof Symbol sym) {
-        return this.id == sym.id;
+        return this.identifier == sym.identifier;
     } else {
         return false;
     }
 }
 
+
+public int getId() {
+    return identifier;
+}
 
 public String display() {
     if (name.isEmpty()) {

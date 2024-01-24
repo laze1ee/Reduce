@@ -92,7 +92,7 @@ private static class LabelCycle {
     int count;
 
     LabelCycle(Lot cycle) {
-        attached_cycle = lotMap(LabelCycle::doing, cycle);
+        attached_cycle = map(LabelCycle::doing, cycle);
         count = -1;
     }
 
