@@ -2,7 +2,7 @@ package share.utility;
 
 import static share.progressive.Pr.eq;
 import static share.progressive.Pr.equal;
-import static share.utility.Ut.stringOf;
+import static share.progressive.Pr.stringOf;
 
 
 class RBNode {

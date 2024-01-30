@@ -12,69 +12,52 @@ class Cycle {
 
 private static class DetectCycle {
 
-    Lot cycle;     // Lot of Lots
+    Lot collector;
+    Lot cycle;
 
     DetectCycle() {
+        collector = lot();
         cycle = lot();
     }
 
     Lot process(Object datum) {
-        _detect(datum, lot());
+        _entry(datum);
         return cycle;
     }
 
-    void _detect(Object datum, Lot col) {
+    void _entry(Object datum) {
         if (datum instanceof Few fw) {
-            _processFex(fw.array, col);
+            _collectFew(fw);
         } else if (datum instanceof Lot lt) {
-            if (!isNull(lt)) {
-                _processLot(lt.pair, col);
-            }
+            _collectPair(lt.pair);
         }
     }
 
-    void _processFex(Object[] array, Lot col) {
-        if (isBelong(array, col)) {
-            if (!isBelong(array, cycle)) {
-                cycle = cons(array, cycle);
+    void _collectFew(Few fw) {
+        if (isBelong(fw, collector)) {
+            if (!isBelong(fw, cycle)) {
+                cycle = cons(fw, cycle);
             }
         } else {
-            col = cons(array, col);
-            for (Object obj : array) {
-                _detect(obj, col);
+            collector = cons(fw, collector);
+            int n = fw.array.length;
+            for (int i = 0; i < n; i = i + 1) {
+                _entry(fewRef(fw, i));
             }
         }
     }
 
-    void _processLot(Pair pair, Lot col) {
-        if (isBelong(pair, col)) {
-            if (!isBelong(pair, cycle)) {
-                cycle = cons(pair, cycle);
-            }
-        } else {
-            _processCdr(pair, col);
-            _travel(pair, cons(pair, col), lot());
-        }
-    }
-
-    void _processCdr(Pair pair, Lot col) {
-        if (pair != null) {
-            col = cons(pair, col);
-            if (isBelong(pair.next, col)) {
-                if (!isBelong(pair.next, cycle)) {
-                    cycle = cons(pair.next, cycle);
+    void _collectPair(Pair pair) {
+        if (!(pair instanceof PairTail)) {
+            if (isBelong(pair, collector)) {
+                if (!isBelong(pair, cycle)) {
+                    cycle = cons(pair, cycle);
                 }
             } else {
-                _processCdr(pair.next, col);
-            }
-        }
-    }
-
-    void _travel(Pair pair, Lot col, Lot stop) {
-        if (pair != null) {
-            if (!isBelong(pair.next, stop)) {
-                _detect(pair.data, col);
-                _travel(pair.next, col, cons(pair, stop));
+                collector = cons(pair, collector);
+                PairUse moo = (PairUse) pair;
+                _entry(moo.data);
+                _collectPair(moo.next);
             }
         }
     }
@@ -88,97 +71,97 @@ static Lot detect(Object datum) {
 
 private static class LabelCycle {
 
-    final Lot attached_cycle;      // lot of Few
+    final Lot attached_cycle;
     int count;
 
     LabelCycle(Lot cycle) {
-        attached_cycle = map(LabelCycle::doing, cycle);
-        count = -1;
+        attached_cycle = map(LabelCycle::attach, cycle);
+        count = 0;
     }
 
     Object process(Object datum) {
         if (datum instanceof Few fw) {
-            return _processFex(fw.array);
+            return _processFew(fw);
         } else if (datum instanceof Lot lt) {
-            if (isNull(lt)) {
-                return new PairNull();
-            } else {
-                return _processLot(lt.pair);
-            }
+            return _processPair(lt.pair);
         } else {
             return datum;
         }
     }
 
     @Contract("_ -> new")
-    @NotNull Fix _processFex(Object[] array) {
-        Few cyc = _find(array, attached_cycle);
-        if (cyc != null && (boolean) ref1(cyc)) {
-            return new Fixed((int) ref2(cyc));
+    @NotNull Object _processFew(Few fw) {
+        Few cyc = _find(fw);
+        if (cyc != null &&
+            (boolean) ref1(cyc)) {
+            return new FewMark((int) ref2(cyc));
         } else if (cyc != null) {
-            count = count + 1;
             set1(cyc, true);
             set2(cyc, count);
-            Object[] tmp = _batchArray(array);
-            return new FixCyc(tmp, (int) ref2(cyc));
+            count = count + 1;
+            Object[] arr = _batchArray(fw.array);
+            return new FewCyc(arr, (int) ref2(cyc));
         } else {
-            Object[] tmp = _batchArray(array);
-            return new FixNonCyc(tmp);
+            Object[] arr = _batchArray(fw.array);
+            return new Few(arr);
         }
     }
 
     Object @NotNull [] _batchArray(Object @NotNull [] arr) {
-        int sz = arr.length;
-        Object[] tmp = new Object[sz];
-        for (int i = 0; i < sz; i = i + 1) {
-            tmp[i] = process(arr[i]);
+        int n = arr.length;
+        Object[] moo = new Object[n];
+        for (int i = 0; i < n; i = i + 1) {
+            moo[i] = process(arr[i]);
         }
-        return tmp;
+        return moo;
     }
 
     @Contract("_ -> new")
-    @NotNull Pair _processLot(Pair pair) {
-        Few cyc = _find(pair, attached_cycle);
-        if (cyc == null) {
-            return new PairHead(process(pair.data), _processCdr(pair.next));
-        } else if ((boolean) ref1(cyc)) {
-            return new PairCyc(null, null, (int) ref2(cyc));
-        } else {
-            count = count + 1;
+    @NotNull Pair _processPair(Pair pair) {
+        Few cyc = _find(pair);
+        if (cyc != null &&
+            ((boolean) ref1(cyc))) {
+            return new PairMark((int) ref2(cyc));
+        } else if (cyc != null) {
             set1(cyc, true);
             set2(cyc, count);
-            return new PairCyc
-                   (process(pair.data), _processCdr(pair.next), (int) ref2(cyc));
+            count = count + 1;
+            PairUse moo = (PairUse) pair;
+            return new PairCyc(process(moo.data), _processNext(moo.next), (int) ref2(cyc));
+        } else {
+            PairUse moo = (PairUse) pair;
+            return new PairHead(process(moo.data), _processNext(moo.next));
         }
     }
 
-    Pair _processCdr(Pair pair) {
-        if (pair == null) {
-            return null;
+    @NotNull Pair _processNext(Pair pair) {
+        if (pair instanceof PairTail) {
+            return new PairTail();
         } else {
-            Few cyc = _find(pair, attached_cycle);
-            if (cyc == null) {
-                return new Pair(process(pair.data), _processCdr(pair.next));
-            } else if ((boolean) ref1(cyc)) {
-                return new PairCycTail(null, null, (int) ref2(cyc));
-            } else {
-                count = count + 1;
+            Few cyc = _find(pair);
+            if (cyc != null &&
+                ((boolean) ref1(cyc))) {
+                return new PairMark((int) ref2(cyc));
+            } else if (cyc != null) {
                 set1(cyc, true);
                 set2(cyc, count);
-                return new PairCycTail
-                       (process(pair.data), _processCdr(pair.next), (int) ref2(cyc));
+                count = count + 1;
+                PairUse moo = (PairUse) pair;
+                return new PairCyc(process(moo.data), _processNext(moo.next), (int) ref2(cyc));
+            } else {
+                PairUse row = (PairUse) pair;
+                return new PairCons(process(row.data), _processNext(row.next));
             }
         }
-
     }
 
     @Contract(value = "_ -> new", pure = true)
-    static @NotNull Object doing(Object datum) {
+    static @NotNull Object attach(Object datum) {
         return few(datum, false, -1);
     }
 
-    @Nullable Few _find(Object datum, Lot cycle) {
-        Lot moo = cycle;
+    @Nullable Few _find(Object datum) {
+        Lot moo = attached_cycle;
         while (!isNull(moo) &&
                !eq(datum, ref0((Few) car(moo)))) {
             moo = cdr(moo);
@@ -196,27 +179,16 @@ static Object label(Object datum, Lot cycle) {
     return l.process(datum);
 }
 
-static String stringOfCycle(Object datum) {
-    Lot cycle = Cycle.detect(datum);
-    Object another;
-    if (Pr.isNull(cycle)) {
-        another = Aid.isolate(datum);
-        return another.toString();
-    } else {
-        another = label(datum, cycle);
-        return String.format("[Warning in print: cycle detected]\n%s", another);
-    }
-}
-
 
 static boolean isTailCircular(@NotNull Lot lt) {
     Pair pair = lt.pair;
-    Lot col = lot();
-    while (pair != null &&
-           !isBelong(pair.next, col)) {
-        col = cons(pair, col);
-        pair = pair.next;
+    Lot col = lot(pair);
+    while (!(pair instanceof PairTail) &&
+           !isBelong(((PairUse) pair).next, col)) {
+        PairUse moo = (PairUse) pair;
+        col = cons(moo.next, col);
+        pair = moo.next;
     }
-    return pair != null;
+    return !(pair instanceof PairTail);
 }
 }

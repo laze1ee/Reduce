@@ -1,9 +1,10 @@
 package share.progressive;
 
-import static share.utility.Ut.stringOf;
+import static share.progressive.Pr.equal;
+import static share.progressive.Pr.stringOf;
 
 
-class PairCyc extends Pair {
+class PairCyc extends PairUse {
 
 final int count;
 
@@ -13,37 +14,25 @@ PairCyc(Object data, Pair next, int count) {
 }
 
 @Override
-public boolean equals(Object datum) {
-    if (datum instanceof PairCyc pair) {
-        if (data == null &&
-            next == null) {
-            return pair.data == null &&
-                   pair.next == null &&
-                   count == pair.count;
-        } else if (data == null) {
-            return pair.data == null &&
-                   count == pair.count &&
-                   Pr.equal(next, pair.next);
-        } else if (next == null) {
-            return pair.next == null &&
-                   count == pair.count &&
-                   Pr.equal(data, pair.data);
-        } else {
-            return count == pair.count &&
-                   Pr.equal(data, pair.data) &&
-                   Pr.equal(next, pair.next);
-        }
+public String toString() {
+    if (next instanceof PairTail) {
+        return String.format("#%s=(%s)", count, stringOf(data));
+    } else if (next instanceof PairCyc ||
+               next instanceof PairMark) {
+        return String.format("#%s=(%s . %s)", count, stringOf(data), next);
     } else {
-        return false;
+        return String.format("#%s=(%s %s)", count, stringOf(data), next);
     }
 }
 
 @Override
-public String toString() {
-    if (next == null) {
-        return String.format("#%d#", count);
+public boolean equals(Object datum) {
+    if (datum instanceof PairCyc moo) {
+        return count == moo.count &&
+               equal(data, moo.data) &&
+               next.equals(moo.next);
     } else {
-        return String.format("#%d=(%s %s)", count, stringOf(data), next);
+        return false;
     }
 }
 }

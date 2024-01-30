@@ -1,6 +1,7 @@
 package share.progressive;
 
-import org.jetbrains.annotations.NotNull;
+import static share.progressive.Pr.isNull;
+import static share.progressive.Pr.length;
 
 
 public class Lot {
@@ -11,25 +12,33 @@ Lot(Pair pair) {
     this.pair = pair;
 }
 
-Lot(Object @NotNull [] args) {
-    if (args.length == 0) {
-        pair = null;
+@Override
+public String toString() {
+    if (pair instanceof PairTail) {
+        return "()";
     } else {
-        pair = Aid.initLot(args);
+        Lot cycle = Cycle.detect(this);
+        if (isNull(cycle)) {
+            Pair new_pair = Aid.isolate(pair);
+            return new_pair.toString();
+        } else {
+            Object cyc_pair = Cycle.label(this, cycle);
+            return cyc_pair.toString();
+        }
     }
 }
-
 
 @Override
 public boolean equals(Object datum) {
     if (datum instanceof Lot lt) {
         Lot c1 = Cycle.detect(this);
         Lot c2 = Cycle.detect(lt);
-        if (Pr.isNull(c1) && Pr.isNull(c2)) {
-            Object o1 = Aid.isolate(this);
-            Object o2 = Aid.isolate(lt);
-            return o1.equals(o2);
-        } else if (Pr.length(c1) == Pr.length(c2)) {
+        if (isNull(c1) && isNull(c2) &&
+            length(this) == length(lt)) {
+            Pair p1 = Aid.isolate(pair);
+            Pair p2 = Aid.isolate(lt.pair);
+            return p1.equals(p2);
+        } else if (!isNull(c1) && !isNull(c2)) {
             Object o1 = Cycle.label(this, c1);
             Object o2 = Cycle.label(lt, c2);
             return o1.equals(o2);
@@ -39,10 +48,5 @@ public boolean equals(Object datum) {
     } else {
         return false;
     }
-}
-
-@Override
-public String toString() {
-    return Cycle.stringOfCycle(this);
 }
 }
