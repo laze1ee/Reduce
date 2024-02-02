@@ -51,7 +51,7 @@ static @NotNull Pair isolate(Pair pair) {
     if (pair instanceof PairTail) {
         return new PairTail();
     } else {
-        PairUse use = (PairUse) pair;
+        PairOn use = (PairOn) pair;
         return new PairCons(use.data, isolate(use.next));
     }
 }
@@ -134,7 +134,7 @@ static boolean arrayEqual(Object arr1, Object arr2) {
     }
 }
 
-static boolean objectArrEqual(Object @NotNull [] arr1, Object @NotNull [] arr2) {
+static boolean objectArrayEqual(Object @NotNull [] arr1, Object @NotNull [] arr2) {
     if (arr1.length == arr2.length) {
         int i = 0;
         while (i < arr1.length &&

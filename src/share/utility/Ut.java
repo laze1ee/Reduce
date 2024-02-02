@@ -1,6 +1,8 @@
 package share.utility;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import share.binary.Binary;
 import share.progressive.Few;
 import share.progressive.Lot;
 import share.refmethod.Eqv;
@@ -14,7 +16,7 @@ public class Ut {
 
 @SuppressWarnings("SpellCheckingInspection")
 private static final char[] CHARS_SET =
-"_-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
+        "_-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
 
 public static @NotNull String randomString(int length) {
     Random rd = new Random();
@@ -74,6 +76,58 @@ public static int fewIndex(Eqv pred, Object datum, Few fw) {
     } else {
         return i;
     }
+}
+//endregion
+
+
+//region Checksum
+private static final int FLETCHER_MOD = 65535;
+private static final int ADLER_MOD = 65521;
+
+@Contract(pure = true)
+public static int fletcher32(byte @NotNull [] bs) {
+    int len = bs.length;
+    int block_sz = 360;       // 0 < n and n * (n+1)/2 * (2^16 - 1) < (2^32 - 1)
+
+    int sum0 = 0;
+    int sum1 = 0;
+    int i = 0;
+    int bound = block_sz;
+    while (bound < len) {
+        for (; i < bound; i = i + 2) {
+            sum0 = sum0 + (int) Binary.binToInteger(bs, i, i + 2, false);
+            sum1 = sum1 + sum0;
+        }
+        sum0 = sum0 % FLETCHER_MOD;
+        sum1 = sum1 % FLETCHER_MOD;
+        bound = bound + block_sz;
+    }
+
+    bound = len & 0xFFFFFFFE;
+    for (; i < bound; i = i + 2) {
+        sum0 = sum0 + (int) Binary.binToInteger(bs, i, i + 2, false);
+        sum1 = sum1 + sum0;
+    }
+    if ((len & 1) == 1) {
+        sum0 = sum0 + ((bs[i] & 0xFF) << 8);
+        sum1 = sum1 + sum0;
+    }
+    sum0 = sum0 % FLETCHER_MOD;
+    sum1 = sum1 % FLETCHER_MOD;
+
+    return (sum1 << 16) | sum0;
+}
+
+
+@Contract(pure = true)
+public static int adler32(byte @NotNull [] bs) {
+    int sum0 = 1;
+    int sum1 = 0;
+    for (byte b : bs) {
+        sum0 = (sum0 + (b & 0xFF)) % ADLER_MOD;
+        sum1 = (sum1 + sum0) % ADLER_MOD;
+    }
+    return (sum1 << 16) | sum0;
 }
 //endregion
 }

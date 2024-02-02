@@ -8,6 +8,22 @@ import share.progressive.Lot;
 
 public class Binary {
 
+public static long binToInteger(byte[] bin, int start, int bound, boolean little_endian) {
+    long n = 0;
+    if (little_endian) {
+        for (int i = bound - 1; i >= start; i = i - 1) {
+            n = n << 8;
+            n = n | (bin[i] & 0xFF);
+        }
+    } else {
+        for (int i = start; i < bound; i = i + 1) {
+            n = n << 8;
+            n = n | (bin[i] & 0xFF);
+        }
+    }
+    return n;
+}
+
 public static byte[] codeDatum(Object datum) {
     if (datum instanceof Boolean b) {
         return Aid.codeBoolean(b);

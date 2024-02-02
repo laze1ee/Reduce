@@ -18,7 +18,7 @@ public String toString() {
 public boolean equals(Object datum) {
     if (datum instanceof FewCyc fc) {
         return count == fc.count &&
-               Aid.objectArrEqual(array, fc.array);
+               Aid.objectArrayEqual(array, fc.array);
     } else {
         return false;
     }

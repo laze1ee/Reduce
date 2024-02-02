@@ -5,30 +5,20 @@ import share.utility.RBTree;
 
 public class Symbol {
 
-private static final RBTree tree = new RBTree();
-private static int count = 1;
+static RBTree catalog = new RBTree();
 
-final String name;
 final int identifier;
 
 
-Symbol(String name) {
-    this.name = name;
-    if (RBTree.isPresent(tree, this.name)) {
-        identifier = (int) RBTree.ref(tree, this.name);
-    } else {
-        identifier = count;
-        RBTree.insert(tree, this.name, identifier);
-        count = count + 1;
-    }
+Symbol(int identifier) {
+    this.identifier = identifier;
 }
 
 
 @Override
 public String toString() {
-    return name;
+    return (String) RBTree.ref(catalog, identifier);
 }
-
 
 @Override
 public boolean equals(Object datum) {
@@ -40,11 +30,12 @@ public boolean equals(Object datum) {
 }
 
 
-public int getId() {
+public int getIdentifier() {
     return identifier;
 }
 
 public String display() {
+    String name = toString();
     if (name.isEmpty()) {
         return "||";
     } else {

@@ -10,7 +10,7 @@ list and vector. Moreover, it facilitates comparison to ascertain the equivalenc
 of two circular structures.
 
 All procedures related to lists and vectors are encapsulated within the
-class `share.progressive.Pg`.
+class `share.progressive.Pr`.
 
 > Symbolic representations will be utilized for illustrative purposes.
 > * `Type-name` denotes a specific type with capitalized initials; for example, Natural represents a

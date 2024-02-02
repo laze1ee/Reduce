@@ -28,13 +28,7 @@ static byte @NotNull [] intToBin(int n) {
 }
 
 static int binToInt(byte[] bin, int start) {
-    int bound = start + 4;
-    int n = 0;
-    for (int i = start; i < bound; i = i + 1) {
-        n = n << 8;
-        n = n | (bin[i] & 0xFF);
-    }
-    return n;
+    return (int) Binary.binToInteger(bin, start, start + 4, false);
 }
 
 @Contract(pure = true)
@@ -49,13 +43,7 @@ static byte @NotNull [] longToBin(long n) {
 }
 
 static long binToLong(byte[] bin, int start) {
-    int bound = start + 8;
-    long n = 0;
-    for (int i = start; i < bound; i = i + 1) {
-        n = n << 8;
-        n = n | (bin[i] & 0xFF);
-    }
-    return n;
+    return Binary.binToInteger(bin, start, start + 8, false);
 }
 
 static byte @NotNull [] doubleToBin(double n) {
@@ -73,12 +61,11 @@ static double binToDouble(byte[] bin, int start) {
 //region Coding
 @Contract(pure = true)
 static byte @NotNull [] codeBoolean(boolean b) {
-    byte[] bin = new byte[2];
-    bin[0] = Label.BOOLEAN;
     if (b) {
-        bin[1] = (byte) 1;
+        return new byte[]{Label.BOOLEAN_TRUE};
+    } else {
+        return new byte[]{Label.BOOLEAN_FALSE};
     }
-    return bin;
 }
 
 static byte @NotNull [] codeInt(int n) {
@@ -283,10 +270,6 @@ static byte @NotNull [] codeDate(@NotNull Date d) {
 
 
 //region Decoding
-static boolean decodeBoolean(byte by) {
-    return by != 0;
-}
-
 static char decodeChar(byte[] bin, int start) {
     int c = binToInt(bin, start);
     return (char) c;
@@ -347,9 +330,12 @@ static class Decoding {
     Object process() {
         Object datum;
         switch (bin[pos]) {
-            case Label.BOOLEAN -> {
+            case Label.BOOLEAN_TRUE -> {
+                datum = true;
                 pos = pos + 1;
-                datum = decodeBoolean(bin[pos]);
+            }
+            case Label.BOOLEAN_FALSE -> {
+                datum = false;
                 pos = pos + 1;
             }
             case Label.INT -> {

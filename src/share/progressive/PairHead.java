@@ -4,7 +4,7 @@ import static share.progressive.Pr.equal;
 import static share.progressive.Pr.stringOf;
 
 
-public class PairHead extends PairCons {
+class PairHead extends PairCons {
 
 PairHead(Object data, Pair next) {
     super(data, next);

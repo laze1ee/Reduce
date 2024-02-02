@@ -4,7 +4,7 @@ import static share.progressive.Pr.equal;
 import static share.progressive.Pr.stringOf;
 
 
-class PairCyc extends PairUse {
+class PairCyc extends PairOn {
 
 final int count;
 

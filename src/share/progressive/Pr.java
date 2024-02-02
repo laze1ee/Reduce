@@ -5,8 +5,12 @@ import org.jetbrains.annotations.NotNull;
 import share.datetime.Time;
 import share.refmethod.Do;
 import share.refmethod.Has;
+import share.utility.RBTree;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+
+import static share.utility.Ut.fletcher32;
 
 
 public class Pr {
@@ -14,7 +18,21 @@ public class Pr {
 //region Constructor
 @Contract("_ -> new")
 public static @NotNull Symbol symbol(@NotNull String str) {
-    return new Symbol(str);
+    if (str.isEmpty() ||
+        str.isBlank()) {
+        throw new RuntimeException(String.format(Shop.INVALID_STRING, stringOf(str)));
+    } else {
+        int checksum = fletcher32(str.getBytes(StandardCharsets.UTF_8));
+        if (RBTree.isPresent(Symbol.catalog, checksum)) {
+            String str2 = (String) RBTree.ref(Symbol.catalog, checksum);
+            if (!str.equals(str2)) {
+                throw new RuntimeException(String.format(Shop.JACKPOT, str, str2));
+            }
+        } else {
+            RBTree.insert(Symbol.catalog, checksum, str);
+        }
+        return new Symbol(checksum);
+    }
 }
 
 @Contract(value = "_ -> new", pure = true)
@@ -39,7 +57,7 @@ public static @NotNull Lot lot(Object @NotNull ... args) {
     Pair pair = new PairTail();
     int n = args.length;
     for (int i = n - 1; i >= 0; i = i - 1) {
-        pair = new PairUse(args[i], pair);
+        pair = new PairOn(args[i], pair);
     }
     return new Lot(pair);
 }
@@ -96,7 +114,7 @@ public static Object car(Lot lt) {
     if (isNull(lt)) {
         throw new RuntimeException(Shop.LOT_END);
     } else {
-        return ((PairUse) lt.pair).data;
+        return ((PairOn) lt.pair).data;
     }
 }
 
@@ -105,7 +123,7 @@ public static @NotNull Lot cdr(Lot lt) {
     if (isNull(lt)) {
         throw new RuntimeException(Shop.LOT_END);
     } else {
-        return new Lot(((PairUse) lt.pair).next);
+        return new Lot(((PairOn) lt.pair).next);
     }
 }
 
@@ -207,7 +225,7 @@ public static void setCar(Lot lt, Object datum) {
     if (isNull(lt)) {
         throw new RuntimeException(Shop.LOT_END);
     } else {
-        ((PairUse) lt.pair).data = datum;
+        ((PairOn) lt.pair).data = datum;
     }
 }
 
@@ -215,7 +233,7 @@ public static void setCdr(Lot lt1, Lot lt2) {
     if (isNull(lt1)) {
         throw new RuntimeException(Shop.LOT_END);
     } else {
-        ((PairUse) lt1.pair).next = lt2.pair;
+        ((PairOn) lt1.pair).next = lt2.pair;
     }
 }
 //endregion
@@ -224,7 +242,7 @@ public static void setCdr(Lot lt1, Lot lt2) {
 //region Connection
 @Contract("_, _ -> new")
 public static @NotNull Lot cons(Object datum, @NotNull Lot lt) {
-    return new Lot(new PairUse(datum, lt.pair));
+    return new Lot(new PairOn(datum, lt.pair));
 }
 
 public static Lot append(Lot lt1, Lot lt2) {
@@ -257,7 +275,7 @@ public static Lot reverse(Lot lt) {
         Pair pair = new PairTail();
         Lot moo = lt;
         while (!isNull(moo)) {
-            pair = new PairUse(car(moo), pair);
+            pair = new PairOn(car(moo), pair);
             moo = cdr(moo);
         }
         return new Lot(pair);
@@ -315,7 +333,7 @@ public static @NotNull Lot fewToLot(@NotNull Few fw) {
     Pair pair = new PairTail();
     int n = length(fw);
     for (int i = n - 1; i >= 0; i = i - 1) {
-        pair = new PairUse(fewRef(fw, i), pair);
+        pair = new PairOn(fewRef(fw, i), pair);
     }
     return new Lot(pair);
 }
@@ -329,7 +347,7 @@ public static @NotNull Lot filter(Has pred, Lot lt) {
         Lot moo = lt;
         while (!isNull(moo)) {
             if (pred.apply(car(moo))) {
-                pair = new PairUse(car(moo), pair);
+                pair = new PairOn(car(moo), pair);
             }
             moo = cdr(moo);
         }
@@ -346,7 +364,7 @@ public static @NotNull Lot map(Do func, Lot lt) {
         Lot moo = lt;
         while (!isNull(moo)) {
             Object datum = func.apply(car(moo));
-            pair = new PairUse(datum, pair);
+            pair = new PairOn(datum, pair);
             moo = cdr(moo);
         }
         return new Lot(pair);

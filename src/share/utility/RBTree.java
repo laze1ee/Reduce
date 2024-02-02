@@ -52,7 +52,7 @@ public static void insert(@NotNull RBTree tree, Object key, Object value) {
         RBTreeAid.InsertFixer fixer = new RBTreeAid.InsertFixer(tree, path);
         fixer.process();
     } else {
-        throw new RuntimeException(String.format("same key %s is present in tree %s", key, tree));
+        throw new RuntimeException(String.format(Shop.SAME_KEY, key, tree));
     }
 }
 
@@ -66,7 +66,7 @@ public static Object ref(@NotNull RBTree tree, Object key) {
     Lot path = RBTreeAid.pathOf(tree.root, key);
     RBNode node = (RBNode) car(path);
     if (node.isEmpty()) {
-        throw new RuntimeException(String.format("key %s is not present in tree %s", key, tree));
+        throw new RuntimeException(String.format(Shop.NOT_PRESENT, key, tree));
     } else {
         return node.value;
     }
@@ -76,7 +76,7 @@ public static void set(@NotNull RBTree tree, Object key, Object new_value) {
     Lot path = RBTreeAid.pathOf(tree.root, key);
     RBNode node = (RBNode) car(path);
     if (node.isEmpty()) {
-        throw new RuntimeException(String.format("key %s is not present in tree %s", key, tree));
+        throw new RuntimeException(String.format(Shop.NOT_PRESENT, key, tree));
     } else {
         node.value = new_value;
     }
@@ -84,7 +84,7 @@ public static void set(@NotNull RBTree tree, Object key, Object new_value) {
 
 public static void delete(@NotNull RBTree tree, Object key) {
     if (tree.isEmpty()) {
-        throw new RuntimeException("empty tree");
+        throw new RuntimeException(Shop.EMPTY_TREE);
     } else {
         RBTreeAid.delete(tree, key);
     }
@@ -93,7 +93,7 @@ public static void delete(@NotNull RBTree tree, Object key) {
 public Object minimum() {
     Lot path = RBTreeAid.minimum(root, lot());
     if (isNull(path)) {
-        throw new RuntimeException("empty tree");
+        throw new RuntimeException(Shop.EMPTY_TREE);
     } else {
         RBNode node = (RBNode) car(path);
         return node.key;
@@ -103,7 +103,7 @@ public Object minimum() {
 public Object maximum() {
     Lot path = RBTreeAid.maximum(root, lot());
     if (isNull(path)) {
-        throw new RuntimeException("empty tree");
+        throw new RuntimeException(Shop.EMPTY_TREE);
     } else {
         RBNode node = (RBNode) car(path);
         return node.key;

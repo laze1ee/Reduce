@@ -55,7 +55,7 @@ private static class DetectCycle {
                 }
             } else {
                 collector = cons(pair, collector);
-                PairUse moo = (PairUse) pair;
+                PairOn moo = (PairOn) pair;
                 _entry(moo.data);
                 _collectPair(moo.next);
             }
@@ -126,10 +126,10 @@ private static class LabelCycle {
             set1(cyc, true);
             set2(cyc, count);
             count = count + 1;
-            PairUse moo = (PairUse) pair;
+            PairOn moo = (PairOn) pair;
             return new PairCyc(process(moo.data), _processNext(moo.next), (int) ref2(cyc));
         } else {
-            PairUse moo = (PairUse) pair;
+            PairOn moo = (PairOn) pair;
             return new PairHead(process(moo.data), _processNext(moo.next));
         }
     }
@@ -146,10 +146,10 @@ private static class LabelCycle {
                 set1(cyc, true);
                 set2(cyc, count);
                 count = count + 1;
-                PairUse moo = (PairUse) pair;
+                PairOn moo = (PairOn) pair;
                 return new PairCyc(process(moo.data), _processNext(moo.next), (int) ref2(cyc));
             } else {
-                PairUse row = (PairUse) pair;
+                PairOn row = (PairOn) pair;
                 return new PairCons(process(row.data), _processNext(row.next));
             }
         }
@@ -184,8 +184,8 @@ static boolean isTailCircular(@NotNull Lot lt) {
     Pair pair = lt.pair;
     Lot col = lot(pair);
     while (!(pair instanceof PairTail) &&
-           !isBelong(((PairUse) pair).next, col)) {
-        PairUse moo = (PairUse) pair;
+           !isBelong(((PairOn) pair).next, col)) {
+        PairOn moo = (PairOn) pair;
         col = cons(moo.next, col);
         pair = moo.next;
     }
