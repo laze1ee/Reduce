@@ -3,13 +3,14 @@ package share.progressive;
 import static share.progressive.Pr.isNull;
 
 
-public class Few {
+public class Few extends Fer {
 
 final Object[] array;
 
 Few(Object[] array) {
     this.array = array;
 }
+
 
 @Override
 public String toString() {
@@ -41,5 +42,10 @@ public boolean equals(Object datum) {
     } else {
         return false;
     }
+}
+
+
+public Object[] toRaw() {
+    return array;
 }
 }

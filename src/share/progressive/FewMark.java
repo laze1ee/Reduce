@@ -1,7 +1,6 @@
 package share.progressive;
 
-@SuppressWarnings("ClassCanBeRecord")
-class FewMark {
+class FewMark extends Fer {
 
 final int count;
 

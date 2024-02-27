@@ -77,6 +77,62 @@ static boolean isScalar(char c) {
 //endregion
 
 
+//region String Of
+private static final Few char_code = few(0, 7, 8, 9, 0xA, 0xB, 0xC, 0xD, 0x1B, 0x20, 0x7F);
+private static final String[] char_name = {"nul", "alarm", "backspace", "tab", "newline", "vtab",
+                                           "page", "return", "esc", "space", "delete"};
+@SuppressWarnings("SpellCheckingInspection")
+private static final char[] HEX_STR = "0123456789ABCDEF".toCharArray();
+
+static String stringOfChar(char c) {
+    int i = fewIndex(Pr::eq, (int) c, char_code);
+    if (0 <= i) {
+        return String.format("#\\%s", char_name[i]);
+    } else if (Character.isISOControl(c)) {
+        return String.format("#\\u%X", (int) c);
+    } else {
+        return String.format("#\\%c", c);
+    }
+}
+
+static String stringOfArray(@NotNull Object array) {
+    if (array instanceof byte[] bs) {
+        return String.format("#i8(%s)", consArray(bs, bs.length));
+    } else if (array instanceof int[] ins) {
+        return String.format("#i32(%s)", consArray(ins, ins.length));
+    } else if (array instanceof long[] ls) {
+        return String.format("#i64(%s)", consArray(ls, ls.length));
+    } else if (array instanceof double[] ds) {
+        return String.format("#r64(%s)", consArray(ds, ds.length));
+    } else if (array instanceof char[] cs) {
+        return String.format("#char(%s)", consArray(cs, cs.length));
+    } else {
+        throw new RuntimeException(String.format("unsupported array type %s for printing", array));
+    }
+}
+
+static @NotNull String consArray(Object arr, int sz) {
+    if (sz == 0) {
+        return "";
+    } else {
+        StringBuilder str = new StringBuilder();
+        sz = sz - 1;
+        for (int i = 0; i < sz; i = i + 1) {
+            str.append(stringOf(Array.get(arr, i)));
+            str.append(" ");
+        }
+        str.append(stringOf(Array.get(arr, sz)));
+        return str.toString();
+    }
+}
+
+@Contract(pure = true)
+static @NotNull String stringOfHex(byte by) {
+    return new String(new char[]{HEX_STR[(by >> 4) & 0xF], HEX_STR[by & 0xF]});
+}
+//endregion
+
+
 //region Comparison
 static boolean numberEq(Number n1, Number n2) {
     if (n1 instanceof Integer i1 &&
@@ -181,62 +237,6 @@ static boolean timeLessThan(@NotNull Time t1, @NotNull Time t2) {
     } else {
         return false;
     }
-}
-//endregion
-
-
-//region String Of
-private static final Few char_code = few(0, 7, 8, 9, 0xA, 0xB, 0xC, 0xD, 0x1B, 0x20, 0x7F);
-private static final String[] char_name = {"nul", "alarm", "backspace", "tab", "newline", "vtab",
-                                           "page", "return", "esc", "space", "delete"};
-@SuppressWarnings("SpellCheckingInspection")
-private static final char[] HEX_STR = "0123456789ABCDEF".toCharArray();
-
-static String stringOfChar(char c) {
-    int i = fewIndex(Pr::eq, (int) c, char_code);
-    if (0 <= i) {
-        return String.format("#\\%s", char_name[i]);
-    } else if (Character.isISOControl(c)) {
-        return String.format("#\\u%X", (int) c);
-    } else {
-        return String.format("#\\%c", c);
-    }
-}
-
-static String stringOfArray(@NotNull Object array) {
-    if (array instanceof byte[] bs) {
-        return String.format("#i8(%s)", consArray(bs, bs.length));
-    } else if (array instanceof int[] ins) {
-        return String.format("#i32(%s)", consArray(ins, ins.length));
-    } else if (array instanceof long[] ls) {
-        return String.format("#i64(%s)", consArray(ls, ls.length));
-    } else if (array instanceof double[] ds) {
-        return String.format("#r64(%s)", consArray(ds, ds.length));
-    } else if (array instanceof char[] cs) {
-        return String.format("#char(%s)", consArray(cs, cs.length));
-    } else {
-        throw new RuntimeException(String.format("unsupported array type %s for printing", array));
-    }
-}
-
-static @NotNull String consArray(Object arr, int sz) {
-    if (sz == 0) {
-        return "";
-    } else {
-        StringBuilder str = new StringBuilder();
-        sz = sz - 1;
-        for (int i = 0; i < sz; i = i + 1) {
-            str.append(stringOf(Array.get(arr, i)));
-            str.append(" ");
-        }
-        str.append(stringOf(Array.get(arr, sz)));
-        return str.toString();
-    }
-}
-
-@Contract(pure = true)
-static @NotNull String stringOfHex(byte by) {
-    return new String(new char[]{HEX_STR[(by >> 4) & 0xF], HEX_STR[by & 0xF]});
 }
 //endregion
 }

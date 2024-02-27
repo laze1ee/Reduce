@@ -118,7 +118,6 @@ public static int fletcher32(byte @NotNull [] bs) {
     return (sum1 << 16) | sum0;
 }
 
-
 @Contract(pure = true)
 public static int adler32(byte @NotNull [] bs) {
     int sum0 = 1;

@@ -27,22 +27,21 @@ private static class DetectCycle {
 
     void _entry(Object datum) {
         if (datum instanceof Few fw) {
-            _collectFew(fw);
+            _collectArray(fw.array);
         } else if (datum instanceof Lot lt) {
             _collectPair(lt.pair);
         }
     }
 
-    void _collectFew(Few fw) {
-        if (isBelong(fw, collector)) {
-            if (!isBelong(fw, cycle)) {
-                cycle = cons(fw, cycle);
+    void _collectArray(Object[] arr) {
+        if (isBelong(arr, collector)) {
+            if (!isBelong(arr, cycle)) {
+                cycle = cons(arr, cycle);
             }
         } else {
-            collector = cons(fw, collector);
-            int n = fw.array.length;
-            for (int i = 0; i < n; i = i + 1) {
-                _entry(fewRef(fw, i));
+            collector = cons(arr, collector);
+            for (Object datum : arr) {
+                _entry(datum);
             }
         }
     }
@@ -81,7 +80,7 @@ private static class LabelCycle {
 
     Object process(Object datum) {
         if (datum instanceof Few fw) {
-            return _processFew(fw);
+            return _processArray(fw.array);
         } else if (datum instanceof Lot lt) {
             return _processPair(lt.pair);
         } else {
@@ -90,8 +89,8 @@ private static class LabelCycle {
     }
 
     @Contract("_ -> new")
-    @NotNull Object _processFew(Few fw) {
-        Few cyc = _find(fw);
+    @NotNull Fer _processArray(Object[] arr) {
+        Few cyc = _find(arr);
         if (cyc != null &&
             (boolean) ref1(cyc)) {
             return new FewMark((int) ref2(cyc));
@@ -99,11 +98,11 @@ private static class LabelCycle {
             set1(cyc, true);
             set2(cyc, count);
             count = count + 1;
-            Object[] arr = _batchArray(fw.array);
-            return new FewCyc(arr, (int) ref2(cyc));
+            Object[] moo = _batchArray(arr);
+            return new FewCyc(moo, (int) ref2(cyc));
         } else {
-            Object[] arr = _batchArray(fw.array);
-            return new Few(arr);
+            Object[] moo = _batchArray(arr);
+            return new Few(moo);
         }
     }
 

@@ -36,7 +36,7 @@ public static @NotNull Symbol symbol(@NotNull String str) {
 }
 
 @Contract(value = "_ -> new", pure = true)
-public static @NotNull Few few(@NotNull Object... args) {
+public static @NotNull Few few(@NotNull Object @NotNull ... args) {
     return new Few(args);
 }
 
@@ -53,7 +53,7 @@ public static @NotNull Few makeFew(int amount) {
 }
 
 @Contract("_ -> new")
-public static @NotNull Lot lot(Object @NotNull ... args) {
+public static @NotNull Lot lot(@NotNull Object @NotNull ... args) {
     Pair pair = new PairTail();
     int n = args.length;
     for (int i = n - 1; i >= 0; i = i - 1) {
@@ -383,6 +383,45 @@ public static @NotNull Few map(Do func, Few fw) {
 //endregion
 
 
+//region StringOf
+public static String stringOf(Object datum) {
+    if (datum instanceof Boolean b) {
+        if (b) {
+            return "#t";
+        } else {
+            return "#f";
+        }
+    } else if (datum instanceof Character c) {
+        return Aid.stringOfChar(c);
+    } else if (datum instanceof String str) {
+        return String.format("\"%s\"", str);
+    } else if (datum.getClass().isArray()) {
+        return Aid.stringOfArray(datum);
+    } else {
+        return datum.toString();
+    }
+}
+
+public static @NotNull String hexOfBytes(byte @NotNull [] bs) {
+    int n = bs.length;
+    if (n == 0) {
+        return "#u8()";
+    } else {
+        StringBuilder str = new StringBuilder();
+        str.append("#u8(");
+        n = n - 1;
+        for (int i = 0; i < n; i = i + 1) {
+            str.append(Aid.stringOfHex(bs[i]));
+            str.append(" ");
+        }
+        str.append(Aid.stringOfHex(bs[n]));
+        str.append(")");
+        return str.toString();
+    }
+}
+//endregion
+
+
 //region Comparison
 public static boolean eq(Object o1, Object o2) {
     if (o1 == o2) {
@@ -463,45 +502,6 @@ public static boolean numberValueLess(Number n1, Number n2) {
 
 public static boolean greater(Object o1, Object o2) {
     return less(o2, o1);
-}
-//endregion
-
-
-//region StringOf
-public static String stringOf(Object datum) {
-    if (datum instanceof Boolean b) {
-        if (b) {
-            return "#t";
-        } else {
-            return "#f";
-        }
-    } else if (datum instanceof Character c) {
-        return Aid.stringOfChar(c);
-    } else if (datum instanceof String str) {
-        return String.format("\"%s\"", str);
-    } else if (datum.getClass().isArray()) {
-        return Aid.stringOfArray(datum);
-    } else {
-        return datum.toString();
-    }
-}
-
-public static @NotNull String hexOfBytes(byte @NotNull [] bs) {
-    int n = bs.length;
-    if (n == 0) {
-        return "#u8()";
-    } else {
-        StringBuilder str = new StringBuilder();
-        str.append("#u8(");
-        n = n - 1;
-        for (int i = 0; i < n; i = i + 1) {
-            str.append(Aid.stringOfHex(bs[i]));
-            str.append(" ");
-        }
-        str.append(Aid.stringOfHex(bs[n]));
-        str.append(")");
-        return str.toString();
-    }
 }
 //endregion
 }

@@ -1,11 +1,13 @@
 package share.progressive;
 
-class FewCyc extends Few {
 
+class FewCyc extends Fer {
+
+Object[] array;
 final int count;
 
 FewCyc(Object[] array, int count) {
-    super(array);
+    this.array = array;
     this.count = count;
 }
 

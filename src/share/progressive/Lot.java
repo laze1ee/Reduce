@@ -12,6 +12,7 @@ Lot(Pair pair) {
     this.pair = pair;
 }
 
+
 @Override
 public String toString() {
     if (pair instanceof PairTail) {
@@ -19,8 +20,9 @@ public String toString() {
     } else {
         Lot cycle = Cycle.detect(this);
         if (isNull(cycle)) {
-            Pair new_pair = Aid.isolate(pair);
-            return new_pair.toString();
+            PairOn moo = (PairOn) pair;
+            PairHead head = new PairHead(moo.data, Aid.isolate(moo.next));
+            return head.toString();
         } else {
             Object cyc_pair = Cycle.label(this, cycle);
             return cyc_pair.toString();
