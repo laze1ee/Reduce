@@ -95,7 +95,7 @@ public static int fletcher32(byte @NotNull [] bs) {
     int bound = block_sz;
     while (bound < len) {
         for (; i < bound; i = i + 2) {
-            sum0 = sum0 + (int) Binary.binToInteger(bs, i, i + 2, false);
+            sum0 = sum0 + Binary.binaryToShort(bs, i, false);
             sum1 = sum1 + sum0;
         }
         sum0 = sum0 % FLETCHER_MOD;
@@ -105,7 +105,7 @@ public static int fletcher32(byte @NotNull [] bs) {
 
     bound = len & 0xFFFFFFFE;
     for (; i < bound; i = i + 2) {
-        sum0 = sum0 + (int) Binary.binToInteger(bs, i, i + 2, false);
+        sum0 = sum0 + Binary.binaryToShort(bs, i, false);
         sum1 = sum1 + sum0;
     }
     if ((len & 1) == 1) {

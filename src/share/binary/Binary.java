@@ -1,5 +1,6 @@
 package share.binary;
 
+import org.jetbrains.annotations.NotNull;
 import share.datetime.Date;
 import share.datetime.Time;
 import share.progressive.Few;
@@ -8,23 +9,31 @@ import share.progressive.Lot;
 
 public class Binary {
 
-public static long binToInteger(byte[] bin, int start, int bound, boolean little_endian) {
-    long n = 0;
-    if (little_endian) {
-        for (int i = bound - 1; i >= start; i = i - 1) {
-            n = n << 8;
-            n = n | (bin[i] & 0xFF);
-        }
-    } else {
-        for (int i = start; i < bound; i = i + 1) {
-            n = n << 8;
-            n = n | (bin[i] & 0xFF);
-        }
-    }
-    return n;
+public static byte @NotNull [] shortToBinary(short n, boolean little_endian) {
+    return Aid.integerToBinary(n, 2, little_endian);
 }
 
-public static byte[] codeDatum(Object datum) {
+public static byte @NotNull [] intToBinary(int n, boolean little_endian) {
+    return Aid.integerToBinary(n, 4, little_endian);
+}
+
+public static byte @NotNull [] longToBinary(long n, boolean little_endian) {
+    return Aid.integerToBinary(n, 8, little_endian);
+}
+
+public static short binaryToShort(byte[] bin, int start, boolean little_endian) {
+    return (short) Aid.binaryToInteger(bin, start, start + 2, little_endian);
+}
+
+public static int binaryToInt(byte[] bin, int start, boolean little_endian) {
+    return (int) Aid.binaryToInteger(bin, start, start + 4, little_endian);
+}
+
+public static long binaryToLong(byte[] bin, int start, boolean little_endian) {
+    return Aid.binaryToInteger(bin, start, start + 8, little_endian);
+}
+
+public static byte[] codingDatum(Object datum) {
     if (datum instanceof Boolean b) {
         return Aid.codeBoolean(b);
     } else if (datum instanceof Integer i) {
@@ -59,7 +68,7 @@ public static byte[] codeDatum(Object datum) {
     }
 }
 
-public static Object decodeDatum(byte[] bin) {
+public static Object decodingDatum(byte[] bin) {
     Aid.Decoding de = new Aid.Decoding(bin);
     return de.process();
 }

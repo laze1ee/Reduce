@@ -16,43 +16,45 @@ import static share.progressive.Pr.*;
 class Aid {
 
 //region Share
-@Contract(pure = true)
-static byte @NotNull [] intToBin(int n) {
-    byte[] bin = new byte[4];
-    int moo = n;
-    for (int i = 3; i >= 0; i = i - 1) {
-        bin[i] = (byte) moo;
-        moo = moo >>> 8;
+static byte @NotNull [] integerToBinary(long n, int length, boolean little_endian) {
+    byte[] bin = new byte[length];
+    if (little_endian) {
+        for (int i = 0; i < length; i = i + 1) {
+            bin[i] = (byte) n;
+            n = n >>> 8;
+        }
+    } else {
+        for (int i = length - 1; i >= 0; i = i - 1) {
+            bin[i] = (byte) n;
+            n = n >>> 8;
+        }
     }
     return bin;
 }
 
-static int binToInt(byte[] bin, int start) {
-    return (int) Binary.binToInteger(bin, start, start + 4, false);
-}
-
-@Contract(pure = true)
-static byte @NotNull [] longToBin(long n) {
-    byte[] bin = new byte[8];
-    long moo = n;
-    for (int i = 7; i >= 0; i = i - 1) {
-        bin[i] = (byte) moo;
-        moo = moo >>> 8;
+static long binaryToInteger(byte[] bin, int start, int bound, boolean little_endian) {
+    long n = 0;
+    if (little_endian) {
+        for (int i = bound - 1; i >= start; i = i - 1) {
+            n = n << 8;
+            n = n | (bin[i] & 0xFF);
+        }
+    } else {
+        for (int i = start; i < bound; i = i + 1) {
+            n = n << 8;
+            n = n | (bin[i] & 0xFF);
+        }
     }
-    return bin;
-}
-
-static long binToLong(byte[] bin, int start) {
-    return Binary.binToInteger(bin, start, start + 8, false);
+    return n;
 }
 
 static byte @NotNull [] doubleToBin(double n) {
     long bits = Double.doubleToLongBits(n);
-    return longToBin(bits);
+    return Binary.longToBinary(bits, false);
 }
 
 static double binToDouble(byte[] bin, int start) {
-    long bits = binToLong(bin, start);
+    long bits = Binary.binaryToLong(bin, start, false);
     return Double.longBitsToDouble(bits);
 }
 //endregion
@@ -71,14 +73,14 @@ static byte @NotNull [] codeBoolean(boolean b) {
 static byte @NotNull [] codeInt(int n) {
     byte[] bin = new byte[5];
     bin[0] = Label.INT;
-    System.arraycopy(intToBin(n), 0, bin, 1, 4);
+    System.arraycopy(Binary.intToBinary(n, false), 0, bin, 1, 4);
     return bin;
 }
 
 static byte @NotNull [] codeLong(long n) {
     byte[] bin = new byte[9];
     bin[0] = Label.LONG;
-    System.arraycopy(longToBin(n), 0, bin, 1, 8);
+    System.arraycopy(Binary.longToBinary(n, false), 0, bin, 1, 8);
     return bin;
 }
 
@@ -92,7 +94,7 @@ static byte @NotNull [] codeDouble(double n) {
 static byte @NotNull [] codeChar(char c) {
     byte[] bin = new byte[5];
     bin[0] = Label.CHAR;
-    System.arraycopy(intToBin(c), 0, bin, 1, 4);
+    System.arraycopy(Binary.intToBinary(c, false), 0, bin, 1, 4);
     return bin;
 }
 
@@ -113,9 +115,9 @@ static byte @NotNull [] codeIntArray(int @NotNull [] ins) {
         int n = ins.length;
         byte[] bin = new byte[5 + n * 4];
         bin[0] = Label.INT_ARR;
-        System.arraycopy(intToBin(n), 0, bin, 1, 4);
+        System.arraycopy(Binary.intToBinary(n, false), 0, bin, 1, 4);
         for (int i = 0; i < n; i = i + 1) {
-            System.arraycopy(intToBin(ins[i]), 0, bin, 5 + i * 4, 4);
+            System.arraycopy(Binary.intToBinary(ins[i], false), 0, bin, 5 + i * 4, 4);
         }
         return bin;
     }
@@ -130,9 +132,9 @@ static byte @NotNull [] codeLongArray(long @NotNull [] ls) {
         int n = ls.length;
         byte[] bin = new byte[5 + n * 8];
         bin[0] = Label.LONG_ARR;
-        System.arraycopy(intToBin(n), 0, bin, 1, 4);
+        System.arraycopy(Binary.intToBinary(n, false), 0, bin, 1, 4);
         for (int i = 0; i < n; i = i + 1) {
-            System.arraycopy(longToBin(ls[i]), 0, bin, 5 + i * 8, 8);
+            System.arraycopy(Binary.longToBinary(ls[i], false), 0, bin, 5 + i * 8, 8);
         }
         return bin;
     }
@@ -147,7 +149,7 @@ static byte @NotNull [] codeDoubleArray(double @NotNull [] ds) {
         int n = ds.length;
         byte[] bin = new byte[5 + n * 8];
         bin[0] = Label.DOUBLE_ARR;
-        System.arraycopy(intToBin(n), 0, bin, 1, 4);
+        System.arraycopy(Binary.intToBinary(n, false), 0, bin, 1, 4);
         for (int i = 0; i < n; i = i + 1) {
             System.arraycopy(doubleToBin(ds[i]), 0, bin, 5 + i * 8, 8);
         }
@@ -163,7 +165,7 @@ static byte @NotNull [] codeLot(Lot lt) {
         Lot moo = lot();
         Lot xoo = lt;
         while (!isNull(xoo)) {
-            moo = cons(Binary.codeDatum(car(xoo)), moo);
+            moo = cons(Binary.codingDatum(car(xoo)), moo);
             xoo = cdr(xoo);
         }
         moo = reverse(moo);
@@ -213,7 +215,7 @@ static byte @NotNull [] codeFew(Few fw) {
         Lot moo = lot();
         int n = length(fw);
         for (int i = 0; i < n; i = i + 1) {
-            moo = cons(Binary.codeDatum(fewRef(fw, i)), moo);
+            moo = cons(Binary.codingDatum(fewRef(fw, i)), moo);
         }
         moo = reverse(moo);
         return connectFew(moo);
@@ -225,7 +227,7 @@ static byte @NotNull [] connectFew(Lot lt_bytes) {
     byte[] bin = new byte[sz];
     bin[0] = Label.FEW;
     int n = length(lt_bytes);
-    System.arraycopy(intToBin(n), 0, bin, 1, 4);
+    System.arraycopy(Binary.intToBinary(n, false), 0, bin, 1, 4);
 
     int i = 5;
     Lot moo = lt_bytes;
@@ -242,9 +244,9 @@ static byte @NotNull [] connectFew(Lot lt_bytes) {
 static byte @NotNull [] codeTime(@NotNull Time t) {
     byte[] bin = new byte[13];
     bin[0] = Label.TIME;
-    byte[] b_sec = longToBin(t.second());
+    byte[] b_sec = Binary.longToBinary(t.second(), false);
     System.arraycopy(b_sec, 0, bin, 1, 8);
-    byte[] b_nano = intToBin(t.nanosecond());
+    byte[] b_nano = Binary.intToBinary(t.nanosecond(), false);
     System.arraycopy(b_nano, 0, bin, 9, 4);
     return bin;
 }
@@ -252,7 +254,7 @@ static byte @NotNull [] codeTime(@NotNull Time t) {
 static byte @NotNull [] codeDate(@NotNull Date d) {
     byte[] bin = new byte[19];
     bin[0] = Label.DATE;
-    byte[] moo = intToBin(d.year());
+    byte[] moo = Binary.intToBinary(d.year(), false);
     System.arraycopy(moo, 0, bin, 1, 4);
     bin[5] = (byte) d.month();
     bin[6] = (byte) d.dayOfMonth();
@@ -260,9 +262,9 @@ static byte @NotNull [] codeDate(@NotNull Date d) {
     bin[8] = (byte) d.hour();
     bin[9] = (byte) d.minute();
     bin[10] = (byte) d.second();
-    moo = intToBin(d.nanosecond());
+    moo = Binary.intToBinary(d.nanosecond(), false);
     System.arraycopy(moo, 0, bin, 11, 4);
-    moo = intToBin(d.offset());
+    moo = Binary.intToBinary(d.offset(), false);
     System.arraycopy(moo, 0, bin, 15, 4);
     return bin;
 }
@@ -271,7 +273,7 @@ static byte @NotNull [] codeDate(@NotNull Date d) {
 
 //region Decoding
 static char decodeChar(byte[] bin, int start) {
-    int c = binToInt(bin, start);
+    int c = Binary.binaryToInt(bin, start, false);
     return (char) c;
 }
 
@@ -279,7 +281,7 @@ static char decodeChar(byte[] bin, int start) {
 static int @NotNull [] decodeIntArray(byte[] bin, int start, int sz) {
     int[] ins = new int[sz];
     for (int i = 0, j = start; i < sz; i = i + 1, j = j + 4) {
-        ins[i] = binToInt(bin, j);
+        ins[i] = Binary.binaryToInt(bin, j, false);
     }
     return ins;
 }
@@ -288,7 +290,7 @@ static int @NotNull [] decodeIntArray(byte[] bin, int start, int sz) {
 static long @NotNull [] decodeLongArray(byte[] bin, int start, int sz) {
     long[] ls = new long[sz];
     for (int i = 0, j = start; i < sz; i = i + 1, j = j + 8) {
-        ls[i] = binToLong(bin, j);
+        ls[i] = Binary.binaryToLong(bin, j, false);
     }
     return ls;
 }
@@ -303,16 +305,16 @@ static double @NotNull [] decodeDoubleArray(byte[] bin, int start, int sz) {
 
 @Contract("_, _ -> new")
 static @NotNull Time decodeTime(byte[] bin, int start) {
-    long second = binToLong(bin, start + 1);
-    int nanosecond = binToInt(bin, start + 9);
+    long second = Binary.binaryToLong(bin, start + 1, false);
+    int nanosecond = Binary.binaryToInt(bin, start + 9, false);
     return new Time(second, nanosecond);
 }
 
 @Contract("_, _ -> new")
 static @NotNull Date decodeDate(byte[] bin, int start) {
-    int year = binToInt(bin, start + 1);
-    int nanosecond = binToInt(bin, start + 11);
-    int offset = binToInt(bin, start + 15);
+    int year = Binary.binaryToInt(bin, start + 1, false);
+    int nanosecond = Binary.binaryToInt(bin, start + 11, false);
+    int offset = Binary.binaryToInt(bin, start + 15, false);
     return new Date(year, bin[start + 5], bin[start + 6], bin[start + 8], bin[start + 9],
                     bin[start + 10], nanosecond, offset);
 }
@@ -340,12 +342,12 @@ static class Decoding {
             }
             case Label.INT -> {
                 pos = pos + 1;
-                datum = binToInt(bin, pos);
+                datum = Binary.binaryToInt(bin, pos, false);
                 pos = pos + 4;
             }
             case Label.LONG -> {
                 pos = pos + 1;
-                datum = binToLong(bin, pos);
+                datum = Binary.binaryToLong(bin, pos, false);
                 pos = pos + 8;
             }
             case Label.DOUBLE -> {
@@ -369,21 +371,21 @@ static class Decoding {
             }
             case Label.INT_ARR -> {
                 pos = pos + 1;
-                int sz = binToInt(bin, pos);
+                int sz = Binary.binaryToInt(bin, pos, false);
                 pos = pos + 4;
                 datum = decodeIntArray(bin, pos, sz);
                 pos = pos + sz * 4;
             }
             case Label.LONG_ARR -> {
                 pos = pos + 1;
-                int sz = binToInt(bin, pos);
+                int sz = Binary.binaryToInt(bin, pos, false);
                 pos = pos + 4;
                 datum = decodeLongArray(bin, pos, sz);
                 pos = pos + sz * 8;
             }
             case Label.DOUBLE_ARR -> {
                 pos = pos + 1;
-                int sz = binToInt(bin, pos);
+                int sz = Binary.binaryToInt(bin, pos, false);
                 pos = pos + 4;
                 datum = decodeDoubleArray(bin, pos, sz);
                 pos = pos + sz * 8;
@@ -409,7 +411,7 @@ static class Decoding {
             }
             case Label.FEW -> {
                 pos = pos + 1;
-                int sz = binToInt(bin, pos);
+                int sz = Binary.binaryToInt(bin, pos, false);
                 pos = pos + 4;
                 datum = makeFew(sz, 0);
                 for (int i = 0; i < sz; i = i + 1) {

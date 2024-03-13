@@ -5,7 +5,7 @@ import share.utility.RBTree;
 
 public class Symbol {
 
-static RBTree catalog = new RBTree();
+static final RBTree catalog = new RBTree();
 
 final int identifier;
 

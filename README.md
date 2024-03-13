@@ -1,10 +1,10 @@
 ## List and Vector
 
 In the Scheme programming language, various high-level data structures, including stacks, heaps, and
-trees, can be easily constructed using list, vector, and other primitive data types. Within my
-functional language project, implemented in Java, a specific subproject—Reduce—focuses on the
+trees, can be easily constructed via using list or vector contains primitive data types. Within my
+functional language project, implemented in Java, a specific subproject Reduce that focuses on the
 implementation of list and vector. To avoid naming conflicts, the term "lot" is used for list,
-and "few" is used for vector. I have implemented a class `Pair` for list, utilizing the primitive
+and "few" is used for vector. I made some classes `Pair` for list, utilizing the primitive
 array type `Object[]` for vector. The code is capable of detecting and correctly printing circular
 list and vector. Moreover, it facilitates comparison to ascertain the equivalence of the contents
 of two circular structures.

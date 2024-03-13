@@ -3,7 +3,7 @@ package share.progressive;
 
 class FewCyc extends Fer {
 
-Object[] array;
+final Object[] array;
 final int count;
 
 FewCyc(Object[] array, int count) {
