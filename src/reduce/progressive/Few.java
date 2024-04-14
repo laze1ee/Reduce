@@ -1,0 +1,53 @@
+package reduce.progressive;
+
+import org.jetbrains.annotations.NotNull;
+
+import static reduce.progressive.Pr.isNull;
+
+
+public class Few extends Fer {
+
+final Object[] array;
+
+public Few(Object @NotNull ... args) {
+    this.array = args;
+}
+
+
+@Override
+public String toString() {
+    Lot cyc_data = Cycle.detect(this);
+    if (isNull(cyc_data)) {
+        return String.format("#(%s)", Aid.consArray(array, array.length));
+    } else {
+        Object cycle = Cycle.label(this, cyc_data);
+        return cycle.toString();
+    }
+}
+
+@Override
+public boolean equals(Object datum) {
+    if (datum instanceof Few fw) {
+        Lot c1 = Cycle.detect(this);
+        Lot c2 = Cycle.detect(fw);
+        if (isNull(c1) && isNull(c2) &&
+            array.length == fw.array.length) {
+            return Aid.objectArrayEqual(array, fw.array);
+        } else if (!isNull(c1) && !isNull(c2) &&
+                   array.length == fw.array.length) {
+            Object o1 = Cycle.label(this, c1);
+            Object o2 = Cycle.label(fw, c2);
+            return o1.equals(o2);
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
+
+public Object[] toRaw() {
+    return array;
+}
+}

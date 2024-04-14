@@ -1,10 +1,10 @@
-module lazelee.Reduce {
+module laze1ee {
     requires org.jetbrains.annotations;
     requires java.management;
 
-    exports share.binary;
-    exports share.datetime;
-    exports share.progressive;
-    exports share.refmethod;
-    exports share.utility;
+    exports reduce.binary;
+    exports reduce.datetime;
+    exports reduce.progressive;
+    exports reduce.refmethod;
+    exports reduce.utility;
 }
