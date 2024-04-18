@@ -13,7 +13,7 @@ import java.util.Arrays;
 import static reduce.progressive.Pr.*;
 
 
-class Aid {
+class Mate {
 
 //region Share
 static byte @NotNull [] integerToBinary(long n, int length, boolean little_endian) {
@@ -427,7 +427,7 @@ static class Decoding {
                 datum = decodeDate(bin, pos);
                 pos = pos + 19;
             }
-            default -> throw new RuntimeException(String.format(Shop.UNMATCHED, bin[pos]));
+            default -> throw new RuntimeException(String.format(Msg.UNMATCHED, bin[pos]));
         }
         return datum;
     }

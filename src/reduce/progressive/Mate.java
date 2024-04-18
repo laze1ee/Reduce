@@ -11,7 +11,7 @@ import java.util.Arrays;
 import static reduce.progressive.Pr.*;
 
 
-class Aid {
+class Mate {
 
 //region Lot
 static Lot appending(Lot lt1, Lot lt2) {
@@ -243,7 +243,7 @@ static boolean arrayEqual(Object arr1, Object arr2) {
         int r = Arrays.compare(ds1, ds2);
         return r == 0;
     } else {
-        throw new RuntimeException(String.format(Shop.UNSUPPORTED_COMPARE, arr1, arr2));
+        throw new RuntimeException(String.format(Msg.UNSUPPORTED_COMPARE, arr1, arr2));
     }
 }
 
@@ -286,7 +286,7 @@ static boolean arrayLess(Object arr1, Object arr2) {
         int r = Arrays.compare(ds1, ds2);
         return r < 0;
     } else {
-        throw new RuntimeException(String.format(Shop.UNSUPPORTED_COMPARE, arr1, arr2));
+        throw new RuntimeException(String.format(Msg.UNSUPPORTED_COMPARE, arr1, arr2));
     }
 }
 

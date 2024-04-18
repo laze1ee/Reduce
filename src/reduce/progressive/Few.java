@@ -18,7 +18,7 @@ public Few(Object @NotNull ... args) {
 public String toString() {
     Lot cyc_data = Cycle.detect(this);
     if (isNull(cyc_data)) {
-        return String.format("#(%s)", Aid.consArray(array, array.length));
+        return String.format("#(%s)", Mate.consArray(array, array.length));
     } else {
         Object cycle = Cycle.label(this, cyc_data);
         return cycle.toString();
@@ -32,7 +32,7 @@ public boolean equals(Object datum) {
         Lot c2 = Cycle.detect(fw);
         if (isNull(c1) && isNull(c2) &&
             array.length == fw.array.length) {
-            return Aid.objectArrayEqual(array, fw.array);
+            return Mate.objectArrayEqual(array, fw.array);
         } else if (!isNull(c1) && !isNull(c2) &&
                    array.length == fw.array.length) {
             Object o1 = Cycle.label(this, c1);

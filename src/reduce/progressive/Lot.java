@@ -32,7 +32,7 @@ public String toString() {
         Lot cycle = Cycle.detect(this);
         if (isNull(cycle)) {
             PairOn moo = (PairOn) pair;
-            PairHead head = new PairHead(moo.data, Aid.isolate(moo.next));
+            PairHead head = new PairHead(moo.data, Mate.isolate(moo.next));
             return head.toString();
         } else {
             Object cyc_pair = Cycle.label(this, cycle);
@@ -48,8 +48,8 @@ public boolean equals(Object datum) {
         Lot c2 = Cycle.detect(lt);
         if (isNull(c1) && isNull(c2) &&
             length(this) == length(lt)) {
-            Pair p1 = Aid.isolate(pair);
-            Pair p2 = Aid.isolate(lt.pair);
+            Pair p1 = Mate.isolate(pair);
+            Pair p2 = Mate.isolate(lt.pair);
             return p1.equals(p2);
         } else if (!isNull(c1) && !isNull(c2)) {
             Object o1 = Cycle.label(this, c1);

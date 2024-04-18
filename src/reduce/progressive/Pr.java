@@ -54,7 +54,7 @@ public static Object fewRef(Few fw, int index) {
     if (0 <= index && index < length(fw)) {
         return fw.array[index];
     } else {
-        throw new RuntimeException(String.format(Shop.FEW_INDEX_OUT, index, fw));
+        throw new RuntimeException(String.format(Msg.FEW_INDEX_OUT, index, fw));
     }
 }
 
@@ -89,7 +89,7 @@ public static int length(@NotNull Few fw) {
 
 public static Object car(Lot lt) {
     if (isNull(lt)) {
-        throw new RuntimeException(Shop.LOT_END);
+        throw new RuntimeException(Msg.LOT_END);
     } else {
         return ((PairOn) lt.pair).data;
     }
@@ -98,7 +98,7 @@ public static Object car(Lot lt) {
 @Contract("_ -> new")
 public static @NotNull Lot cdr(Lot lt) {
     if (isNull(lt)) {
-        throw new RuntimeException(Shop.LOT_END);
+        throw new RuntimeException(Msg.LOT_END);
     } else {
         return new Lot(((PairOn) lt.pair).next);
     }
@@ -119,7 +119,7 @@ public static Object cadr(Lot lt) {
 
 public static int length(@NotNull Lot lt) {
     if (lt.isCircularInBreadth()) {
-        throw new RuntimeException(String.format(Shop.CYC_BREADTH, lt));
+        throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
     } else {
         int n = 0;
         while (!isNull(lt)) {
@@ -139,7 +139,7 @@ public static Object lotRef(Lot lt, int index) {
         }
         return car(lt);
     } else {
-        throw new RuntimeException(String.format(Shop.LOT_INDEX_OUT, index, lt));
+        throw new RuntimeException(String.format(Msg.LOT_INDEX_OUT, index, lt));
     }
 }
 
@@ -166,7 +166,7 @@ public static void fewSet(Few fw, int index, Object value) {
     if (0 <= index && index < length(fw)) {
         fw.array[index] = value;
     } else {
-        throw new RuntimeException(String.format(Shop.FEW_INDEX_OUT, index, fw));
+        throw new RuntimeException(String.format(Msg.FEW_INDEX_OUT, index, fw));
     }
 }
 
@@ -200,7 +200,7 @@ public static void fewFill(@NotNull Few fw, Object datum) {
 
 public static void setCar(Lot lt, Object datum) {
     if (isNull(lt)) {
-        throw new RuntimeException(Shop.LOT_END);
+        throw new RuntimeException(Msg.LOT_END);
     } else {
         ((PairOn) lt.pair).data = datum;
     }
@@ -208,7 +208,7 @@ public static void setCar(Lot lt, Object datum) {
 
 public static void setCdr(Lot lt1, Lot lt2) {
     if (isNull(lt1)) {
-        throw new RuntimeException(Shop.LOT_END);
+        throw new RuntimeException(Msg.LOT_END);
     } else {
         ((PairOn) lt1.pair).next = lt2.pair;
     }
@@ -224,9 +224,9 @@ public static @NotNull Lot cons(Object datum, @NotNull Lot lt) {
 
 public static Lot append(Lot lt1, Lot lt2) {
     if (lt1.isCircularInBreadth()) {
-        throw new RuntimeException(String.format(Shop.CYC_BREADTH, lt1));
+        throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt1));
     } else {
-        return Aid.appending(lt1, lt2);
+        return Mate.appending(lt1, lt2);
     }
 }
 //endregion
@@ -262,18 +262,18 @@ public static Lot reverse(Lot lt) {
 public static Lot lotHead(Lot lt, int index) {
     if (lt.isCircularInBreadth() ||
         (0 <= index && index <= length(lt))) {
-        return Aid.heading(lt, index);
+        return Mate.heading(lt, index);
     } else {
-        throw new RuntimeException(String.format(Shop.LOT_INDEX_OUT, index, lt));
+        throw new RuntimeException(String.format(Msg.LOT_INDEX_OUT, index, lt));
     }
 }
 
 public static Lot lotTail(Lot lt, int index) {
     if (lt.isCircularInBreadth() ||
         (0 <= index && index <= length(lt))) {
-        return Aid.tailing(lt, index);
+        return Mate.tailing(lt, index);
     } else {
-        throw new RuntimeException(String.format(Shop.LOT_INDEX_OUT, index, lt));
+        throw new RuntimeException(String.format(Msg.LOT_INDEX_OUT, index, lt));
     }
 }
 
@@ -281,9 +281,9 @@ public static Lot copy(Lot lt) {
     if (isNull(lt)) {
         return lot();
     } else if (lt.isCircularInBreadth()) {
-        throw new RuntimeException(String.format(Shop.CYC_BREADTH, lt));
+        throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
     } else {
-        return Aid.copying(lt);
+        return Mate.copying(lt);
     }
 }
 //endregion
@@ -292,7 +292,7 @@ public static Lot copy(Lot lt) {
 //region Transformer
 public static @NotNull Few lotToFew(Lot lt) {
     if (lt.isCircularInBreadth()) {
-        throw new RuntimeException(String.format(Shop.CYC_BREADTH, lt));
+        throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
     } else {
         Lot moo = lt;
         int n = length(moo);
@@ -318,7 +318,7 @@ public static @NotNull Lot fewToLot(@NotNull Few fw) {
 @Contract("_, _ -> new")
 public static @NotNull Lot filter(Has pred, Lot lt) {
     if (lt.isCircularInBreadth()) {
-        throw new RuntimeException(String.format(Shop.CYC_BREADTH, lt));
+        throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
     } else {
         Pair pair = new PairTail();
         Lot moo = lt;
@@ -335,7 +335,7 @@ public static @NotNull Lot filter(Has pred, Lot lt) {
 @Contract("_, _ -> new")
 public static @NotNull Lot map(Do func, Lot lt) {
     if (lt.isCircularInBreadth()) {
-        throw new RuntimeException(String.format(Shop.CYC_BREADTH, lt));
+        throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
     } else {
         Pair pair = new PairTail();
         Lot moo = lt;
@@ -371,11 +371,11 @@ public static String stringOf(Object datum) {
             return "#f";
         }
     } else if (datum instanceof Character c) {
-        return Aid.stringOfChar(c);
+        return Mate.stringOfChar(c);
     } else if (datum instanceof String str) {
-        return Aid.originalString(str);
+        return Mate.originalString(str);
     } else if (datum.getClass().isArray()) {
-        return Aid.stringOfArray(datum);
+        return Mate.stringOfArray(datum);
     } else {
         return datum.toString();
     }
@@ -390,10 +390,10 @@ public static @NotNull String hexOfBytes(byte @NotNull [] bs) {
         str.append("#u8(");
         n = n - 1;
         for (int i = 0; i < n; i = i + 1) {
-            str.append(Aid.stringOfHex(bs[i]));
+            str.append(Mate.stringOfHex(bs[i]));
             str.append(" ");
         }
-        str.append(Aid.stringOfHex(bs[n]));
+        str.append(Mate.stringOfHex(bs[n]));
         str.append(")");
         return str.toString();
     }
@@ -410,7 +410,7 @@ public static boolean eq(Object o1, Object o2) {
         return (b1 && b2) || !(b1 || b2);
     } else if (o1 instanceof Number n1 &&
                o2 instanceof Number n2) {
-        return Aid.numberEq(n1, n2);
+        return Mate.numberEq(n1, n2);
     } else if (o1 instanceof Character c1 &&
                o2 instanceof Character c2) {
         return ((char) c1) == c2;
@@ -433,7 +433,7 @@ public static boolean equal(Object o1, Object o2) {
         return true;
     } else if (o1.getClass().isArray() &&
                o2.getClass().isArray()) {
-        return Aid.arrayEqual(o1, o2);
+        return Mate.arrayEqual(o1, o2);
     } else {
         return o1.equals(o2);
     }
@@ -445,19 +445,19 @@ public static boolean less(Object o1, Object o2) {
         return sym1.identifier < sym2.identifier;
     } else if (o1 instanceof Number n1 &&
                o2 instanceof Number n2) {
-        return Aid.numberLess(n1, n2);
+        return Mate.numberLess(n1, n2);
     } else if (o1 instanceof String s1 &&
                o2 instanceof String s2) {
         int m = s1.compareTo(s2);
         return m < 0;
     } else if (o1.getClass().isArray() &&
                o2.getClass().isArray()) {
-        return Aid.arrayLess(o1, o2);
+        return Mate.arrayLess(o1, o2);
     } else if (o1 instanceof Time t1 &&
                o2 instanceof Time t2) {
-        return Aid.timeLessThan(t1, t2);
+        return Mate.timeLessThan(t1, t2);
     } else {
-        throw new RuntimeException(String.format(Shop.UNDEFINED_COMPARE, o1, o2));
+        throw new RuntimeException(String.format(Msg.UNDEFINED_COMPARE, o1, o2));
     }
 }
 

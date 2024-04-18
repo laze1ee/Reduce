@@ -12,17 +12,17 @@ import java.time.ZonedDateTime;
 public record Time(long second, int nanosecond) {
 
 public Time(long second, int nanosecond) {
-    if (nanosecond <= Aid.NEG_NANO ||
-        Aid.POS_NANO <= nanosecond) {
+    if (nanosecond <= Mate.NEG_NANO ||
+        Mate.POS_NANO <= nanosecond) {
         throw new RuntimeException
-              (String.format(Shop.OUT_RANGE_NANO, nanosecond, Aid.NEG_NANO + 1, Aid.POS_NANO - 1));
+              (String.format(Msg.OUT_RANGE_NANO, nanosecond, Mate.NEG_NANO + 1, Mate.POS_NANO - 1));
     }
     if (second > 0 && nanosecond < 0) {
         this.second = second - 1;
-        this.nanosecond = Aid.POS_NANO + nanosecond;
+        this.nanosecond = Mate.POS_NANO + nanosecond;
     } else if (second < 0 && nanosecond > 0) {
         this.second = second + 1;
-        this.nanosecond = nanosecond - Aid.POS_NANO;
+        this.nanosecond = nanosecond - Mate.POS_NANO;
     } else {
         this.second = second;
         this.nanosecond = nanosecond;
@@ -51,12 +51,12 @@ public @NotNull Time neg() {
 }
 
 public @NotNull Date toDate(int offset) {
-    if (Aid.checkTime(this)) {
-        return Aid.timeToDate(this, offset);
+    if (Mate.checkTime(this)) {
+        return Mate.timeToDate(this, offset);
     } else {
         throw new IllegalArgumentException(
         String.format("the time %s converting to date is not in range [%d %d]",
-                      this, Aid.UTC_MIN, Aid.UTC_MAX));
+                      this, Mate.UTC_MIN, Mate.UTC_MAX));
     }
 }
 
@@ -70,14 +70,14 @@ public static @NotNull Time current(TimeType type) {
         return new Time(second, nanosecond);
     } else if (type == TimeType.Monotonic) {
         long stamp = System.nanoTime();
-        long second = stamp / Aid.POS_NANO;
-        int nanosecond = (int) (stamp % Aid.POS_NANO);
+        long second = stamp / Mate.POS_NANO;
+        int nanosecond = (int) (stamp % Mate.POS_NANO);
         return new Time(second, nanosecond);
     } else {
         ThreadMXBean bean = ManagementFactory.getThreadMXBean();
         long stamp = bean.getCurrentThreadCpuTime();
-        long second = stamp / Aid.POS_NANO;
-        int nanosecond = (int) (stamp % Aid.POS_NANO);
+        long second = stamp / Mate.POS_NANO;
+        int nanosecond = (int) (stamp % Mate.POS_NANO);
         return new Time(second, nanosecond);
     }
 }
@@ -91,10 +91,10 @@ public static @NotNull Time current() {
 public static @NotNull Time add(@NotNull Time t1, @NotNull Time t2) {
     long second = t1.second + t2.second;
     int nanosecond = t1.nanosecond + t2.nanosecond;
-    if (nanosecond >= Aid.POS_NANO) {
-        return new Time(second + 1, nanosecond - Aid.POS_NANO);
-    } else if (nanosecond <= Aid.NEG_NANO) {
-        return new Time(second - 1, nanosecond + Aid.POS_NANO);
+    if (nanosecond >= Mate.POS_NANO) {
+        return new Time(second + 1, nanosecond - Mate.POS_NANO);
+    } else if (nanosecond <= Mate.NEG_NANO) {
+        return new Time(second - 1, nanosecond + Mate.POS_NANO);
     } else {
         return new Time(second, nanosecond);
     }

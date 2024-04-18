@@ -4,7 +4,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 
-class Aid {
+class Mate {
 
 static final int POS_NANO = 1_000_000_000;
 static final int NEG_NANO = -1_000_000_000;

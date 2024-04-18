@@ -18,13 +18,13 @@ final int identifier;
 public Symbol(@NotNull String str) {
     if (str.isEmpty() ||
         str.isBlank()) {
-        throw new RuntimeException(String.format(Shop.INVALID_STRING, stringOf(str)));
+        throw new RuntimeException(String.format(Msg.INVALID_STRING, stringOf(str)));
     } else {
         int checksum = Ut.fletcher32(str.getBytes(StandardCharsets.UTF_8));
         if (RBTree.isPresent(Symbol.catalog, checksum)) {
             String str2 = (String) RBTree.ref(Symbol.catalog, checksum);
             if (!str.equals(str2)) {
-                throw new RuntimeException(String.format(Shop.JACKPOT, str, str2));
+                throw new RuntimeException(String.format(Msg.JACKPOT, str, str2));
             }
         } else {
             RBTree.insert(Symbol.catalog, checksum, str);
@@ -61,14 +61,14 @@ public String display() {
         StringBuilder str = new StringBuilder();
         int sz = name.length();
         char c = name.charAt(0);
-        if (Character.isDigit(c) || Aid.isCharPresent(c, Aid.occupant1) || Aid.isScalar(c)) {
+        if (Character.isDigit(c) || Mate.isCharPresent(c, Mate.occupant1) || Mate.isScalar(c)) {
             str.append(String.format("\\u%X;", (int) c));
         } else {
             str.append(c);
         }
         for (int i = 1; i < sz; i = i + 1) {
             c = name.charAt(i);
-            if (Aid.isScalar(c)) {
+            if (Mate.isScalar(c)) {
                 str.append(String.format("\\u%X;", (int) c));
             } else {
                 str.append(c);
