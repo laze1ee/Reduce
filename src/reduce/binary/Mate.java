@@ -158,13 +158,13 @@ static byte @NotNull [] codeDoubleArray(double @NotNull [] ds) {
 }
 
 
-static byte @NotNull [] codeLot(Lot lt) {
-    if (isNull(lt)) {
+static byte @NotNull [] codeLot(@NotNull Lot lt) {
+    if (lt.isEmpty()) {
         return new byte[]{Label.LOT_BEGIN, Label.LOT_END};
     } else {
         Lot moo = lot();
         Lot xoo = lt;
-        while (!isNull(xoo)) {
+        while (!xoo.isEmpty()) {
             moo = cons(Binary.codingDatum(car(xoo)), moo);
             xoo = cdr(xoo);
         }
@@ -181,7 +181,7 @@ static byte @NotNull [] connectLot(Lot lt_bytes) {
 
     int i = 1;
     Lot moo = lt_bytes;
-    while (!isNull(cdr(moo))) {
+    while (!cdr(moo).isEmpty()) {
         byte[] bs = (byte[]) car(moo);
         System.arraycopy(bs, 0, bin, i, bs.length);
         i = i + bs.length;
@@ -197,7 +197,7 @@ static byte @NotNull [] connectLot(Lot lt_bytes) {
 static int sizeOf(Lot lt_bytes) {
     Lot moo = lt_bytes;
     int n = 0;
-    while (!isNull(moo)) {
+    while (!moo.isEmpty()) {
         byte[] bs = (byte[]) car(moo);
         n = n + bs.length;
         moo = cdr(moo);
@@ -231,7 +231,7 @@ static byte @NotNull [] connectFew(Lot lt_bytes) {
 
     int i = 5;
     Lot moo = lt_bytes;
-    while (!isNull(moo)) {
+    while (!moo.isEmpty()) {
         byte[] bs = (byte[]) car(moo);
         System.arraycopy(bs, 0, bin, i, bs.length);
         i = i + bs.length;

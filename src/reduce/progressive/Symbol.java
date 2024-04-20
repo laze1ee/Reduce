@@ -2,7 +2,7 @@ package reduce.progressive;
 
 import org.jetbrains.annotations.NotNull;
 import reduce.utility.RBTree;
-import reduce.utility.Ut;
+import reduce.utility.CheckSum;
 
 import java.nio.charset.StandardCharsets;
 
@@ -20,7 +20,7 @@ public Symbol(@NotNull String str) {
         str.isBlank()) {
         throw new RuntimeException(String.format(Msg.INVALID_STRING, stringOf(str)));
     } else {
-        int checksum = Ut.fletcher32(str.getBytes(StandardCharsets.UTF_8));
+        int checksum = CheckSum.fletcher32(str.getBytes(StandardCharsets.UTF_8));
         if (RBTree.isPresent(Symbol.catalog, checksum)) {
             String str2 = (String) RBTree.ref(Symbol.catalog, checksum);
             if (!str.equals(str2)) {
@@ -48,10 +48,6 @@ public boolean equals(Object datum) {
     }
 }
 
-
-public int getIdentifier() {
-    return identifier;
-}
 
 public String display() {
     String name = toString();

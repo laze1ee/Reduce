@@ -3,7 +3,6 @@ package reduce.progressive;
 import org.jetbrains.annotations.NotNull;
 
 import static reduce.progressive.Pr.*;
-import static reduce.utility.Ut.isBelong;
 
 
 public class Lot {
@@ -30,7 +29,7 @@ public String toString() {
         return "()";
     } else {
         Lot cycle = Cycle.detect(this);
-        if (isNull(cycle)) {
+        if (cycle.isEmpty()) {
             PairOn moo = (PairOn) pair;
             PairHead head = new PairHead(moo.data, Mate.isolate(moo.next));
             return head.toString();
@@ -46,12 +45,12 @@ public boolean equals(Object datum) {
     if (datum instanceof Lot lt) {
         Lot c1 = Cycle.detect(this);
         Lot c2 = Cycle.detect(lt);
-        if (isNull(c1) && isNull(c2) &&
+        if (c1.isEmpty() && c2.isEmpty() &&
             length(this) == length(lt)) {
             Pair p1 = Mate.isolate(pair);
             Pair p2 = Mate.isolate(lt.pair);
             return p1.equals(p2);
-        } else if (!isNull(c1) && !isNull(c2)) {
+        } else if (!c1.isEmpty() && !c2.isEmpty()) {
             Object o1 = Cycle.label(this, c1);
             Object o2 = Cycle.label(lt, c2);
             return o1.equals(o2);
@@ -63,6 +62,9 @@ public boolean equals(Object datum) {
     }
 }
 
+public boolean isEmpty() {
+    return pair instanceof PairTail;
+}
 
 public boolean isCircularInBreadth() {
     Pair moo_pair = pair;

@@ -2,8 +2,6 @@ package reduce.progressive;
 
 import org.jetbrains.annotations.NotNull;
 
-import static reduce.progressive.Pr.isNull;
-
 
 public class Few extends Fer {
 
@@ -17,7 +15,7 @@ public Few(Object @NotNull ... args) {
 @Override
 public String toString() {
     Lot cyc_data = Cycle.detect(this);
-    if (isNull(cyc_data)) {
+    if (cyc_data.isEmpty()) {
         return String.format("#(%s)", Mate.consArray(array, array.length));
     } else {
         Object cycle = Cycle.label(this, cyc_data);
@@ -30,10 +28,10 @@ public boolean equals(Object datum) {
     if (datum instanceof Few fw) {
         Lot c1 = Cycle.detect(this);
         Lot c2 = Cycle.detect(fw);
-        if (isNull(c1) && isNull(c2) &&
+        if (c1.isEmpty() && c2.isEmpty() &&
             array.length == fw.array.length) {
             return Mate.objectArrayEqual(array, fw.array);
-        } else if (!isNull(c1) && !isNull(c2) &&
+        } else if (!c1.isEmpty() && !c2.isEmpty() &&
                    array.length == fw.array.length) {
             Object o1 = Cycle.label(this, c1);
             Object o2 = Cycle.label(fw, c2);

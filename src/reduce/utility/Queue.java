@@ -35,8 +35,8 @@ public boolean equals(Object datum) {
 
 
 public boolean isEmpty() {
-    return isNull((Lot) ref0(pipe)) &&
-           isNull((Lot) ref1(pipe));
+    return ((Lot) ref0(pipe)).isEmpty() &&
+           ((Lot) ref1(pipe)).isEmpty();
 }
 
 public static void en(@NotNull Queue queue, Object datum) {
@@ -48,7 +48,7 @@ public static void en(@NotNull Queue queue, Object datum) {
 public static Object de(@NotNull Queue queue) {
     if (queue.isEmpty()) {
         throw new RuntimeException(Msg.EMPTY_QUEUE);
-    } else if (isNull((Lot) ref0(queue.pipe))) {
+    } else if (((Lot) ref0(queue.pipe)).isEmpty()) {
         Lot en_lot = (Lot) ref1(queue.pipe);
         en_lot = reverse(en_lot);
         set0(queue.pipe, cdr(en_lot));

@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static reduce.progressive.Pr.*;
-import static reduce.utility.Ut.isBelong;
 
 
 class Cycle {
@@ -161,11 +160,11 @@ private static class LabelCycle {
 
     private @Nullable Few _find(Object datum) {
         Lot moo = attached_cycle;
-        while (!isNull(moo) &&
+        while (!moo.isEmpty() &&
                !eq(datum, ref0((Few) car(moo)))) {
             moo = cdr(moo);
         }
-        if (isNull(moo)) {
+        if (moo.isEmpty()) {
             return null;
         } else {
             return (Few) car(moo);

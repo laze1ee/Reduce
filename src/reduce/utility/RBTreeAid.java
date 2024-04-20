@@ -57,7 +57,7 @@ private static void leftRotate(RBTree tree, Lot path) {
     y.left = x;
     x.right = b;
 
-    if (isNull(cdr(path))) {
+    if (cdr(path).isEmpty()) {
         tree.root = y;
     } else {
         RBNode p = (RBNode) cadr(path);
@@ -80,7 +80,7 @@ private static void rightRotate(RBTree tree, Lot path) {
     y.right = x;
     x.left = b;
 
-    if (isNull(cdr(path))) {
+    if (cdr(path).isEmpty()) {
         tree.root = y;
     } else {
         RBNode p = (RBNode) cadr(path);
@@ -228,8 +228,8 @@ private static class DeleteFixer {
         x.color = false;
     }
 
-    private void _aid(Lot path) {
-        if (!isNull(path) && x.isBlack()) {
+    private void _aid(@NotNull Lot path) {
+        if (!path.isEmpty() && x.isBlack()) {
             RBNode p = (RBNode) car(path);
             if (isLeftOf(x, p)) {
                 RBNode s = p.right;

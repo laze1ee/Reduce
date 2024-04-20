@@ -3,7 +3,6 @@ package reduce.progressive;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import reduce.datetime.Time;
-import reduce.utility.Ut;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -14,8 +13,8 @@ import static reduce.progressive.Pr.*;
 class Mate {
 
 //region Lot
-static Lot appending(Lot lt1, Lot lt2) {
-    if (isNull(lt1)) {
+static Lot appending(@NotNull Lot lt1, Lot lt2) {
+    if (lt1.isEmpty()) {
         return lt2;
     } else {
         return cons(car(lt1), appending(cdr(lt1), lt2));
@@ -38,8 +37,8 @@ static Lot tailing(Lot lt, int index) {
     }
 }
 
-static Lot copying(Lot lt) {
-    if (isNull(lt)) {
+static Lot copying(@NotNull Lot lt) {
+    if (lt.isEmpty()) {
         return lot();
     } else {
         return cons(car(lt), copying(cdr(lt)));
@@ -85,7 +84,7 @@ private static final String[] char_name = {"nul", "alarm", "backspace", "tab", "
 private static final char[] HEX_STR = "0123456789ABCDEF".toCharArray();
 
 static String stringOfChar(char c) {
-    int i = Ut.fewIndex(Pr::eq, (int) c, char_code);
+    int i = fewIndex(Pr::eq, (int) c, char_code);
     if (0 <= i) {
         return String.format("#\\%s", char_name[i]);
     } else if (Character.isISOControl(c)) {

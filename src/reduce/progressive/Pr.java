@@ -4,9 +4,11 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import reduce.datetime.Time;
 import reduce.refmethod.Do;
+import reduce.refmethod.Eqv;
 import reduce.refmethod.Has;
 
 import java.util.Arrays;
+import java.util.Random;
 
 
 public class Pr {
@@ -41,15 +43,80 @@ public static @NotNull Few makeFew(int amount) {
 //endregion
 
 
-//region Predicate
-@Contract(pure = true)
-public static boolean isNull(@NotNull Lot lt) {
-    return lt.pair instanceof PairTail;
-}
-//endregion
-
-
 //region Visitor
+public static Object car(@NotNull Lot lt) {
+    if (lt.isEmpty()) {
+        throw new RuntimeException(Msg.LOT_END);
+    } else {
+        return ((PairOn) lt.pair).data;
+    }
+}
+
+@Contract("_ -> new")
+public static @NotNull Lot cdr(@NotNull Lot lt) {
+    if (lt.isEmpty()) {
+        throw new RuntimeException(Msg.LOT_END);
+    } else {
+        return new Lot(((PairOn) lt.pair).next);
+    }
+}
+
+public static Object caar(Lot lt) {
+    return car((Lot) car(lt));
+}
+
+@Contract("_ -> new")
+public static @NotNull Lot cddr(Lot lt) {
+    return cdr(cdr(lt));
+}
+
+public static Object cadr(Lot lt) {
+    return car(cdr(lt));
+}
+
+public static int length(@NotNull Lot lt) {
+    if (lt.isCircularInBreadth()) {
+        throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
+    } else {
+        int n = 0;
+        while (!lt.isEmpty()) {
+            n = n + 1;
+            lt = cdr(lt);
+        }
+        return n;
+    }
+}
+
+public static Object lotRef(Lot lt, int index) {
+    if (0 <= index && index < length(lt)) {
+        int i = index;
+        while (0 < i) {
+            lt = cdr(lt);
+            i = i - 1;
+        }
+        return car(lt);
+    } else {
+        throw new RuntimeException(String.format(Msg.LOT_INDEX_OUT, index, lt));
+    }
+}
+
+public static Object first(Lot lt) {
+    return lotRef(lt, 0);
+}
+
+public static Object second(Lot lt) {
+    return lotRef(lt, 1);
+}
+
+public static Object third(Lot lt) {
+    return lotRef(lt, 2);
+}
+
+public static Object fourth(Lot lt) {
+    return lotRef(lt, 3);
+}
+
+
 public static Object fewRef(Few fw, int index) {
     if (0 <= index && index < length(fw)) {
         return fw.array[index];
@@ -86,82 +153,26 @@ public static Object ref5(Few fw) {
 public static int length(@NotNull Few fw) {
     return fw.array.length;
 }
-
-public static Object car(Lot lt) {
-    if (isNull(lt)) {
-        throw new RuntimeException(Msg.LOT_END);
-    } else {
-        return ((PairOn) lt.pair).data;
-    }
-}
-
-@Contract("_ -> new")
-public static @NotNull Lot cdr(Lot lt) {
-    if (isNull(lt)) {
-        throw new RuntimeException(Msg.LOT_END);
-    } else {
-        return new Lot(((PairOn) lt.pair).next);
-    }
-}
-
-public static Object caar(Lot lt) {
-    return car((Lot) car(lt));
-}
-
-@Contract("_ -> new")
-public static @NotNull Lot cddr(Lot lt) {
-    return cdr(cdr(lt));
-}
-
-public static Object cadr(Lot lt) {
-    return car(cdr(lt));
-}
-
-public static int length(@NotNull Lot lt) {
-    if (lt.isCircularInBreadth()) {
-        throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
-    } else {
-        int n = 0;
-        while (!isNull(lt)) {
-            n = n + 1;
-            lt = cdr(lt);
-        }
-        return n;
-    }
-}
-
-public static Object lotRef(Lot lt, int index) {
-    if (0 <= index && index < length(lt)) {
-        int i = index;
-        while (0 < i) {
-            lt = cdr(lt);
-            i = i - 1;
-        }
-        return car(lt);
-    } else {
-        throw new RuntimeException(String.format(Msg.LOT_INDEX_OUT, index, lt));
-    }
-}
-
-public static Object first(Lot lt) {
-    return lotRef(lt, 0);
-}
-
-public static Object second(Lot lt) {
-    return lotRef(lt, 1);
-}
-
-public static Object third(Lot lt) {
-    return lotRef(lt, 2);
-}
-
-public static Object fourth(Lot lt) {
-    return lotRef(lt, 3);
-}
 //endregion
 
 
 //region Setter
+public static void setCar(@NotNull Lot lt, Object datum) {
+    if (lt.isEmpty()) {
+        throw new RuntimeException(Msg.LOT_END);
+    } else {
+        ((PairOn) lt.pair).data = datum;
+    }
+}
+
+public static void setCdr(@NotNull Lot lt1, Lot lt2) {
+    if (lt1.isEmpty()) {
+        throw new RuntimeException(Msg.LOT_END);
+    } else {
+        ((PairOn) lt1.pair).next = lt2.pair;
+    }
+}
+
 public static void fewSet(Few fw, int index, Object value) {
     if (0 <= index && index < length(fw)) {
         fw.array[index] = value;
@@ -197,22 +208,6 @@ public static void set5(Few fw, Object datum) {
 public static void fewFill(@NotNull Few fw, Object datum) {
     Arrays.fill(fw.array, datum);
 }
-
-public static void setCar(Lot lt, Object datum) {
-    if (isNull(lt)) {
-        throw new RuntimeException(Msg.LOT_END);
-    } else {
-        ((PairOn) lt.pair).data = datum;
-    }
-}
-
-public static void setCdr(Lot lt1, Lot lt2) {
-    if (isNull(lt1)) {
-        throw new RuntimeException(Msg.LOT_END);
-    } else {
-        ((PairOn) lt1.pair).next = lt2.pair;
-    }
-}
 //endregion
 
 
@@ -222,7 +217,7 @@ public static @NotNull Lot cons(Object datum, @NotNull Lot lt) {
     return new Lot(new PairOn(datum, lt.pair));
 }
 
-public static Lot append(Lot lt1, Lot lt2) {
+public static Lot append(@NotNull Lot lt1, Lot lt2) {
     if (lt1.isCircularInBreadth()) {
         throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt1));
     } else {
@@ -233,6 +228,50 @@ public static Lot append(Lot lt1, Lot lt2) {
 
 
 //region Copy
+public static @NotNull Lot reverse(@NotNull Lot lt) {
+    if (lt.isEmpty()) {
+        return lt;
+    } else if (lt.isCircularInBreadth()) {
+        throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
+    } else {
+        Pair pair = new PairTail();
+        Lot moo = lt;
+        while (!moo.isEmpty()) {
+            pair = new PairOn(car(moo), pair);
+            moo = cdr(moo);
+        }
+        return new Lot(pair);
+    }
+}
+
+public static Lot lotHead(@NotNull Lot lt, int index) {
+    if (lt.isCircularInBreadth() ||
+        (0 <= index && index <= length(lt))) {
+        return Mate.heading(lt, index);
+    } else {
+        throw new RuntimeException(String.format(Msg.LOT_INDEX_OUT, index, lt));
+    }
+}
+
+public static Lot lotTail(@NotNull Lot lt, int index) {
+    if (lt.isCircularInBreadth() ||
+        (0 <= index && index <= length(lt))) {
+        return Mate.tailing(lt, index);
+    } else {
+        throw new RuntimeException(String.format(Msg.LOT_INDEX_OUT, index, lt));
+    }
+}
+
+public static Lot copy(@NotNull Lot lt) {
+    if (lt.isEmpty()) {
+        return lot();
+    } else if (lt.isCircularInBreadth()) {
+        throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
+    } else {
+        return Mate.copying(lt);
+    }
+}
+
 public static void fewCopyInto(@NotNull Few src, int src_pos, @NotNull Few dest,
                                int dest_pos, int amount) {
     System.arraycopy(src.array, src_pos, dest.array, dest_pos, amount);
@@ -244,53 +283,11 @@ public static @NotNull Few copy(@NotNull Few fw) {
     fewCopyInto(fw, 0, moo, 0, n);
     return moo;
 }
-
-public static Lot reverse(Lot lt) {
-    if (isNull(lt)) {
-        return lt;
-    } else {
-        Pair pair = new PairTail();
-        Lot moo = lt;
-        while (!isNull(moo)) {
-            pair = new PairOn(car(moo), pair);
-            moo = cdr(moo);
-        }
-        return new Lot(pair);
-    }
-}
-
-public static Lot lotHead(Lot lt, int index) {
-    if (lt.isCircularInBreadth() ||
-        (0 <= index && index <= length(lt))) {
-        return Mate.heading(lt, index);
-    } else {
-        throw new RuntimeException(String.format(Msg.LOT_INDEX_OUT, index, lt));
-    }
-}
-
-public static Lot lotTail(Lot lt, int index) {
-    if (lt.isCircularInBreadth() ||
-        (0 <= index && index <= length(lt))) {
-        return Mate.tailing(lt, index);
-    } else {
-        throw new RuntimeException(String.format(Msg.LOT_INDEX_OUT, index, lt));
-    }
-}
-
-public static Lot copy(Lot lt) {
-    if (isNull(lt)) {
-        return lot();
-    } else if (lt.isCircularInBreadth()) {
-        throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
-    } else {
-        return Mate.copying(lt);
-    }
-}
 //endregion
 
 
 //region Transformer
-public static @NotNull Few lotToFew(Lot lt) {
+public static @NotNull Few lotToFew(@NotNull Lot lt) {
     if (lt.isCircularInBreadth()) {
         throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
     } else {
@@ -316,13 +313,13 @@ public static @NotNull Lot fewToLot(@NotNull Few fw) {
 }
 
 @Contract("_, _ -> new")
-public static @NotNull Lot filter(Has pred, Lot lt) {
+public static @NotNull Lot filter(Has pred, @NotNull Lot lt) {
     if (lt.isCircularInBreadth()) {
         throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
     } else {
         Pair pair = new PairTail();
         Lot moo = lt;
-        while (!isNull(moo)) {
+        while (!moo.isEmpty()) {
             if (pred.apply(car(moo))) {
                 pair = new PairOn(car(moo), pair);
             }
@@ -333,13 +330,13 @@ public static @NotNull Lot filter(Has pred, Lot lt) {
 }
 
 @Contract("_, _ -> new")
-public static @NotNull Lot map(Do func, Lot lt) {
+public static @NotNull Lot map(Do func, @NotNull Lot lt) {
     if (lt.isCircularInBreadth()) {
         throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
     } else {
         Pair pair = new PairTail();
         Lot moo = lt;
-        while (!isNull(moo)) {
+        while (!moo.isEmpty()) {
             Object datum = func.apply(car(moo));
             pair = new PairOn(datum, pair);
             moo = cdr(moo);
@@ -361,6 +358,21 @@ public static @NotNull Few map(Do func, Few fw) {
 
 
 //region StringOf
+@SuppressWarnings("SpellCheckingInspection")
+private static final char[] CHARS_SET =
+"_-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
+
+public static @NotNull String randomString(int length) {
+    Random rd = new Random();
+    StringBuilder str = new StringBuilder();
+    for (int i = 0; i < length; i = i + 1) {
+        int index = rd.nextInt(CHARS_SET.length);
+        char c = CHARS_SET[index];
+        str.append(c);
+    }
+    return str.toString();
+}
+
 public static String stringOf(Object datum) {
     if (datum == null) {
         return "#<null>";
@@ -463,6 +475,63 @@ public static boolean less(Object o1, Object o2) {
 
 public static boolean greater(Object o1, Object o2) {
     return less(o2, o1);
+}
+//endregion
+
+
+//region Non-Core Function
+public static boolean isBelong(Object datum, Lot lt) {
+    Lot moo = lt;
+    while (!moo.isEmpty() &&
+           !eq(datum, car(moo))) {
+        moo = cdr(moo);
+    }
+    return !moo.isEmpty();
+}
+
+public static boolean isBelong(Eqv pred, Object datum, Lot lt) {
+    Lot moo = lt;
+    while (!moo.isEmpty() &&
+           !pred.apply(datum, car(moo))) {
+        moo = cdr(moo);
+    }
+    return !moo.isEmpty();
+}
+
+public static Lot remove(Object datum, @NotNull Lot lt) {
+    if (lt.isEmpty()) {
+        return lot();
+    } else if (eq(car(lt), datum)) {
+        return cdr(lt);
+    } else {
+        return cons(car(lt), remove(datum, cdr(lt)));
+    }
+}
+
+public static @NotNull Lot removeDup(Lot lt) {
+    Lot moo = lt;
+    Lot xoo = lot();
+    while (!moo.isEmpty()) {
+        if (!isBelong(car(moo), cdr(moo))) {
+            xoo = cons(car(moo), xoo);
+        }
+        moo = cdr(moo);
+    }
+    return reverse(xoo);
+}
+
+public static int fewIndex(Eqv pred, Object datum, Few fw) {
+    int sz = length(fw);
+    int i = 0;
+    while (i < sz &&
+           !pred.apply(datum, fewRef(fw, i))) {
+        i = i + 1;
+    }
+    if (i == sz) {
+        return -1;
+    } else {
+        return i;
+    }
 }
 //endregion
 }
