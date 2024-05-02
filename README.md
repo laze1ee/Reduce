@@ -12,8 +12,7 @@ array type `Object[]` for vector.
 The code is capable of detecting and correctly printing circular list and vector. Moreover, it
 facilitates comparison to ascertain the equivalence of the contents of two circular structures.
 
-All procedures related to lists and vectors are encapsulated within the
-class `reduce.progressive.Pr`.
+All procedures related to list and vector are encapsulated within the class `reduce.progressive.Pr`.
 
 > Symbolic representations will be utilized for illustrative purposes.
 > * `Type-name` denotes a specific type with capitalized initials; for example, Natural represents a
@@ -25,36 +24,36 @@ class `reduce.progressive.Pr`.
 
 ### List
 
-|                                    Scheme |                             Java |
-|------------------------------------------:|---------------------------------:|
-|                 `(list Any ...)` ⇒ `List` |           `lot(Any ...)` ⇒ `Lot` |
-|                `(null? List)` ⇒ `Boolean` |        `isNull(Lot)` ⇒ `Boolean` |
-|               `(length List)` ⇒ `Natural` |        `length(Lot)` ⇒ `Natural` |
-|                      `(car Pair)` ⇒ `Any` |               `car(Lot)` ⇒ `Any` |
-|                      `(cdr Pair)` ⇒ `Any` |              `cdr(Lot)` ⇒ `List` |
-|         `(list-ref List Natural)` ⇒ `Any` |   `lotRef(Lot, Natural)` ⇒ `Any` |
-|          `(set-car! List Any)` ⇒ `<void>` |    `setCar(Lot, Any)` ⇒ `<void>` |
-|          `(set-cdr! Pair Any)` ⇒ `<void>` |    `setCdr(Lot, Lot)` ⇒ `<void>` |
-|                 `(cons Any Any)` ⇒ `Pair` |         `cons(Any, Lot)` ⇒ `Lot` |
-|             `(append List Pair)` ⇒ `Pair` |       `append(Lot, Lot)` ⇒ `Lot` |
-|                 `(reverse List)` ⇒ `List` |           `reverse(Lot)` ⇒ `Lot` |
-|       `(list-head List Natural)` ⇒ `List` |  `lotHead(Lot, Natural)` ⇒ `Lot` |
-|       `(list-tail List Natural)` ⇒ `List` |  `lotTail(Lot, Natural)` ⇒ `Lot` |
-|               `(list-copy List)` ⇒ `List` |              `copy(Lot)` ⇒ `Lot` |
-|  `(map Procedure List List ...)` ⇒ `List` |         `lotMap(Do Lot)` ⇒ `Lot` |
-|        `(filter Procedure List)` ⇒ `List` |        `filter(Has Lot)` ⇒ `Lot` |
+|                                    Scheme |                            Java |
+|------------------------------------------:|--------------------------------:|
+|                 `(list Any ...)` ⇒ `List` |      `new Lot(Any ...)` ⇒ `Lot` |
+|                `(null? List)` ⇒ `Boolean` |     `Lot.isEmpty()` ⇒ `Boolean` |
+|               `(length List)` ⇒ `Natural` |       `length(Lot)` ⇒ `Natural` |
+|                      `(car Pair)` ⇒ `Any` |              `car(Lot)` ⇒ `Any` |
+|                      `(cdr Pair)` ⇒ `Any` |             `cdr(Lot)` ⇒ `List` |
+|         `(list-ref List Natural)` ⇒ `Any` |  `lotRef(Lot, Natural)` ⇒ `Any` |
+|          `(set-car! List Any)` ⇒ `<void>` |   `setCar(Lot, Any)` ⇒ `<void>` |
+|          `(set-cdr! Pair Any)` ⇒ `<void>` |   `setCdr(Lot, Lot)` ⇒ `<void>` |
+|                 `(cons Any Any)` ⇒ `Pair` |        `cons(Any, Lot)` ⇒ `Lot` |
+|             `(append List Pair)` ⇒ `Pair` |      `append(Lot, Lot)` ⇒ `Lot` |
+|                 `(reverse List)` ⇒ `List` |          `reverse(Lot)` ⇒ `Lot` |
+|       `(list-head List Natural)` ⇒ `List` | `lotHead(Lot, Natural)` ⇒ `Lot` |
+|       `(list-tail List Natural)` ⇒ `List` | `lotTail(Lot, Natural)` ⇒ `Lot` |
+|               `(list-copy List)` ⇒ `List` |             `copy(Lot)` ⇒ `Lot` |
+|  `(map Procedure List List ...)` ⇒ `List` |           `map(Do Lot)` ⇒ `Lot` |
+|        `(filter Procedure List)` ⇒ `List` |       `filter(Has Lot)` ⇒ `Lot` |
 
 ### Vector
 
-|                                            Scheme |                                    Java |
-|--------------------------------------------------:|----------------------------------------:|
-|                     `(vector Any ...)` ⇒ `Vector` |                  `few(Any ...)` ⇒ `Few` |
-|            `(make-vector Natural Any)` ⇒ `Vector` |         `makefew(Natural, Any)` ⇒ `Few` |
-|              `(vector-length Vector)` ⇒ `Natural` |               `length(Few)` ⇒ `Natural` |
-|             `(vector-ref Vector Natural)` ⇒ `Any` |          `fewRef(Few, Natural)` ⇒ `Any` |
-|     `(vector-set! Vector Natural Any)` ⇒ `<void>` |  `fewSet(Few, Natural, Any)` ⇒ `<void>` |
-|                 `(vector-copy Vector)` ⇒ `Vector` |                     `copy(Few)` ⇒ `Few` |
-|  `(vector-map Proc Vector Vector ...)` ⇒ `Vector` |                `fewMap(Do Few)` ⇒ `Few` |
+|                                            Scheme |                                   Java |
+|--------------------------------------------------:|---------------------------------------:|
+|                     `(vector Any ...)` ⇒ `Vector` |             `new Few(Any ...)` ⇒ `Few` |
+|            `(make-vector Natural Any)` ⇒ `Vector` |        `makefew(Natural, Any)` ⇒ `Few` |
+|              `(vector-length Vector)` ⇒ `Natural` |              `length(Few)` ⇒ `Natural` |
+|             `(vector-ref Vector Natural)` ⇒ `Any` |         `fewRef(Few, Natural)` ⇒ `Any` |
+|     `(vector-set! Vector Natural Any)` ⇒ `<void>` | `fewSet(Few, Natural, Any)` ⇒ `<void>` |
+|                 `(vector-copy Vector)` ⇒ `Vector` |                    `copy(Few)` ⇒ `Few` |
+|  `(vector-map Proc Vector Vector ...)` ⇒ `Vector` |                  `map(Do Few)` ⇒ `Few` |
 
 ### Others
 

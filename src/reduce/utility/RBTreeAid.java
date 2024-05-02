@@ -22,7 +22,7 @@ static @NotNull String stringOfColor(boolean color) {
 
 
 static @NotNull Lot pathOf(RBNode node, Object key) {
-    Lot path = lot();
+    Lot path = new Lot();
     RBNode moo = node;
     while (!moo.isEmpty()) {
         if (less(key, moo.key)) {
@@ -191,7 +191,7 @@ static void delete(@NotNull RBTree tree, Object key) {
             transplant(tree, path, x);
             path = cons(x, cdr(path));
         } else {
-            Lot path2 = minimum(deleted.right, lot());
+            Lot path2 = minimum(deleted.right, new Lot());
             RBNode alternate = (RBNode) car(path2);
             color = alternate.color;
             x = alternate.right;
@@ -292,7 +292,7 @@ static class Travel {
     Lot col;
 
     Travel() {
-        col = lot();
+        col = new Lot();
     }
 
     Lot process(RBNode node) {
@@ -315,7 +315,7 @@ static class Filter {
     final Has pred;
 
     Filter(Has pred) {
-        col = lot();
+        col = new Lot();
         this.pred = pred;
     }
 

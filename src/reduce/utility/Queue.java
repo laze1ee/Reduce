@@ -15,7 +15,7 @@ final Few pipe;
 public Queue(Object @NotNull ... args) {
     Few moo = new Few(args);
     Lot xoo = fewToLot(moo);
-    pipe = few(xoo, lot());
+    pipe = new Few(xoo, new Lot());
 }
 
 @Override
@@ -52,7 +52,7 @@ public static Object de(@NotNull Queue queue) {
         Lot en_lot = (Lot) ref1(queue.pipe);
         en_lot = reverse(en_lot);
         set0(queue.pipe, cdr(en_lot));
-        set1(queue.pipe, lot());
+        set1(queue.pipe, new Lot());
         return car(en_lot);
     } else {
         Lot de_lot = (Lot) ref0(queue.pipe);

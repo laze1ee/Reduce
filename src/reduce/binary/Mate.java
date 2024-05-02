@@ -162,7 +162,7 @@ static byte @NotNull [] codeLot(@NotNull Lot lt) {
     if (lt.isEmpty()) {
         return new byte[]{Label.LOT_BEGIN, Label.LOT_END};
     } else {
-        Lot moo = lot();
+        Lot moo = new Lot();
         Lot xoo = lt;
         while (!xoo.isEmpty()) {
             moo = cons(Binary.codingDatum(car(xoo)), moo);
@@ -212,7 +212,7 @@ static byte @NotNull [] codeFew(Few fw) {
         bin[0] = Label.FEW;
         return bin;
     } else {
-        Lot moo = lot();
+        Lot moo = new Lot();
         int n = length(fw);
         for (int i = 0; i < n; i = i + 1) {
             moo = cons(Binary.codingDatum(fewRef(fw, i)), moo);
@@ -393,7 +393,7 @@ static class Decoding {
             case Label.LOT_BEGIN -> {
                 pos = pos + 1;
                 if (bin[pos] == Label.LOT_END) {
-                    datum = lot();
+                    datum = new Lot();
                     pos = pos + 1;
                 } else {
                     Object moo = process();
@@ -407,7 +407,7 @@ static class Decoding {
             }
             case Label.LOT_END -> {
                 pos = pos + 1;
-                datum = lot();
+                datum = new Lot();
             }
             case Label.FEW -> {
                 pos = pos + 1;

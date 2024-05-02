@@ -68,7 +68,7 @@ public boolean isEmpty() {
 
 public boolean isCircularInBreadth() {
     Pair moo_pair = pair;
-    Lot col = lot(moo_pair);
+    Lot col = new Lot(moo_pair);
     while (!(moo_pair instanceof PairTail) &&
            !isBelong(((PairOn) moo_pair).next, col)) {
         PairOn xoo = (PairOn) moo_pair;

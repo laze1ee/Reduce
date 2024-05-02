@@ -9,7 +9,7 @@ static final String JACKPOT =
 "congratulation! you encounter the same checksum with fletcher-32 but different strings %s and %s";
 
 // Lot and Few
-static final String LOT_END = "() is in the end";
+static final String LOT_EMPTY = "list () is empty";
 static final String CYC_BREADTH = "%s is circular in breadth";
 static final String FEW_INDEX_OUT = "index %s is out of range for few %s";
 static final String LOT_INDEX_OUT = "index %s is out of range for lot %s";

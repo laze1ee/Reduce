@@ -15,8 +15,8 @@ private static class DetectCycle {
     Lot cycle;
 
     DetectCycle() {
-        collector = lot();
-        cycle = lot();
+        collector = new Lot();
+        cycle = new Lot();
     }
 
     Lot process(Object datum) {
@@ -155,7 +155,7 @@ private static class LabelCycle {
 
     @Contract(value = "_ -> new", pure = true)
     static @NotNull Object attach(Object datum) {
-        return few(datum, false, -1);
+        return new Few(datum, false, -1);
     }
 
     private @Nullable Few _find(Object datum) {

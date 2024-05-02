@@ -13,38 +13,6 @@ import static reduce.progressive.Pr.*;
 class Mate {
 
 //region Lot
-static Lot appending(@NotNull Lot lt1, Lot lt2) {
-    if (lt1.isEmpty()) {
-        return lt2;
-    } else {
-        return cons(car(lt1), appending(cdr(lt1), lt2));
-    }
-}
-
-static Lot heading(Lot lt, int index) {
-    if (index == 0) {
-        return lot();
-    } else {
-        return cons(car(lt), heading(cdr(lt), index - 1));
-    }
-}
-
-static Lot tailing(Lot lt, int index) {
-    if (index == 0) {
-        return lt;
-    } else {
-        return tailing(cdr(lt), index - 1);
-    }
-}
-
-static Lot copying(@NotNull Lot lt) {
-    if (lt.isEmpty()) {
-        return lot();
-    } else {
-        return cons(car(lt), copying(cdr(lt)));
-    }
-}
-
 @Contract("null -> new")
 static @NotNull Pair isolate(Pair pair) {
     if (pair instanceof PairTail) {
@@ -77,7 +45,7 @@ static boolean isScalar(char c) {
 
 
 //region String Of
-private static final Few char_code = few(0, 7, 8, 9, 0xA, 0xB, 0xC, 0xD, 0x1B, 0x20, 0x7F);
+private static final Few char_code = new Few(0, 7, 8, 9, 0xA, 0xB, 0xC, 0xD, 0x1B, 0x20, 0x7F);
 private static final String[] char_name = {"nul", "alarm", "backspace", "tab", "newline", "vtab",
                                            "page", "return", "esc", "space", "delete"};
 @SuppressWarnings("SpellCheckingInspection")
