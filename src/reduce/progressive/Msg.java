@@ -17,4 +17,8 @@ static final String LOT_INDEX_OUT = "index %s is out of range for lot %s";
 // Comparison
 static final String UNSUPPORTED_COMPARE = "unsupported array %s and %s for comparing";
 static final String UNDEFINED_COMPARE = "undefined type %s and %s for comparing in size";
+
+// Binary
+static final String UNSUPPORTED = "unsupported data tye %s for coding";
+static final String UNMATCHED = "unmatched label code %s for decoding";
 }

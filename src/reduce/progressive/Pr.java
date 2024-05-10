@@ -2,7 +2,12 @@ package reduce.progressive;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import reduce.datetime.Date;
 import reduce.datetime.Time;
+import reduce.numerus.Complex;
+import reduce.numerus.Float64;
+import reduce.numerus.Fraction;
+import reduce.numerus.Intact;
 import reduce.refmethod.Do;
 import reduce.refmethod.Eqv;
 import reduce.refmethod.Has;
@@ -542,6 +547,60 @@ public static int fewIndex(Eqv pred, Object datum, Few fw) {
     } else {
         return i;
     }
+}
+//endregion
+
+
+//region Binary
+public static byte[] code(Object datum) {
+    if (datum instanceof Boolean b) {
+        return Mate.codeBoolean(b);
+    } else if (datum instanceof Integer in) {
+        return Mate.codeInt(in);
+    } else if (datum instanceof Long l) {
+        return Mate.codeLong(l);
+    } else if (datum instanceof Double d) {
+        return Mate.codeDouble(d);
+    } else if (datum instanceof Character c) {
+        return Mate.codeChar(c);
+    } else if (datum instanceof String str) {
+        return Mate.codeString(str);
+
+    } else if (datum instanceof int[] ins) {
+        return Mate.codeInts(ins);
+    } else if (datum instanceof long[] ls) {
+        return Mate.codeLongs(ls);
+    } else if (datum instanceof double[] ds) {
+        return Mate.codeDoubles(ds);
+
+    } else if (datum instanceof Intact in) {
+        return in.code();
+    } else if (datum instanceof Fraction fr) {
+        return fr.code();
+    } else if (datum instanceof Float64 fl) {
+        return fl.code();
+    } else if (datum instanceof Complex cx) {
+        return cx.code();
+
+    } else if (datum instanceof Symbol sym) {
+        return Mate.codeSymbol(sym);
+    } else if (datum instanceof Lot lt) {
+        return Mate.codeLot(lt);
+    } else if (datum instanceof Few fw) {
+        return Mate.codeFew(fw);
+
+    } else if (datum instanceof Time t) {
+        return Mate.codeTime(t);
+    } else if (datum instanceof Date d) {
+        return Mate.codeDate(d);
+    } else {
+        throw new RuntimeException(String.format(Msg.UNSUPPORTED, datum));
+    }
+}
+
+public static Object decode(byte[] bin) {
+    Mate.Decoding de = new Mate.Decoding(bin);
+    return de.process();
 }
 //endregion
 }

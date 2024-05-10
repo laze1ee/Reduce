@@ -2,11 +2,14 @@ package reduce.datetime;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import reduce.utility.CheckSum;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+
+import static reduce.progressive.Pr.code;
 
 
 public record Time(long second, int nanosecond) {
@@ -29,6 +32,7 @@ public Time(long second, int nanosecond) {
     }
 }
 
+
 @Override
 public String toString() {
     return String.format("#<time %d.%09d>", second, Math.abs(nanosecond));
@@ -42,6 +46,12 @@ public boolean equals(Object datum) {
     } else {
         return false;
     }
+}
+
+@Override
+public int hashCode() {
+    byte[] bin = code(this);
+    return CheckSum.fletcher32(bin);
 }
 
 

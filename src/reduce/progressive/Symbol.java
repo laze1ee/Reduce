@@ -48,6 +48,10 @@ public boolean equals(Object datum) {
     }
 }
 
+@Override
+public int hashCode() {
+    return identifier;
+}
 
 public String display() {
     String name = toString();

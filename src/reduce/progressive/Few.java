@@ -1,6 +1,9 @@
 package reduce.progressive;
 
 import org.jetbrains.annotations.NotNull;
+import reduce.utility.CheckSum;
+
+import static reduce.progressive.Pr.code;
 
 
 public class Few extends Fer {
@@ -44,6 +47,11 @@ public boolean equals(Object datum) {
     }
 }
 
+@Override
+public int hashCode() {
+    byte[] bin = code(this);
+    return CheckSum.fletcher32(bin);
+}
 
 public Object[] toRaw() {
     return array;

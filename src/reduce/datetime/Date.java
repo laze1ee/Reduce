@@ -1,11 +1,14 @@
 package reduce.datetime;
 
 import org.jetbrains.annotations.NotNull;
+import reduce.utility.CheckSum;
 
 import java.time.OffsetTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+
+import static reduce.progressive.Pr.code;
 
 
 public class Date {
@@ -58,6 +61,7 @@ public Date(int year, int month, int day_of_month, int hour, int minute, int sec
     this.offset = offset;
 }
 
+
 @Override
 public String toString() {
     return String.format("#<date %s %d-%02d-%02d %s %02d:%02d:%02d>",
@@ -81,6 +85,11 @@ public boolean equals(Object datum) {
     }
 }
 
+@Override
+public int hashCode() {
+    byte[] bin = code(this);
+    return CheckSum.fletcher32(bin);
+}
 
 public int year() {
     return year;
