@@ -13,8 +13,8 @@ public class Queue {
 final Few pipe;
 
 public Queue(Object @NotNull ... args) {
-    Few moo = new Few(args);
-    Lot xoo = fewToLot(moo);
+    Few ooo = new Few(args);
+    Lot xoo = fewToLot(ooo);
     pipe = new Few(xoo, new Lot());
 }
 

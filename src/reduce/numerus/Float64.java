@@ -105,10 +105,10 @@ public Real toExact() {
 @Override
 public byte[] code() {
     long bits = Double.doubleToLongBits(data);
-    byte[] moo = Share.integerToBinary(bits, 8, false);
-    byte[] bin = new byte[1 + moo.length];
+    byte[] ooo = Share.integerToBinary(bits, 8, false);
+    byte[] bin = new byte[1 + ooo.length];
     bin[0] = BinaryLabel.FLOAT64;
-    System.arraycopy(moo, 0, bin, 1, moo.length);
+    System.arraycopy(ooo, 0, bin, 1, ooo.length);
     return bin;
 }
 }

@@ -7,6 +7,7 @@ final int count;
 PairMark(int count) {
     this.count = count;
 }
+
 @Override
 public String toString() {
     return String.format("#%s#", count);

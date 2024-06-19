@@ -4,10 +4,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import reduce.datetime.Date;
 import reduce.datetime.Time;
-import reduce.numerus.Complex;
-import reduce.numerus.Float64;
-import reduce.numerus.Fraction;
-import reduce.numerus.Intact;
+import reduce.numerus.*;
 import reduce.refmethod.Do;
 import reduce.refmethod.Eqv;
 import reduce.refmethod.Has;
@@ -78,16 +75,16 @@ public static int length(@NotNull Lot lt) {
 }
 
 public static Object lotRef(Lot lt, int index) {
-    if (0 <= index && index < length(lt)) {
-        int i = index;
-        while (0 < i) {
-            lt = cdr(lt);
-            i = i - 1;
+    Lot ooo = lt;
+    int i = index;
+    while (!ooo.isEmpty()) {
+        if (i == 0) {
+            return car(ooo);
         }
-        return car(lt);
-    } else {
-        throw new RuntimeException(String.format(Msg.LOT_INDEX_OUT, index, lt));
+        ooo = cdr(ooo);
+        i -= 1;
     }
+    throw new RuntimeException(String.format(Msg.LOT_INDEX_OUT, index, lt));
 }
 
 public static Object first(Lot lt) {
@@ -211,13 +208,13 @@ public static Lot append(@NotNull Lot lt1, Lot lt2) {
     if (lt1.isCircularInBreadth()) {
         throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt1));
     } else {
-        Lot moo = reverse(lt1);
-        Lot xoo = lt2;
-        while(!moo.isEmpty()) {
-            xoo = cons(car(moo), xoo);
-            moo = cdr(moo);
+        Lot ooo = reverse(lt1);
+        Lot eee = lt2;
+        while (!ooo.isEmpty()) {
+            eee = cons(car(ooo), eee);
+            ooo = cdr(ooo);
         }
-        return xoo;
+        return eee;
     }
 }
 //endregion
@@ -231,10 +228,9 @@ public static @NotNull Lot reverse(@NotNull Lot lt) {
         throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
     } else {
         Pair pair = new PairTail();
-        Lot moo = lt;
-        while (!moo.isEmpty()) {
-            pair = new PairOn(car(moo), pair);
-            moo = cdr(moo);
+        while (!lt.isEmpty()) {
+            pair = new PairOn(car(lt), pair);
+            lt = cdr(lt);
         }
         return new Lot(pair);
     }
@@ -243,13 +239,19 @@ public static @NotNull Lot reverse(@NotNull Lot lt) {
 public static @NotNull Lot lotHead(@NotNull Lot lt, int index) {
     if (lt.isCircularInBreadth() ||
         (0 <= index && index <= length(lt))) {
-        Lot moo = lt;
-        Lot xoo = new Lot();
-        for (int i = index; i > 0; i -= 1) {
-            xoo = cons(car(moo), xoo);
-            moo = cdr(moo);
+        if (index == 0) {
+            return new Lot();
+        } else {
+            PairOn head = new PairOn(car(lt), new PairTail());
+            PairOn ooo = head;
+            Lot eee = cdr(lt);
+            for (int i = index - 1; i > 0; i -= 1) {
+                ooo.next = new PairOn(car(eee), new PairTail());
+                ooo = (PairOn) ooo.next;
+                eee = cdr(eee);
+            }
+            return new Lot(head);
         }
-        return reverse(xoo);
     } else {
         throw new RuntimeException(String.format(Msg.LOT_INDEX_OUT, index, lt));
     }
@@ -258,11 +260,10 @@ public static @NotNull Lot lotHead(@NotNull Lot lt, int index) {
 public static Lot lotTail(@NotNull Lot lt, int index) {
     if (lt.isCircularInBreadth() ||
         (0 <= index && index <= length(lt))) {
-        Lot moo = lt;
         for (int i = index; i > 0; i -= 1) {
-            moo = cdr(moo);
+            lt = cdr(lt);
         }
-        return moo;
+        return lt;
     } else {
         throw new RuntimeException(String.format(Msg.LOT_INDEX_OUT, index, lt));
     }
@@ -276,12 +277,12 @@ public static @NotNull Lot copy(@NotNull Lot lt) {
         throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
     } else {
         PairOn head = new PairOn(car(lt), new PairTail());
-        PairOn pair = head;
-        Lot moo = cdr(lt);
-        while (!moo.isEmpty()) {
-            pair.next = new PairOn(car(moo), new PairTail());
-            pair = (PairOn) pair.next;
-            moo = cdr(moo);
+        PairOn ooo = head;
+        Lot eee = cdr(lt);
+        while (!eee.isEmpty()) {
+            ooo.next = new PairOn(car(eee), new PairTail());
+            ooo = (PairOn) ooo.next;
+            eee = cdr(eee);
         }
         return new Lot(head);
     }
@@ -306,12 +307,11 @@ public static @NotNull Few lotToFew(@NotNull Lot lt) {
     if (lt.isCircularInBreadth()) {
         throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
     } else {
-        Lot moo = lt;
-        int n = length(moo);
-        Few fw = makeFew(n);
-        for (int i = 0; i < n; i = i + 1) {
-            fewSet(fw, i, car(moo));
-            moo = cdr(moo);
+        int n = length(lt);
+        Few fw = makeFew(n, 0);
+        for (int i = 0; i < n; i += 1) {
+            fewSet(fw, i, car(lt));
+            lt = cdr(lt);
         }
         return fw;
     }
@@ -321,7 +321,7 @@ public static @NotNull Few lotToFew(@NotNull Lot lt) {
 public static @NotNull Lot fewToLot(@NotNull Few fw) {
     Pair pair = new PairTail();
     int n = length(fw);
-    for (int i = n - 1; i >= 0; i = i - 1) {
+    for (int i = n - 1; i >= 0; i -= 1) {
         pair = new PairOn(fewRef(fw, i), pair);
     }
     return new Lot(pair);
@@ -333,14 +333,13 @@ public static @NotNull Lot filter(Has pred, @NotNull Lot lt) {
         throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
     } else {
         Pair pair = new PairTail();
-        Lot moo = lt;
-        while (!moo.isEmpty()) {
-            if (pred.apply(car(moo))) {
-                pair = new PairOn(car(moo), pair);
+        while (!lt.isEmpty()) {
+            if (pred.apply(car(lt))) {
+                pair = new PairOn(car(lt), pair);
             }
-            moo = cdr(moo);
+            lt = cdr(lt);
         }
-        return new Lot(pair);
+        return reverse(new Lot(pair));
     }
 }
 
@@ -350,24 +349,23 @@ public static @NotNull Lot map(Do func, @NotNull Lot lt) {
         throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
     } else {
         Pair pair = new PairTail();
-        Lot moo = lt;
-        while (!moo.isEmpty()) {
-            Object datum = func.apply(car(moo));
+        while (!lt.isEmpty()) {
+            Object datum = func.apply(car(lt));
             pair = new PairOn(datum, pair);
-            moo = cdr(moo);
+            lt = cdr(lt);
         }
-        return new Lot(pair);
+        return reverse(new Lot(pair));
     }
 }
 
 public static @NotNull Few map(Do func, Few fw) {
     int n = length(fw);
-    Few moo = makeFew(n);
+    Few ooo = makeFew(n, 0);
     for (int i = 0; i < n; i = i + 1) {
         Object datum = func.apply(fewRef(fw, i));
-        fewSet(moo, i, datum);
+        fewSet(ooo, i, datum);
     }
-    return moo;
+    return ooo;
 }
 //endregion
 
@@ -438,6 +436,9 @@ public static boolean eq(Object o1, Object o2) {
     } else if (o1 instanceof Number n1 &&
                o2 instanceof Number n2) {
         return Mate.numberEq(n1, n2);
+    } else if (o1 instanceof Numerus n1 &&
+               o2 instanceof Numerus n2) {
+        return Numerus.eq(n1, n2);
     } else if (o1 instanceof Character c1 &&
                o2 instanceof Character c2) {
         return ((char) c1) == c2;
@@ -460,7 +461,29 @@ public static boolean equal(Object o1, Object o2) {
         return true;
     } else if (o1.getClass().isArray() &&
                o2.getClass().isArray()) {
-        return Mate.arrayEqual(o1, o2);
+        if (o1 instanceof boolean[] bs1 &&
+            o2 instanceof boolean[] bs2) {
+            int r = Arrays.compare(bs1, bs2);
+            return r == 0;
+        } else if (o1 instanceof byte[] bs1 &&
+                   o2 instanceof byte[] bs2) {
+            int r = Arrays.compare(bs1, bs2);
+            return r == 0;
+        } else if (o1 instanceof int[] ins1 &&
+                   o2 instanceof int[] ins2) {
+            int r = Arrays.compare(ins1, ins2);
+            return r == 0;
+        } else if (o1 instanceof long[] ls1 &&
+                   o2 instanceof long[] ls2) {
+            int r = Arrays.compare(ls1, ls2);
+            return r == 0;
+        } else if (o1 instanceof double[] ds1 &&
+                   o2 instanceof double[] ds2) {
+            int r = Arrays.compare(ds1, ds2);
+            return r == 0;
+        } else {
+            return false;
+        }
     } else {
         return o1.equals(o2);
     }
@@ -473,16 +496,42 @@ public static boolean less(Object o1, Object o2) {
     } else if (o1 instanceof Number n1 &&
                o2 instanceof Number n2) {
         return Mate.numberLess(n1, n2);
+    } else if (o1 instanceof Real r1 &&
+               o2 instanceof Real r2) {
+        return Numerus.valueLess(r1, r2);
     } else if (o1 instanceof String s1 &&
                o2 instanceof String s2) {
         int m = s1.compareTo(s2);
         return m < 0;
-    } else if (o1.getClass().isArray() &&
-               o2.getClass().isArray()) {
-        return Mate.arrayLess(o1, o2);
     } else if (o1 instanceof Time t1 &&
                o2 instanceof Time t2) {
         return Mate.timeLessThan(t1, t2);
+    } else if (o1.getClass().isArray() &&
+               o2.getClass().isArray()) {
+        if (o1 instanceof boolean[] bs1 &&
+            o2 instanceof boolean[] bs2) {
+            int r = Arrays.compare(bs1, bs2);
+            return r < 0;
+        } else if (o1 instanceof byte[] bs1 &&
+                   o2 instanceof byte[] bs2) {
+            int r = Arrays.compare(bs1, bs2);
+            return r < 0;
+        } else if (o1 instanceof int[] ins1 &&
+                   o2 instanceof int[] ins2) {
+            int r = Arrays.compare(ins1, ins2);
+            return r < 0;
+        } else if (o1 instanceof long[] ls1 &&
+                   o2 instanceof long[] ls2) {
+            int r = Arrays.compare(ls1, ls2);
+            return r < 0;
+        } else if (o1 instanceof double[] ds1 &&
+                   o2 instanceof double[] ds2) {
+            int r = Arrays.compare(ds1, ds2);
+            return r < 0;
+        } else {
+            throw new RuntimeException(String.format(Msg.UNDEFINED_ARR_COMPARE,
+                                                     stringOf(o1), stringOf(o2)));
+        }
     } else {
         throw new RuntimeException(String.format(Msg.UNDEFINED_COMPARE, o1, o2));
     }
@@ -495,44 +544,36 @@ public static boolean greater(Object o1, Object o2) {
 
 
 //region Non-Core Function
-public static boolean isBelong(Object datum, Lot lt) {
-    Lot moo = lt;
-    while (!moo.isEmpty() &&
-           !eq(datum, car(moo))) {
-        moo = cdr(moo);
+public static boolean isBelong(Object datum, @NotNull Lot lt) {
+    if (lt.isCircularInBreadth()) {
+        throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
+    } else {
+        return Mate.isBelong(datum, lt);
     }
-    return !moo.isEmpty();
-}
-
-public static boolean isBelong(Eqv pred, Object datum, Lot lt) {
-    Lot moo = lt;
-    while (!moo.isEmpty() &&
-           !pred.apply(datum, car(moo))) {
-        moo = cdr(moo);
-    }
-    return !moo.isEmpty();
 }
 
 public static Lot remove(Object datum, @NotNull Lot lt) {
-    if (lt.isEmpty()) {
-        return new Lot();
-    } else if (eq(car(lt), datum)) {
-        return cdr(lt);
+    if (lt.isCircularInBreadth()) {
+        throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
     } else {
-        return cons(car(lt), remove(datum, cdr(lt)));
+        return Mate.remove(datum, lt);
     }
 }
 
-public static @NotNull Lot removeDup(Lot lt) {
-    Lot moo = lt;
-    Lot xoo = new Lot();
-    while (!moo.isEmpty()) {
-        if (!isBelong(car(moo), cdr(moo))) {
-            xoo = cons(car(moo), xoo);
-        }
-        moo = cdr(moo);
+public static @NotNull Lot removeAll(Object datum, @NotNull Lot lt) {
+    if (lt.isCircularInBreadth()) {
+        throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
+    } else {
+        return Mate.removeAll(datum, lt);
     }
-    return reverse(xoo);
+}
+
+public static @NotNull Lot removeDup(@NotNull Lot lt) {
+    if (lt.isCircularInBreadth()) {
+        throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
+    } else {
+        return Mate.removeDup(lt);
+    }
 }
 
 public static int fewIndex(Eqv pred, Object datum, Few fw) {

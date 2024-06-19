@@ -17,7 +17,7 @@ Lot(Pair pair) {
 public Lot(Object @NotNull ... args) {
     Pair pair = new PairTail();
     int n = args.length;
-    for (int i = n - 1; i >= 0; i = i - 1) {
+    for (int i = n - 1; i >= 0; i -= 1) {
         pair = new PairOn(args[i], pair);
     }
     this.pair = pair;
@@ -31,12 +31,12 @@ public String toString() {
     } else {
         Lot cycle = Cycle.detect(this);
         if (cycle.isEmpty()) {
-            PairOn moo = (PairOn) pair;
-            PairHead head = new PairHead(moo.data, Mate.isolate(moo.next));
+            PairOn ooo = (PairOn) pair;
+            PairHead head = new PairHead(ooo.data, Mate.toPairCons(ooo.next));
             return head.toString();
         } else {
-            Object cyc_pair = Cycle.label(this, cycle);
-            return cyc_pair.toString();
+            Object ooo = Cycle.label(this, cycle);
+            return ooo.toString();
         }
     }
 }
@@ -48,8 +48,8 @@ public boolean equals(Object datum) {
         Lot c2 = Cycle.detect(lt);
         if (c1.isEmpty() && c2.isEmpty() &&
             length(this) == length(lt)) {
-            Pair p1 = Mate.isolate(pair);
-            Pair p2 = Mate.isolate(lt.pair);
+            Pair p1 = Mate.toPairCons(pair);
+            Pair p2 = Mate.toPairCons(lt.pair);
             return p1.equals(p2);
         } else if (!c1.isEmpty() && !c2.isEmpty()) {
             Object o1 = Cycle.label(this, c1);
@@ -74,14 +74,17 @@ public boolean isEmpty() {
 }
 
 public boolean isCircularInBreadth() {
-    Pair moo_pair = pair;
-    Lot col = new Lot(moo_pair);
-    while (!(moo_pair instanceof PairTail) &&
-           !isBelong(((PairOn) moo_pair).next, col)) {
-        PairOn xoo = (PairOn) moo_pair;
-        col = cons(xoo.next, col);
-        moo_pair = xoo.next;
+    Pair ooo = pair;
+    Lot col = new Lot();
+    col = cons(pair, col);
+    while (!(ooo instanceof PairTail)) {
+        PairOn eee = (PairOn) ooo;
+        if (Mate.isBelong(eee.next, col)) {
+            return true;
+        }
+        col = cons(eee.next, col);
+        ooo = eee.next;
     }
-    return !(moo_pair instanceof PairTail);
+    return false;
 }
 }

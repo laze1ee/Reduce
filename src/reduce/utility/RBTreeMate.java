@@ -9,7 +9,7 @@ import static reduce.progressive.Pr.*;
 
 
 @SuppressWarnings("SuspiciousNameCombination")
-class RBTreeAid {
+class RBTreeMate {
 
 @Contract(pure = true)
 static @NotNull String stringOfColor(boolean color) {
@@ -21,21 +21,20 @@ static @NotNull String stringOfColor(boolean color) {
 }
 
 
-static @NotNull Lot pathOf(RBNode node, Object key) {
+static @NotNull Lot pathOf(@NotNull RBNode node, Object key) {
     Lot path = new Lot();
-    RBNode moo = node;
-    while (!moo.isEmpty()) {
-        if (less(key, moo.key)) {
-            path = cons(moo, path);
-            moo = moo.left;
-        } else if (greater(key, moo.key)) {
-            path = cons(moo, path);
-            moo = moo.right;
+    while (!node.isEmpty()) {
+        if (less(key, node.key)) {
+            path = cons(node, path);
+            node = node.left;
+        } else if (greater(key, node.key)) {
+            path = cons(node, path);
+            node = node.right;
         } else {
-            return cons(moo, path);
+            return cons(node, path);
         }
     }
-    return cons(moo, path);
+    return cons(node, path);
 }
 
 private static boolean isLeftOf(Object node1, @NotNull RBNode node2) {
@@ -93,20 +92,18 @@ private static void rightRotate(RBTree tree, Lot path) {
 }
 
 
-static Lot minimum(RBNode node, Lot path) {
-    RBNode moo = node;
-    while (!moo.isEmpty()) {
-        path = cons(moo, path);
-        moo = moo.left;
+static Lot minimum(@NotNull RBNode node, Lot path) {
+    while (!node.isEmpty()) {
+        path = cons(node, path);
+        node = node.left;
     }
     return path;
 }
 
-static Lot maximum(RBNode node, Lot path) {
-    RBNode moo = node;
-    while (!moo.isEmpty()) {
-        path = cons(moo, path);
-        moo = moo.right;
+static Lot maximum(@NotNull RBNode node, Lot path) {
+    while (!node.isEmpty()) {
+        path = cons(node, path);
+        node = node.right;
     }
     return path;
 }
@@ -174,11 +171,11 @@ private static void transplant(RBTree tree, Lot path, RBNode node) {
     }
 }
 
-static void delete(@NotNull RBTree tree, Object key) {
+static boolean delete(@NotNull RBTree tree, Object key) {
     Lot path = pathOf(tree.root, key);
     RBNode deleted = (RBNode) car(path);
     if (deleted.isEmpty()) {
-        throw new RuntimeException(String.format("key %s is not present in tree %s", key, tree));
+        return false;
     } else {
         boolean color = deleted.color;
         RBNode x;
@@ -208,6 +205,7 @@ static void delete(@NotNull RBTree tree, Object key) {
             DeleteFixer fixer = new DeleteFixer(tree, path);
             fixer.process();
         }
+        return true;
     }
 }
 

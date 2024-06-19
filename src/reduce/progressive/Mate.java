@@ -19,13 +19,61 @@ class Mate {
 
 //region Lot
 @Contract("null -> new")
-static @NotNull Pair isolate(Pair pair) {
+static @NotNull Pair toPairCons(Pair pair) {
     if (pair instanceof PairTail) {
         return new PairTail();
     } else {
-        PairOn use = (PairOn) pair;
-        return new PairCons(use.data, isolate(use.next));
+        PairOn on = (PairOn) pair;
+        return new PairCons(on.data, toPairCons(on.next));
     }
+}
+
+static boolean isBelong(Object datum, @NotNull Lot lt) {
+    while (!lt.isEmpty() &&
+           !equal(datum, car(lt))) {
+        lt = cdr(lt);
+    }
+    return !lt.isEmpty();
+}
+
+static Lot remove(Object datum, @NotNull Lot lt) {
+    Lot ooo = new Lot();
+    while (!lt.isEmpty()) {
+        if (equal(datum, car(lt))) {
+            lt = cdr(lt);
+            break;
+        } else {
+            ooo = cons(car(lt), ooo);
+            lt = cdr(lt);
+        }
+    }
+    while (!ooo.isEmpty()) {
+        lt = cons(car(ooo), lt);
+        ooo = cdr(ooo);
+    }
+    return lt;
+}
+
+static @NotNull Lot removeAll(Object datum, @NotNull Lot lt) {
+    Lot ooo = new Lot();
+    while (!lt.isEmpty()) {
+        if (!equal(datum, car(lt))) {
+            ooo = cons(car(lt), ooo);
+        }
+        lt = cdr(lt);
+    }
+    return reverse(ooo);
+}
+
+static @NotNull Lot removeDup(@NotNull Lot lt) {
+    Lot ooo = new Lot();
+    while (!lt.isEmpty()) {
+        if (!isBelong(car(lt), cdr(lt))) {
+            ooo = cons(car(lt), ooo);
+        }
+        lt = cdr(lt);
+    }
+    return reverse(ooo);
 }
 //endregion
 
@@ -56,7 +104,7 @@ private static final String[] char_name = {"nul", "alarm", "backspace", "tab", "
 @SuppressWarnings("SpellCheckingInspection")
 private static final char[] HEX_STR = "0123456789ABCDEF".toCharArray();
 
-static String stringOfChar(char c) {
+static @NotNull String stringOfChar(char c) {
     int i = fewIndex(Pr::eq, (int) c, char_code);
     if (0 <= i) {
         return String.format("#\\%s", char_name[i]);
@@ -73,37 +121,48 @@ static @NotNull String originalString(@NotNull String str) {
     builder.append('"');
     for (int i = 0; i < sz; i += 1) {
         char c = str.charAt(i);
-        if (c == '\b') {
+        switch (c) {
+        case '\b' -> {
             builder.append("\\");
             builder.append('b');
-        } else if (c == '\t') {
+        }
+        case '\t' -> {
             builder.append('\\');
             builder.append('t');
-        } else if (c == '\n') {
+        }
+        case '\n' -> {
             builder.append('\\');
             builder.append('n');
-        } else if (c == '\f') {
+        }
+        case '\f' -> {
             builder.append('\\');
             builder.append('f');
-        } else if (c == '\r') {
+        }
+        case '\r' -> {
             builder.append('\\');
             builder.append('r');
-        } else if (c == '"') {
+        }
+        case '"' -> {
             builder.append('\\');
             builder.append('"');
-        } else if (c == '\\') {
+        }
+        case '\\' -> {
             builder.append(c);
             builder.append(c);
-        } else {
+        }
+        default -> {
             builder.append(c);
+        }
         }
     }
     builder.append('"');
     return builder.toString();
 }
 
-static String stringOfArray(@NotNull Object array) {
-    if (array instanceof byte[] bs) {
+static @NotNull String stringOfArray(@NotNull Object array) {
+    if (array instanceof boolean[] bs) {
+        return String.format("#1(%s)", consArray(bs, bs.length));
+    } else if (array instanceof byte[] bs) {
         return String.format("#i8(%s)", consArray(bs, bs.length));
     } else if (array instanceof int[] ins) {
         return String.format("#i32(%s)", consArray(ins, ins.length));
@@ -111,8 +170,6 @@ static String stringOfArray(@NotNull Object array) {
         return String.format("#i64(%s)", consArray(ls, ls.length));
     } else if (array instanceof double[] ds) {
         return String.format("#r64(%s)", consArray(ds, ds.length));
-    } else if (array instanceof char[] cs) {
-        return String.format("#char(%s)", consArray(cs, cs.length));
     } else {
         throw new RuntimeException(String.format("unsupported array type %s for printing", array));
     }
@@ -189,36 +246,6 @@ static boolean numberLess(Number n1, Number n2) {
     }
 }
 
-static boolean arrayEqual(Object arr1, Object arr2) {
-    if (arr1 instanceof boolean[] bs1 &&
-        arr2 instanceof boolean[] bs2) {
-        int r = Arrays.compare(bs1, bs2);
-        return r == 0;
-    } else if (arr1 instanceof byte[] bs1 &&
-               arr2 instanceof byte[] bs2) {
-        int r = Arrays.compare(bs1, bs2);
-        return r == 0;
-    } else if (arr1 instanceof short[] shs1 &&
-               arr2 instanceof short[] shs2) {
-        int r = Arrays.compare(shs1, shs2);
-        return r == 0;
-    } else if (arr1 instanceof int[] ins1 &&
-               arr2 instanceof int[] ins2) {
-        int r = Arrays.compare(ins1, ins2);
-        return r == 0;
-    } else if (arr1 instanceof long[] ls1 &&
-               arr2 instanceof long[] ls2) {
-        int r = Arrays.compare(ls1, ls2);
-        return r == 0;
-    } else if (arr1 instanceof double[] ds1 &&
-               arr2 instanceof double[] ds2) {
-        int r = Arrays.compare(ds1, ds2);
-        return r == 0;
-    } else {
-        throw new RuntimeException(String.format(Msg.UNSUPPORTED_COMPARE, arr1, arr2));
-    }
-}
-
 static boolean objectArrayEqual(Object @NotNull [] arr1, Object @NotNull [] arr2) {
     if (arr1.length == arr2.length) {
         int i = 0;
@@ -229,36 +256,6 @@ static boolean objectArrayEqual(Object @NotNull [] arr1, Object @NotNull [] arr2
         return i == arr1.length;
     } else {
         return false;
-    }
-}
-
-static boolean arrayLess(Object arr1, Object arr2) {
-    if (arr1 instanceof boolean[] bs1 &&
-        arr2 instanceof boolean[] bs2) {
-        int r = Arrays.compare(bs1, bs2);
-        return r < 0;
-    } else if (arr1 instanceof byte[] bs1 &&
-               arr2 instanceof byte[] bs2) {
-        int r = Arrays.compare(bs1, bs2);
-        return r < 0;
-    } else if (arr1 instanceof short[] shs1 &&
-               arr2 instanceof short[] shs2) {
-        int r = Arrays.compare(shs1, shs2);
-        return r < 0;
-    } else if (arr1 instanceof int[] ins1 &&
-               arr2 instanceof int[] ins2) {
-        int r = Arrays.compare(ins1, ins2);
-        return r < 0;
-    } else if (arr1 instanceof long[] ls1 &&
-               arr2 instanceof long[] ls2) {
-        int r = Arrays.compare(ls1, ls2);
-        return r < 0;
-    } else if (arr1 instanceof double[] ds1 &&
-               arr2 instanceof double[] ds2) {
-        int r = Arrays.compare(ds1, ds2);
-        return r < 0;
-    } else {
-        throw new RuntimeException(String.format(Msg.UNSUPPORTED_COMPARE, arr1, arr2));
     }
 }
 
@@ -285,35 +282,35 @@ static byte @NotNull [] codeBoolean(boolean b) {
 }
 
 static byte @NotNull [] codeInt(int n) {
-    byte[] moo = Share.integerToBinary(n, 4, false);
+    byte[] ooo = Share.integerToBinary(n, 4, false);
     byte[] bin = new byte[5];
     bin[0] = BinaryLabel.INT;
-    System.arraycopy(moo, 0, bin, 1, 4);
+    System.arraycopy(ooo, 0, bin, 1, 4);
     return bin;
 }
 
 static byte @NotNull [] codeLong(long n) {
-    byte[] moo = Share.integerToBinary(n, 8, false);
+    byte[] ooo = Share.integerToBinary(n, 8, false);
     byte[] bin = new byte[9];
     bin[0] = BinaryLabel.LONG;
-    System.arraycopy(moo, 0, bin, 1, 8);
+    System.arraycopy(ooo, 0, bin, 1, 8);
     return bin;
 }
 
 static byte @NotNull [] codeDouble(double n) {
     long bits = Double.doubleToLongBits(n);
-    byte[] moo = Share.integerToBinary(bits, 8, false);
+    byte[] ooo = Share.integerToBinary(bits, 8, false);
     byte[] bin = new byte[9];
     bin[0] = BinaryLabel.DOUBLE;
-    System.arraycopy(moo, 0, bin, 1, 8);
+    System.arraycopy(ooo, 0, bin, 1, 8);
     return bin;
 }
 
 static byte @NotNull [] codeChar(char c) {
-    byte[] moo = Share.integerToBinary(c, 3, false);
+    byte[] ooo = Share.integerToBinary(c, 3, false);
     byte[] bin = new byte[4];
     bin[0] = BinaryLabel.CHAR;
-    System.arraycopy(moo, 0, bin, 1, 3);
+    System.arraycopy(ooo, 0, bin, 1, 3);
     return bin;
 }
 
@@ -331,8 +328,8 @@ static byte @NotNull [] codeInts(int @NotNull [] ins) {
     bin[0] = BinaryLabel.INTS;
     System.arraycopy(size, 0, bin, 1, size.length);
     for (int i = 0; i < ins.length; i += 1) {
-        byte[] moo = Share.integerToBinary(ins[i], 4, false);
-        System.arraycopy(moo, 0, bin, 1 + size.length + 4 * i, 4);
+        byte[] ooo = Share.integerToBinary(ins[i], 4, false);
+        System.arraycopy(ooo, 0, bin, 1 + size.length + 4 * i, 4);
     }
     return bin;
 }
@@ -343,8 +340,8 @@ static byte @NotNull [] codeLongs(long @NotNull [] ls) {
     bin[0] = BinaryLabel.LONGS;
     System.arraycopy(size, 0, bin, 1, size.length);
     for (int i = 0; i < ls.length; i += 1) {
-        byte[] moo = Share.integerToBinary(ls[i], 8, false);
-        System.arraycopy(moo, 0, bin, 1 + size.length + 8 * i, 8);
+        byte[] ooo = Share.integerToBinary(ls[i], 8, false);
+        System.arraycopy(ooo, 0, bin, 1 + size.length + 8 * i, 8);
     }
     return bin;
 }
@@ -356,8 +353,8 @@ static byte @NotNull [] codeDoubles(double @NotNull [] ds) {
     System.arraycopy(size, 0, bin, 1, size.length);
     for (int i = 0; i < ds.length; i += 1) {
         long bits = Double.doubleToLongBits(ds[i]);
-        byte[] moo = Share.integerToBinary(bits, 8, false);
-        System.arraycopy(moo, 0, bin, 1 + size.length + 8 * i, 8);
+        byte[] ooo = Share.integerToBinary(bits, 8, false);
+        System.arraycopy(ooo, 0, bin, 1 + size.length + 8 * i, 8);
     }
     return bin;
 }
@@ -374,14 +371,14 @@ static byte @NotNull [] codeLot(@NotNull Lot lt) {
     if (lt.isEmpty()) {
         return new byte[]{BinaryLabel.LOT_BEGIN, BinaryLabel.LOT_END};
     } else {
-        Lot moo = lt;
-        Lot xoo = new Lot();
-        while (!moo.isEmpty()) {
-            xoo = cons(code(car(moo)), xoo);
-            moo = cdr(moo);
+        Lot ooo = lt;
+        Lot eee = new Lot();
+        while (!ooo.isEmpty()) {
+            eee = cons(code(car(ooo)), eee);
+            ooo = cdr(ooo);
         }
-        xoo = reverse(xoo);
-        return connectLot(xoo);
+        eee = reverse(eee);
+        return connectLot(eee);
     }
 }
 
@@ -392,27 +389,27 @@ static byte @NotNull [] connectLot(Lot lt) {
     bin[sz - 1] = BinaryLabel.LOT_END;
 
     int i = 1;
-    Lot moo = lt;
-    while (!cdr(moo).isEmpty()) {
-        byte[] bs = (byte[]) car(moo);
+    Lot ooo = lt;
+    while (!cdr(ooo).isEmpty()) {
+        byte[] bs = (byte[]) car(ooo);
         System.arraycopy(bs, 0, bin, i, bs.length);
         i += bs.length;
         bin[i] = BinaryLabel.LOT_CONS;
         i += 1;
-        moo = cdr(moo);
+        ooo = cdr(ooo);
     }
-    byte[] bs = (byte[]) car(moo);
+    byte[] bs = (byte[]) car(ooo);
     System.arraycopy(bs, 0, bin, i, bs.length);
     return bin;
 }
 
 static int sizeOf(Lot bins) {
     int n = 0;
-    Lot moo = bins;
-    while (!moo.isEmpty()) {
-        byte[] bs = (byte[]) car(moo);
+    Lot ooo = bins;
+    while (!ooo.isEmpty()) {
+        byte[] bs = (byte[]) car(ooo);
         n += bs.length;
-        moo = cdr(moo);
+        ooo = cdr(ooo);
     }
     return n;
 }
@@ -425,13 +422,13 @@ static byte @NotNull [] codeFew(Few fw) {
         System.arraycopy(size, 0, bin, 1, size.length);
         return bin;
     } else {
-        Lot moo = new Lot();
+        Lot ooo = new Lot();
         int n = length(fw);
         for (int i = 0; i < n; i = i + 1) {
-            moo = cons(code(fewRef(fw, i)), moo);
+            ooo = cons(code(fewRef(fw, i)), ooo);
         }
-        moo = reverse(moo);
-        return connectFew(moo);
+        ooo = reverse(ooo);
+        return connectFew(ooo);
     }
 }
 
@@ -442,12 +439,12 @@ static byte @NotNull [] connectFew(Lot lt) {
     System.arraycopy(size, 0, bin, 1, size.length);
 
     int i = 1 + size.length;
-    Lot moo = lt;
-    while (!moo.isEmpty()) {
-        byte[] bs = (byte[]) car(moo);
+    Lot ooo = lt;
+    while (!ooo.isEmpty()) {
+        byte[] bs = (byte[]) car(ooo);
         System.arraycopy(bs, 0, bin, i, bs.length);
         i = i + bs.length;
-        moo = cdr(moo);
+        ooo = cdr(ooo);
     }
     return bin;
 }
@@ -466,18 +463,18 @@ static byte @NotNull [] codeTime(@NotNull Time t) {
 static byte @NotNull [] codeDate(@NotNull Date d) {
     byte[] bin = new byte[19];
     bin[0] = BinaryLabel.DATE;
-    byte[] moo = Share.integerToBinary(d.year(), 4, false);
-    System.arraycopy(moo, 0, bin, 1, 4);
+    byte[] ooo = Share.integerToBinary(d.year(), 4, false);
+    System.arraycopy(ooo, 0, bin, 1, 4);
     bin[5] = (byte) d.month();
     bin[6] = (byte) d.dayOfMonth();
     bin[7] = (byte) d.dayOfWeek();
     bin[8] = (byte) d.hour();
     bin[9] = (byte) d.minute();
     bin[10] = (byte) d.second();
-    moo = Share.integerToBinary(d.nanosecond(), 4, false);
-    System.arraycopy(moo, 0, bin, 11, 4);
-    moo = Share.integerToBinary(d.offset(), 4, false);
-    System.arraycopy(moo, 0, bin, 15, 4);
+    ooo = Share.integerToBinary(d.nanosecond(), 4, false);
+    System.arraycopy(ooo, 0, bin, 11, 4);
+    ooo = Share.integerToBinary(d.offset(), 4, false);
+    System.arraycopy(ooo, 0, bin, 15, 4);
     return bin;
 }
 //endregion
@@ -543,132 +540,132 @@ static class Decoding {
         int label = bin[pos];
         pos += 1;
         switch (label) {
-            case BinaryLabel.BOOLEAN_FALSE -> {
-                datum = false;
-            }
-            case BinaryLabel.BOOLEAN_TRUE -> {
-                datum = true;
-            }
-            case BinaryLabel.INT -> {
-                datum = (int) Share.binaryToInteger(bin, pos, pos + 4, false);
-                pos = pos + 4;
-            }
-            case BinaryLabel.LONG -> {
-                datum = Share.binaryToInteger(bin, pos, pos + 8, false);
-                pos = pos + 8;
-            }
-            case BinaryLabel.DOUBLE -> {
-                long bits = Share.binaryToInteger(bin, pos, pos + 8, false);
-                datum = Double.longBitsToDouble(bits);
-                pos = pos + 8;
-            }
-            case BinaryLabel.CHAR -> {
-                datum = (char) Share.binaryToInteger(bin, pos, pos + 3, false);
-                pos = pos + 3;
-            }
-            case BinaryLabel.STRING -> {
-                int start = pos;
-                while (bin[pos] != 0) {
-                    pos = pos + 1;
-                }
-                byte[] bs_str = Arrays.copyOfRange(bin, start, pos);
-                datum = new String(bs_str, StandardCharsets.UTF_8);
+        case BinaryLabel.BOOLEAN_FALSE -> {
+            datum = false;
+        }
+        case BinaryLabel.BOOLEAN_TRUE -> {
+            datum = true;
+        }
+        case BinaryLabel.INT -> {
+            datum = (int) Share.binaryToInteger(bin, pos, pos + 4, false);
+            pos = pos + 4;
+        }
+        case BinaryLabel.LONG -> {
+            datum = Share.binaryToInteger(bin, pos, pos + 8, false);
+            pos = pos + 8;
+        }
+        case BinaryLabel.DOUBLE -> {
+            long bits = Share.binaryToInteger(bin, pos, pos + 8, false);
+            datum = Double.longBitsToDouble(bits);
+            pos = pos + 8;
+        }
+        case BinaryLabel.CHAR -> {
+            datum = (char) Share.binaryToInteger(bin, pos, pos + 3, false);
+            pos = pos + 3;
+        }
+        case BinaryLabel.STRING -> {
+            int start = pos;
+            while (bin[pos] != 0) {
                 pos = pos + 1;
             }
-            case BinaryLabel.INTS -> {
-                int size = (int) Share.decodeSize(bin, pos);
-                pos = pos + 1 + (bin[pos] & 0xFF);
-                datum = decodeInts(bin, pos, size);
-                pos = pos + 4 * size;
-            }
-            case BinaryLabel.LONGS -> {
-                int size = (int) Share.decodeSize(bin, pos);
-                pos = pos + 1 + (bin[pos] & 0xFF);
-                datum = decodeLongs(bin, pos, size);
-                pos = pos + 8 * size;
-            }
-            case BinaryLabel.DOUBLES -> {
-                int size = (int) Share.decodeSize(bin, pos);
-                pos = pos + 1 + (bin[pos] & 0xFF);
-                datum = decodeDoubles(bin, pos, size);
-                pos = pos + 8 * size;
-            }
-            case BinaryLabel.INTACT -> {
-                int size = (int) Share.decodeSize(bin, pos);
-                pos = pos + 1 + (bin[pos] & 0xFF);
-                byte[] big = new byte[size];
-                System.arraycopy(bin, pos, big, 0, size);
-                datum = new Intact(big);
-                pos = pos + size;
-            }
-            case BinaryLabel.FRACTION -> {
-                int sz_num = (int) Share.decodeSize(bin, pos);
-                pos = pos + 1 + (bin[pos] & 0xFF);
-                byte[] num = new byte[sz_num];
-                System.arraycopy(bin, pos, num, 0, sz_num);
-                pos = pos + sz_num;
+            byte[] bs_str = Arrays.copyOfRange(bin, start, pos);
+            datum = new String(bs_str, StandardCharsets.UTF_8);
+            pos = pos + 1;
+        }
+        case BinaryLabel.INTS -> {
+            int size = (int) Share.decodeSize(bin, pos);
+            pos = pos + 1 + (bin[pos] & 0xFF);
+            datum = decodeInts(bin, pos, size);
+            pos = pos + 4 * size;
+        }
+        case BinaryLabel.LONGS -> {
+            int size = (int) Share.decodeSize(bin, pos);
+            pos = pos + 1 + (bin[pos] & 0xFF);
+            datum = decodeLongs(bin, pos, size);
+            pos = pos + 8 * size;
+        }
+        case BinaryLabel.DOUBLES -> {
+            int size = (int) Share.decodeSize(bin, pos);
+            pos = pos + 1 + (bin[pos] & 0xFF);
+            datum = decodeDoubles(bin, pos, size);
+            pos = pos + 8 * size;
+        }
+        case BinaryLabel.INTACT -> {
+            int size = (int) Share.decodeSize(bin, pos);
+            pos = pos + 1 + (bin[pos] & 0xFF);
+            byte[] big = new byte[size];
+            System.arraycopy(bin, pos, big, 0, size);
+            datum = new Intact(big);
+            pos = pos + size;
+        }
+        case BinaryLabel.FRACTION -> {
+            int sz_num = (int) Share.decodeSize(bin, pos);
+            pos = pos + 1 + (bin[pos] & 0xFF);
+            byte[] num = new byte[sz_num];
+            System.arraycopy(bin, pos, num, 0, sz_num);
+            pos = pos + sz_num;
 
-                int sz_den = (int) Share.decodeSize(bin, pos);
-                pos = pos + 1 + (bin[pos] & 0xFF);
-                byte[] den = new byte[sz_den];
-                System.arraycopy(bin, pos, den, 0, sz_den);
-                pos = pos + sz_den;
-                datum = new Fraction(num, den);
-            }
-            case BinaryLabel.FLOAT64 -> {
-                long bits = Share.binaryToInteger(bin, pos, pos + 8, false);
-                double d = Double.longBitsToDouble(bits);
-                datum = new Float64(d);
-                pos = pos + 8;
-            }
-            case BinaryLabel.COMPLEX -> {
-                Real real = (Real) process();
-                Real img = (Real) process();
-                datum = new Complex(real, img);
-            }
-            case BinaryLabel.SYMBOL -> {
-                int start = pos;
-                while (bin[pos] != 0) {
-                    pos = pos + 1;
-                }
-                byte[] bs_str = Arrays.copyOfRange(bin, start, pos);
-                datum = new Symbol(new String(bs_str, StandardCharsets.UTF_8));
+            int sz_den = (int) Share.decodeSize(bin, pos);
+            pos = pos + 1 + (bin[pos] & 0xFF);
+            byte[] den = new byte[sz_den];
+            System.arraycopy(bin, pos, den, 0, sz_den);
+            pos = pos + sz_den;
+            datum = new Fraction(num, den);
+        }
+        case BinaryLabel.FLOAT64 -> {
+            long bits = Share.binaryToInteger(bin, pos, pos + 8, false);
+            double d = Double.longBitsToDouble(bits);
+            datum = new Float64(d);
+            pos = pos + 8;
+        }
+        case BinaryLabel.COMPLEX -> {
+            Real real = (Real) process();
+            Real img = (Real) process();
+            datum = new Complex(real, img);
+        }
+        case BinaryLabel.SYMBOL -> {
+            int start = pos;
+            while (bin[pos] != 0) {
                 pos = pos + 1;
             }
-            case BinaryLabel.LOT_BEGIN -> {
-                if (bin[pos] == BinaryLabel.LOT_END) {
-                    datum = new Lot();
-                    pos = pos + 1;
-                } else {
-                    Object moo = process();
-                    datum = cons(moo, (Lot) process());
-                }
-            }
-            case BinaryLabel.LOT_CONS -> {
-                Object moo = process();
-                datum = cons(moo, (Lot) process());
-            }
-            case BinaryLabel.LOT_END -> {
+            byte[] bs_str = Arrays.copyOfRange(bin, start, pos);
+            datum = new Symbol(new String(bs_str, StandardCharsets.UTF_8));
+            pos = pos + 1;
+        }
+        case BinaryLabel.LOT_BEGIN -> {
+            if (bin[pos] == BinaryLabel.LOT_END) {
                 datum = new Lot();
+                pos = pos + 1;
+            } else {
+                Object ooo = process();
+                datum = cons(ooo, (Lot) process());
             }
-            case BinaryLabel.FEW -> {
-                int size = (int) Share.decodeSize(bin, pos);
-                pos = pos + 1 + (bin[pos] & 0xFF);
-                datum = makeFew(size, 0);
-                for (int i = 0; i < size; i = i + 1) {
-                    Object moo = process();
-                    fewSet((Few) datum, i, moo);
-                }
+        }
+        case BinaryLabel.LOT_CONS -> {
+            Object ooo = process();
+            datum = cons(ooo, (Lot) process());
+        }
+        case BinaryLabel.LOT_END -> {
+            datum = new Lot();
+        }
+        case BinaryLabel.FEW -> {
+            int size = (int) Share.decodeSize(bin, pos);
+            pos = pos + 1 + (bin[pos] & 0xFF);
+            datum = makeFew(size, 0);
+            for (int i = 0; i < size; i = i + 1) {
+                Object ooo = process();
+                fewSet((Few) datum, i, ooo);
             }
-            case BinaryLabel.TIME -> {
-                datum = decodeTime(bin, pos);
-                pos = pos + 12;
-            }
-            case BinaryLabel.DATE -> {
-                datum = decodeDate(bin, pos);
-                pos = pos + 18;
-            }
-            default -> throw new RuntimeException(String.format(Msg.UNMATCHED, bin[pos]));
+        }
+        case BinaryLabel.TIME -> {
+            datum = decodeTime(bin, pos);
+            pos = pos + 12;
+        }
+        case BinaryLabel.DATE -> {
+            datum = decodeDate(bin, pos);
+            pos = pos + 18;
+        }
+        default -> throw new RuntimeException(String.format(Msg.UNMATCHED, bin[pos]));
         }
         return datum;
     }

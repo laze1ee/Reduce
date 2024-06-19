@@ -18,6 +18,7 @@ public RBTree() {
     root = new RBNode();
 }
 
+
 @Override
 public String toString() {
     return String.format("(Red-Black-Tree %s)", root);
@@ -37,9 +38,11 @@ public boolean isEmpty() {
     return root.isEmpty();
 }
 
-
-public static void insert(@NotNull RBTree tree, Object key, Object value) {
-    Lot path = RBTreeAid.pathOf(tree.root, key);
+/***
+ * @return if inserting succeeded, return true else false.
+ */
+public static boolean insert(@NotNull RBTree tree, Object key, @NotNull Object value) {
+    Lot path = RBTreeMate.pathOf(tree.root, key);
     RBNode node = (RBNode) car(path);
     if (node.isEmpty()) {
         node.key = key;
@@ -47,21 +50,22 @@ public static void insert(@NotNull RBTree tree, Object key, Object value) {
         node.color = true;
         node.left = new RBNode();
         node.right = new RBNode();
-        RBTreeAid.InsertFixer fixer = new RBTreeAid.InsertFixer(tree, path);
+        RBTreeMate.InsertFixer fixer = new RBTreeMate.InsertFixer(tree, path);
         fixer.process();
+        return true;
     } else {
-        throw new RuntimeException(String.format(Msg.SAME_KEY, key, tree));
+        return false;
     }
 }
 
 public static boolean isPresent(@NotNull RBTree tree, Object key) {
-    Lot path = RBTreeAid.pathOf(tree.root, key);
+    Lot path = RBTreeMate.pathOf(tree.root, key);
     RBNode node = (RBNode) car(path);
     return !node.isEmpty();
 }
 
 public static Object ref(@NotNull RBTree tree, Object key) {
-    Lot path = RBTreeAid.pathOf(tree.root, key);
+    Lot path = RBTreeMate.pathOf(tree.root, key);
     RBNode node = (RBNode) car(path);
     if (node.isEmpty()) {
         throw new RuntimeException(String.format(Msg.NOT_PRESENT, key, tree));
@@ -71,7 +75,7 @@ public static Object ref(@NotNull RBTree tree, Object key) {
 }
 
 public static void set(@NotNull RBTree tree, Object key, Object new_value) {
-    Lot path = RBTreeAid.pathOf(tree.root, key);
+    Lot path = RBTreeMate.pathOf(tree.root, key);
     RBNode node = (RBNode) car(path);
     if (node.isEmpty()) {
         throw new RuntimeException(String.format(Msg.NOT_PRESENT, key, tree));
@@ -80,16 +84,19 @@ public static void set(@NotNull RBTree tree, Object key, Object new_value) {
     }
 }
 
-public static void delete(@NotNull RBTree tree, Object key) {
+/***
+ * @return if deleting succeeded, return true else false.
+ */
+public static boolean delete(@NotNull RBTree tree, Object key) {
     if (tree.isEmpty()) {
-        throw new RuntimeException(Msg.EMPTY_TREE);
+        return false;
     } else {
-        RBTreeAid.delete(tree, key);
+        return RBTreeMate.delete(tree, key);
     }
 }
 
 public Object minimum() {
-    Lot path = RBTreeAid.minimum(root, new Lot());
+    Lot path = RBTreeMate.minimum(root, new Lot());
     if (path.isEmpty()) {
         throw new RuntimeException(Msg.EMPTY_TREE);
     } else {
@@ -99,7 +106,7 @@ public Object minimum() {
 }
 
 public Object maximum() {
-    Lot path = RBTreeAid.maximum(root, new Lot());
+    Lot path = RBTreeMate.maximum(root, new Lot());
     if (path.isEmpty()) {
         throw new RuntimeException(Msg.EMPTY_TREE);
     } else {
@@ -109,12 +116,12 @@ public Object maximum() {
 }
 
 public static Lot travel(@NotNull RBTree tree) {
-    RBTreeAid.Travel f = new RBTreeAid.Travel();
+    RBTreeMate.Travel f = new RBTreeMate.Travel();
     return f.process(tree.root);
 }
 
 public static Lot filter(Has pred, @NotNull RBTree tree) {
-    RBTreeAid.Filter f = new RBTreeAid.Filter(pred);
+    RBTreeMate.Filter f = new RBTreeMate.Filter(pred);
     return f.process(tree.root);
 }
 }

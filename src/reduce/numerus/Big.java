@@ -36,18 +36,18 @@ static byte @NotNull [] add(byte @NotNull [] m, byte @NotNull [] n) {
 }
 
 private static byte @NotNull [] complement(byte @NotNull [] big, int length) {
-    byte[] moo = new byte[length];
+    byte[] ooo = new byte[length];
     int i = length - 1;
     for (int j = big.length - 1; j >= 0; i -= 1, j -= 1) {
-        moo[i] = big[j];
+        ooo[i] = big[j];
     }
 
     if (big[0] < 0) {
         for (; i >= 0; i -= 1) {
-            moo[i] = -1;
+            ooo[i] = -1;
         }
     }
-    return moo;
+    return ooo;
 }
 
 static byte @NotNull [] neg(byte @NotNull [] big) {
@@ -73,17 +73,17 @@ static byte @NotNull [] mul(byte @NotNull [] m, byte[] n) {
     int sz = a.length + b.length;
     byte[] product = new byte[sz];
     for (int i = b.length - 1; i >= 0; i -= 1) {
-        byte[] moo = new byte[sz];
+        byte[] ooo = new byte[sz];
         int carry = 0;
         for (int j = a.length - 1; j >= 0; j -= 1) {
             carry = (a[j] & 0xFF) * (b[i] & 0xFF) + carry;
-            moo[i + j + 1] = (byte) carry;
+            ooo[i + j + 1] = (byte) carry;
             carry = carry >> 8;
         }
-        moo[i] = (byte) carry;
+        ooo[i] = (byte) carry;
         carry = 0;
         for (int j = sz - 1; j >= 0; j -= 1) {
-            carry = (product[j] & 0xff) + (moo[j] & 0xFF) + carry;
+            carry = (product[j] & 0xff) + (ooo[j] & 0xFF) + carry;
             product[j] = (byte) carry;
             carry = carry >> 8;
         }
@@ -139,20 +139,20 @@ static int nearLeftBit(byte @NotNull [] big) {
 }
 
 static byte @NotNull [] shiftR(byte @NotNull [] big, int shift) {
-    byte[] moo = new byte[big.length];
+    byte[] ooo = new byte[big.length];
     int mask = (1 << shift) - 1;
     int front_half = 0;
     for (int i = 0; i < big.length; i += 1) {
-        moo[i] = (byte) (moo[i] | front_half);
+        ooo[i] = (byte) (ooo[i] | front_half);
         int back_half = (big[i] & 0xFF) >>> shift;
-        moo[i] = (byte) (moo[i] | back_half);
+        ooo[i] = (byte) (ooo[i] | back_half);
         front_half = (big[i] & mask) << (8 - shift);
     }
     if (big[0] < 0) {
-        moo[0] = (byte) (moo[0] | (mask << (8 - shift)));
+        ooo[0] = (byte) (ooo[0] | (mask << (8 - shift)));
     }
 
-    return Share.trim(moo);
+    return Share.trim(ooo);
 }
 
 static byte[] shiftRight(byte @NotNull [] big, int shift) {
@@ -162,13 +162,13 @@ static byte[] shiftRight(byte @NotNull [] big, int shift) {
     if (big.length <= m || equal(big, zero)) {
         return zero;
     } else {
-        byte[] moo = new byte[big.length - m];
-        System.arraycopy(big, 0, moo, 0, big.length - m);
+        byte[] ooo = new byte[big.length - m];
+        System.arraycopy(big, 0, ooo, 0, big.length - m);
 
         if (n == 0) {
-            return moo;
+            return ooo;
         } else {
-            return shiftR(moo, n);
+            return shiftR(ooo, n);
         }
     }
 }
@@ -186,22 +186,22 @@ static byte @NotNull [] shiftRightUnsigned(byte @NotNull [] big, int shift) {
 }
 
 static byte @NotNull [] shiftL(byte @NotNull [] big, int shift) {
-    byte[] moo = new byte[big.length + 1];
+    byte[] ooo = new byte[big.length + 1];
     int mask = ((1 << shift) - 1) << (8 - shift);
     int back_half = 0;
     for (int i = big.length - 1; i >= 0; i -= 1) {
-        moo[i + 1] = (byte) (moo[i + 1] | back_half);
+        ooo[i + 1] = (byte) (ooo[i + 1] | back_half);
         int front_half = (big[i] & 0xFF) << shift;
-        moo[i + 1] = (byte) (moo[i + 1] | front_half);
+        ooo[i + 1] = (byte) (ooo[i + 1] | front_half);
         back_half = (big[i] & mask) >>> (8 - shift);
     }
-    moo[0] = (byte) (moo[0] | back_half);
+    ooo[0] = (byte) (ooo[0] | back_half);
 
     if (big[0] < 0) {
-        moo[0] = (byte) (moo[0] | mask);
-        return moo;
+        ooo[0] = (byte) (ooo[0] | mask);
+        return ooo;
     } else {
-        return Share.trim(moo);
+        return Share.trim(ooo);
     }
 }
 
@@ -212,13 +212,13 @@ static byte @NotNull [] shiftLeft(byte @NotNull [] big, int shift) {
         int m = shift / 8;
         int n = shift % 8;
 
-        byte[] moo = new byte[big.length + m];
-        System.arraycopy(big, 0, moo, 0, big.length);
+        byte[] ooo = new byte[big.length + m];
+        System.arraycopy(big, 0, ooo, 0, big.length);
 
         if (n == 0) {
-            return moo;
+            return ooo;
         } else {
-            return shiftL(moo, n);
+            return shiftL(ooo, n);
         }
     }
 }

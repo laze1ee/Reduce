@@ -17,13 +17,13 @@ static final int DAYS_Y = 365;
 static final long SEC_DAY = 86400;
 static final long COMPLEMENT = 62167219200L;
 
-static final int[][] DAY_YEAR = new
-                                int[][]{{0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
-                                        {0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}};
+static final int[][] DAY_YEAR =
+new int[][]{{0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
+            {0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}};
 
-static final int[][] SUM_DAYS = new
-                                int[][]{{0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365},
-                                        {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366}};
+static final int[][] SUM_DAYS =
+new int[][]{{0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365},
+            {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366}};
 
 private static final int START_DAY_OF_WEEK = 5;
 
@@ -54,7 +54,8 @@ static int dayOfWeek(int year, int month, int day_of_month) {
 }
 
 
-static String stringOfOffset(int offset) {
+@Contract(pure = true)
+static @NotNull String stringOfOffset(int offset) {
     int n = offset;
     String sign;
     if (n == 0) {

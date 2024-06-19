@@ -8,6 +8,7 @@ import reduce.share.Share;
 public abstract class Numerus {
 
 public abstract Numerus neg();
+
 public abstract byte[] code();
 
 
@@ -110,7 +111,7 @@ public static int intactToInt(@NotNull Intact in) {
 }
 
 
-public static boolean shortEq(Numerus n1, Numerus n2) {
+public static boolean eq(Numerus n1, Numerus n2) {
     if (n1 instanceof Intact in1 &&
         n2 instanceof Intact in2) {
         return Big.equal(in1.data, in2.data);

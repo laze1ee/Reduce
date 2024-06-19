@@ -34,7 +34,7 @@ public Time(long second, int nanosecond) {
 
 
 @Override
-public String toString() {
+public @NotNull String toString() {
     return String.format("#<time %d.%09d>", second, Math.abs(nanosecond));
 }
 

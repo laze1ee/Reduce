@@ -334,16 +334,16 @@ static @NotNull Float64 formFloat(boolean neg, int exponent, byte[] fra) {
         return new Float64(d);
     } else {
         int offset = 53 - Big.farLeftBit(fra);
-        byte[] moo = fra;
+        byte[] ooo = fra;
         if (offset > 0) {
-            moo = Big.shiftLeft(moo, offset);
+            ooo = Big.shiftLeft(ooo, offset);
         } else if (offset < 0) {
-            moo = Big.shiftRight(moo, offset * -1);
+            ooo = Big.shiftRight(ooo, offset * -1);
         }
-        moo[0] = (byte) (moo[0] & 0xF);
+        ooo[0] = (byte) (ooo[0] & 0xF);
 
         byte[] bits = new byte[8];
-        System.arraycopy(moo, 0, bits, 1, 7);
+        System.arraycopy(ooo, 0, bits, 1, 7);
         bits[1] = (byte) (bits[1] | (exponent << 4));
         bits[0] = (byte) (exponent >> 4);
         if (neg) {
@@ -430,22 +430,22 @@ static Intact parseVariousInteger(String str) {
 
     bound = rangePrefixInteger(StringMass::isBin, str, 0, Msg.BIN_PREFIX);
     if (bound > 0) {
-        String moo = trimInteger(str, bound);
-        return parsePrefixInteger(moo, 1);
+        String ooo = trimInteger(str, bound);
+        return parsePrefixInteger(ooo, 1);
     }
     bound = rangePrefixInteger(StringMass::isDigit, str, 0, Msg.DEC_PREFIX);
     if (bound > 0) {
-        String moo = trimInteger(str, bound);
-        return parseInteger(moo);
+        String ooo = trimInteger(str, bound);
+        return parseInteger(ooo);
     }
     bound = rangePrefixInteger(StringMass::isHex, str, 0, Msg.HEX_PREFIX);
     if (bound > 0) {
-        String moo = trimInteger(str, bound);
-        return parsePrefixInteger(moo, 4);
+        String ooo = trimInteger(str, bound);
+        return parsePrefixInteger(ooo, 4);
     } else {
         bound = rangeInteger(StringMass::isDigit, str, 0);
-        String moo = trimInteger(str, bound);
-        return parseInteger(moo);
+        String ooo = trimInteger(str, bound);
+        return parseInteger(ooo);
     }
 }
 
@@ -459,43 +459,43 @@ static Real parseReal(@NotNull String str) {
     }
     bound = rangePrefixFloat(StringMass::isBin, str, 0, Msg.BIN_PREFIX);
     if (bound == sz) {
-        String moo = trimFloat(str, bound);
-        return parsePrefixFloat(moo, 1);
+        String ooo = trimFloat(str, bound);
+        return parsePrefixFloat(ooo, 1);
     }
     bound = rangePrefixFloat(StringMass::isDigit, str, 0, Msg.DEC_PREFIX);
     if (bound == sz) {
-        String moo = trimFloat(str, bound);
-        return parseFloat(moo);
+        String ooo = trimFloat(str, bound);
+        return parseFloat(ooo);
     }
     bound = rangePrefixFloat(StringMass::isHex, str, 0, Msg.HEX_PREFIX);
     if (bound == sz) {
-        String moo = trimFloat(str, bound);
-        return parsePrefixFloat(moo, 4);
+        String ooo = trimFloat(str, bound);
+        return parsePrefixFloat(ooo, 4);
     }
     bound = rangePrefixInteger(StringMass::isBin, str, 0, Msg.BIN_PREFIX);
     if (bound == sz) {
-        String moo = trimInteger(str, bound);
-        return parsePrefixInteger(moo, 1);
+        String ooo = trimInteger(str, bound);
+        return parsePrefixInteger(ooo, 1);
     }
     bound = rangePrefixInteger(StringMass::isDigit, str, 0, Msg.DEC_PREFIX);
     if (bound == sz) {
-        String moo = trimInteger(str, bound);
-        return parseInteger(moo);
+        String ooo = trimInteger(str, bound);
+        return parseInteger(ooo);
     }
     bound = rangePrefixInteger(StringMass::isHex, str, 0, Msg.HEX_PREFIX);
     if (bound == sz) {
-        String moo = trimInteger(str, bound);
-        return parsePrefixInteger(moo, 4);
+        String ooo = trimInteger(str, bound);
+        return parsePrefixInteger(ooo, 4);
     }
     bound = rangeFloat(StringMass::isDigit, str, 0);
     if (bound == sz) {
-        String moo = trimFloat(str, bound);
-        return parseFloat(moo);
+        String ooo = trimFloat(str, bound);
+        return parseFloat(ooo);
     }
     bound = rangeInteger(StringMass::isDigit, str, 0);
     if (bound == sz) {
-        String moo = trimInteger(str, bound);
-        return parseInteger(moo);
+        String ooo = trimInteger(str, bound);
+        return parseInteger(ooo);
     }
 
     if (str.equals(Msg.POS_INF)) {

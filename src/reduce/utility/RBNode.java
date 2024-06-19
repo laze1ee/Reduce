@@ -26,7 +26,7 @@ public String toString() {
         return "nil";
     } else {
         return String.format("(%s %s %s %s %s)", stringOf(key), stringOf(value),
-                             RBTreeAid.stringOfColor(color), left, right);
+                             RBTreeMate.stringOfColor(color), left, right);
     }
 }
 

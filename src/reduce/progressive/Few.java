@@ -17,12 +17,12 @@ public Few(Object @NotNull ... args) {
 
 @Override
 public String toString() {
-    Lot cyc_data = Cycle.detect(this);
-    if (cyc_data.isEmpty()) {
+    Lot cycle = Cycle.detect(this);
+    if (cycle.isEmpty()) {
         return String.format("#(%s)", Mate.consArray(array, array.length));
     } else {
-        Object cycle = Cycle.label(this, cyc_data);
-        return cycle.toString();
+        Object ooo = Cycle.label(this, cycle);
+        return ooo.toString();
     }
 }
 

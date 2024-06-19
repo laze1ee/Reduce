@@ -9,22 +9,24 @@ import static reduce.progressive.Pr.*;
 
 class Cycle {
 
-private static class DetectCycle {
+private static class Detecting {
 
+    final Object datum;
     Lot collector;
     Lot cycle;
 
-    DetectCycle() {
-        collector = new Lot();
-        cycle = new Lot();
+    Detecting(Object datum) {
+        this.datum = datum;
+        this.collector = new Lot();
+        this.cycle = new Lot();
     }
 
-    Lot process(Object datum) {
-        _entry(datum);
+    Lot process() {
+        _job(datum);
         return cycle;
     }
 
-    private void _entry(Object datum) {
+    private void _job(Object datum) {
         if (datum instanceof Few fw) {
             _collectArray(fw.array);
         } else if (datum instanceof Lot lt) {
@@ -33,62 +35,68 @@ private static class DetectCycle {
     }
 
     private void _collectArray(Object[] arr) {
-        if (isBelong(arr, collector)) {
-            if (!isBelong(arr, cycle)) {
+        if (Mate.isBelong(arr, collector)) {
+            if (!Mate.isBelong(arr, cycle)) {
                 cycle = cons(arr, cycle);
             }
         } else {
             collector = cons(arr, collector);
             for (Object datum : arr) {
-                _entry(datum);
+                _job(datum);
             }
         }
     }
 
     private void _collectPair(Pair pair) {
         if (!(pair instanceof PairTail)) {
-            if (isBelong(pair, collector)) {
-                if (!isBelong(pair, cycle)) {
+            if (Mate.isBelong(pair, collector)) {
+                if (!Mate.isBelong(pair, cycle)) {
                     cycle = cons(pair, cycle);
                 }
             } else {
                 collector = cons(pair, collector);
-                PairOn moo = (PairOn) pair;
-                _entry(moo.data);
-                _collectPair(moo.next);
+                PairOn ooo = (PairOn) pair;
+                _job(ooo.data);
+                _collectPair(ooo.next);
             }
         }
     }
 }
 
 static Lot detect(Object datum) {
-    DetectCycle d = new DetectCycle();
-    return d.process(datum);
+    Detecting inst = new Detecting(datum);
+    return inst.process();
 }
 
 
-private static class LabelCycle {
+private static class Labeling {
 
+    final Object datum;
     final Lot attached_cycle;
     int count;
 
-    LabelCycle(Lot cycle) {
-        attached_cycle = map(LabelCycle::attach, cycle);
-        count = 0;
+    Labeling(Object datum, Lot cycle) {
+        this.datum = datum;
+        this.attached_cycle = map(Labeling::attach, cycle);
+        this.count = 0;
     }
 
-    Object process(Object datum) {
+    Object process() {
+        return _job(datum);
+    }
+
+    Object _job(Object datum) {
         if (datum instanceof Few fw) {
-            return _processArray(fw.array);
+            return _jobArray(fw.array);
         } else if (datum instanceof Lot lt) {
-            return _processPair(lt.pair);
+            return _jobPair(lt.pair);
         } else {
             return datum;
         }
     }
 
     @Contract("_ -> new")
-    private @NotNull Fer _processArray(Object[] arr) {
+    private @NotNull Fer _jobArray(Object[] arr) {
         Few cyc = _find(arr);
         if (cyc != null &&
             (boolean) ref1(cyc)) {
@@ -97,25 +105,25 @@ private static class LabelCycle {
             set1(cyc, true);
             set2(cyc, count);
             count = count + 1;
-            Object[] moo = _batchArray(arr);
-            return new FewCyc(moo, (int) ref2(cyc));
+            Object[] ooo = _batchArray(arr);
+            return new FewCyc(ooo, (int) ref2(cyc));
         } else {
-            Object[] moo = _batchArray(arr);
-            return new Few(moo);
+            Object[] ooo = _batchArray(arr);
+            return new Few(ooo);
         }
     }
 
     private Object @NotNull [] _batchArray(Object @NotNull [] arr) {
         int n = arr.length;
-        Object[] moo = new Object[n];
+        Object[] ooo = new Object[n];
         for (int i = 0; i < n; i = i + 1) {
-            moo[i] = process(arr[i]);
+            ooo[i] = _job(arr[i]);
         }
-        return moo;
+        return ooo;
     }
 
     @Contract("_ -> new")
-    private @NotNull Pair _processPair(Pair pair) {
+    private @NotNull Pair _jobPair(Pair pair) {
         Few cyc = _find(pair);
         if (cyc != null &&
             ((boolean) ref1(cyc))) {
@@ -124,15 +132,15 @@ private static class LabelCycle {
             set1(cyc, true);
             set2(cyc, count);
             count = count + 1;
-            PairOn moo = (PairOn) pair;
-            return new PairCyc(process(moo.data), _processNext(moo.next), (int) ref2(cyc));
+            PairOn ooo = (PairOn) pair;
+            return new PairCyc(_job(ooo.data), _jobNext(ooo.next), (int) ref2(cyc));
         } else {
-            PairOn moo = (PairOn) pair;
-            return new PairHead(process(moo.data), _processNext(moo.next));
+            PairOn ooo = (PairOn) pair;
+            return new PairHead(_job(ooo.data), _jobNext(ooo.next));
         }
     }
 
-    private @NotNull Pair _processNext(Pair pair) {
+    private @NotNull Pair _jobNext(Pair pair) {
         if (pair instanceof PairTail) {
             return new PairTail();
         } else {
@@ -144,11 +152,11 @@ private static class LabelCycle {
                 set1(cyc, true);
                 set2(cyc, count);
                 count = count + 1;
-                PairOn moo = (PairOn) pair;
-                return new PairCyc(process(moo.data), _processNext(moo.next), (int) ref2(cyc));
+                PairOn ooo = (PairOn) pair;
+                return new PairCyc(_job(ooo.data), _jobNext(ooo.next), (int) ref2(cyc));
             } else {
                 PairOn row = (PairOn) pair;
-                return new PairCons(process(row.data), _processNext(row.next));
+                return new PairCons(_job(row.data), _jobNext(row.next));
             }
         }
     }
@@ -159,21 +167,21 @@ private static class LabelCycle {
     }
 
     private @Nullable Few _find(Object datum) {
-        Lot moo = attached_cycle;
-        while (!moo.isEmpty() &&
-               !eq(datum, ref0((Few) car(moo)))) {
-            moo = cdr(moo);
+        Lot ooo = attached_cycle;
+        while (!ooo.isEmpty() &&
+               !eq(datum, ref0((Few) car(ooo)))) {
+            ooo = cdr(ooo);
         }
-        if (moo.isEmpty()) {
+        if (ooo.isEmpty()) {
             return null;
         } else {
-            return (Few) car(moo);
+            return (Few) car(ooo);
         }
     }
 }
 
 static Object label(Object datum, Lot cycle) {
-    LabelCycle l = new LabelCycle(cycle);
-    return l.process(datum);
+    Labeling inst = new Labeling(datum, cycle);
+    return inst.process();
 }
 }
