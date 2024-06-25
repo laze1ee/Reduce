@@ -61,6 +61,11 @@ public static Object cadr(Lot lt) {
     return car(cdr(lt));
 }
 
+@Contract("_ -> new")
+public static @NotNull Lot cdar(Lot lt) {
+    return cdr((Lot) car(lt));
+}
+
 public static int length(@NotNull Lot lt) {
     if (lt.isCircularInBreadth()) {
         throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));

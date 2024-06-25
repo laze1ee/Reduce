@@ -70,9 +70,9 @@ public static byte @NotNull [] trim(byte @NotNull [] big) {
         if (big[k] < 0) {
             k -= 1;
         }
-        byte[] moo = new byte[big.length - k];
-        System.arraycopy(big, k, moo, 0, big.length - k);
-        return moo;
+        byte[] ooo = new byte[big.length - k];
+        System.arraycopy(big, k, ooo, 0, big.length - k);
+        return ooo;
     } else if (big[0] == -1) {
         int k = 0;
         while (k < bound && big[k] == -1) {
@@ -81,9 +81,9 @@ public static byte @NotNull [] trim(byte @NotNull [] big) {
         if (big[k] >= 0) {
             k -= 1;
         }
-        byte[] moo = new byte[big.length - k];
-        System.arraycopy(big, k, moo, 0, big.length - k);
-        return moo;
+        byte[] ooo = new byte[big.length - k];
+        System.arraycopy(big, k, ooo, 0, big.length - k);
+        return ooo;
     } else {
         return big;
     }

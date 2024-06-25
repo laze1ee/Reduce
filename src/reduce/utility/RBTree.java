@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import reduce.progressive.Lot;
 import reduce.refmethod.Has;
 
-import static reduce.progressive.Pr.*;
+import static reduce.progressive.Pr.car;
 
 
 /**
