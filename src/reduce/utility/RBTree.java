@@ -50,7 +50,7 @@ public static boolean insert(@NotNull RBTree tree, Object key, @NotNull Object v
         node.color = true;
         node.left = new RBNode();
         node.right = new RBNode();
-        RBTreeMate.InsertFixer fixer = new RBTreeMate.InsertFixer(tree, path);
+        RBTreeMate.InsertFixing fixer = new RBTreeMate.InsertFixing(tree, path);
         fixer.process();
         return true;
     } else {
@@ -116,7 +116,7 @@ public Object maximum() {
 }
 
 public static Lot travel(@NotNull RBTree tree) {
-    RBTreeMate.Travel f = new RBTreeMate.Travel();
+    RBTreeMate.Traveling f = new RBTreeMate.Traveling();
     return f.process(tree.root);
 }
 

@@ -92,19 +92,19 @@ public static Object lotRef(Lot lt, int index) {
     throw new RuntimeException(String.format(Msg.LOT_INDEX_OUT, index, lt));
 }
 
-public static Object first(Lot lt) {
+public static Object get0(Lot lt) {
     return lotRef(lt, 0);
 }
 
-public static Object second(Lot lt) {
+public static Object get1(Lot lt) {
     return lotRef(lt, 1);
 }
 
-public static Object third(Lot lt) {
+public static Object get2(Lot lt) {
     return lotRef(lt, 2);
 }
 
-public static Object fourth(Lot lt) {
+public static Object get3(Lot lt) {
     return lotRef(lt, 3);
 }
 

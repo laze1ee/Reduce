@@ -109,24 +109,24 @@ static Lot maximum(@NotNull RBNode node, Lot path) {
 }
 
 
-record InsertFixer(RBTree tree, Lot path) {
+record InsertFixing(RBTree tree, Lot path) {
 
     void process() {
-        _aid(path);
+        _job(path);
         tree.root.color = false;
     }
 
-    private void _aid(Lot path) {
-        if (2 < length(path) && ((RBNode) cadr(path)).isRed()) {
-            RBNode p = (RBNode) lotRef(path, 1);
-            RBNode pp = (RBNode) lotRef(path, 2);
+    private void _job(Lot path) {
+        if (2 < length(path) && ((RBNode) get1(path)).isRed())   {
+            RBNode p = (RBNode) get1(path);
+            RBNode pp = (RBNode) get2(path);
             if (isLeftOf(p, pp)) {
                 RBNode u = pp.right;
                 if (u.isRed()) {
                     p.color = false;
                     u.color = false;
                     pp.color = true;
-                    _aid(cddr(path));
+                    _job(cddr(path));
                 } else {
                     if (isRightOf(car(path), p)) {
                         leftRotate(tree, cdr(path));
@@ -142,7 +142,7 @@ record InsertFixer(RBTree tree, Lot path) {
                     p.color = false;
                     u.color = false;
                     pp.color = true;
-                    _aid(cddr(path));
+                    _job(cddr(path));
                 } else {
                     if (isLeftOf(car(path), p)) {
                         rightRotate(tree, cdr(path));
@@ -162,7 +162,7 @@ private static void transplant(RBTree tree, Lot path, RBNode node) {
     if (1 == length(path)) {
         tree.root = node;
     } else {
-        RBNode p = (RBNode) lotRef(path, 1);
+        RBNode p = (RBNode) get1(path);
         if (isLeftOf(car(path), p)) {
             p.left = node;
         } else {
@@ -188,45 +188,45 @@ static boolean delete(@NotNull RBTree tree, Object key) {
             transplant(tree, path, x);
             path = cons(x, cdr(path));
         } else {
-            Lot path2 = minimum(deleted.right, new Lot());
-            RBNode alternate = (RBNode) car(path2);
+            Lot min_path = minimum(deleted.right, new Lot());
+            RBNode alternate = (RBNode) car(min_path);
             color = alternate.color;
             x = alternate.right;
             if (!isRightOf(alternate, deleted)) {
-                transplant(tree, path2, x);
+                transplant(tree, min_path, x);
                 alternate.right = deleted.right;
             }
             transplant(tree, path, alternate);
             alternate.left = deleted.left;
             alternate.color = deleted.color;
-            path = append(cons(x, cdr(path2)), cons(alternate, cdr(path)));
+            path = append(cons(x, cdr(min_path)), cons(alternate, cdr(path)));
         }
         if (!color) {       // is the deleted color black?
-            DeleteFixer fixer = new DeleteFixer(tree, path);
+            DeleteFixing fixer = new DeleteFixing(tree, path);
             fixer.process();
         }
         return true;
     }
 }
 
-private static class DeleteFixer {
+private static class DeleteFixing {
 
     final RBTree tree;
     final Lot path;
     RBNode x;
 
-    DeleteFixer(RBTree tree, Lot path) {
+    DeleteFixing(RBTree tree, Lot path) {
         this.tree = tree;
         this.path = path;
     }
 
     void process() {
         x = (RBNode) car(path);
-        _aid(cdr(path));
+        _job(cdr(path));
         x.color = false;
     }
 
-    private void _aid(@NotNull Lot path) {
+    private void _job(@NotNull Lot path) {
         if (!path.isEmpty() && x.isBlack()) {
             RBNode p = (RBNode) car(path);
             if (isLeftOf(x, p)) {
@@ -241,7 +241,7 @@ private static class DeleteFixer {
                 if (s.left.isBlack() && s.right.isBlack()) {
                     s.color = true;
                     x = p;
-                    _aid(cdr(path));
+                    _job(cdr(path));
                 } else {
                     if (s.right.isBlack()) {
                         rightRotate(tree, cons(s, path));
@@ -266,7 +266,7 @@ private static class DeleteFixer {
                 if (s.left.isBlack() && s.right.isBlack()) {
                     s.color = true;
                     x = p;
-                    _aid(cdr(path));
+                    _job(cdr(path));
                 } else {
                     if (s.left.isBlack()) {
                         leftRotate(tree, cons(s, path));
@@ -285,24 +285,24 @@ private static class DeleteFixer {
 }
 
 
-static class Travel {
+static class Traveling {
 
     Lot col;
 
-    Travel() {
+    Traveling() {
         col = new Lot();
     }
 
     Lot process(RBNode node) {
-        _aid(node);
+        _job(node);
         return col;
     }
 
-    private void _aid(@NotNull RBNode node) {
+    private void _job(@NotNull RBNode node) {
         if (!node.isEmpty()) {
-            _aid(node.right);
+            _job(node.right);
             col = cons(node.key, col);
-            _aid(node.left);
+            _job(node.left);
         }
     }
 }
