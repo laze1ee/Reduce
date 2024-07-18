@@ -138,7 +138,7 @@ static int nearLeftBit(byte @NotNull [] big) {
     }
 }
 
-static byte @NotNull [] shiftR(byte @NotNull [] big, int shift) {
+private static byte @NotNull [] shiftR(byte @NotNull [] big, int shift) {
     byte[] ooo = new byte[big.length];
     int mask = (1 << shift) - 1;
     int front_half = 0;
@@ -185,7 +185,7 @@ static byte @NotNull [] shiftRightUnsigned(byte @NotNull [] big, int shift) {
     }
 }
 
-static byte @NotNull [] shiftL(byte @NotNull [] big, int shift) {
+private static byte @NotNull [] shiftL(byte @NotNull [] big, int shift) {
     byte[] ooo = new byte[big.length + 1];
     int mask = ((1 << shift) - 1) << (8 - shift);
     int back_half = 0;

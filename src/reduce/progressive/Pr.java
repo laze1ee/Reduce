@@ -503,7 +503,7 @@ public static boolean less(Object o1, Object o2) {
         return Mate.numberLess(n1, n2);
     } else if (o1 instanceof Real r1 &&
                o2 instanceof Real r2) {
-        return Numerus.valueLess(r1, r2);
+        return Numerus.valueLessThan(r1, r2);
     } else if (o1 instanceof String s1 &&
                o2 instanceof String s2) {
         int m = s1.compareTo(s2);

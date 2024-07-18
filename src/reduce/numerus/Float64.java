@@ -68,11 +68,6 @@ public boolean isNan() {
     return Double.isNaN(data);
 }
 
-boolean isInteger() {
-    return Double.isFinite(data) &&
-           data == Math.floor(data);
-}
-
 public Real toExact() {
     if (data == 0) {
         return Intact.zero;

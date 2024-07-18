@@ -17,7 +17,7 @@ public Complex(Real real, Real imaginary) {
 
 @Override
 public String toString() {
-    boolean neg = Arithmetic.realLess(imaginary, Intact.zero);
+    boolean neg = Arithmetic.realValueLessThan(imaginary, Intact.zero);
     if (neg ||
         imaginary == Float64.POS_INF ||
         imaginary == Float64.NEG_INF ||

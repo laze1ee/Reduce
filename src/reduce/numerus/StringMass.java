@@ -11,16 +11,6 @@ static boolean isHex(char c) {
     return ('0' <= c && c <= '9') || ('A' <= c && c <= 'F') || ('a' <= c && c <= 'f');
 }
 
-static byte valueOfChar(char c) {
-    if ('0' <= c && c <= '9') {
-        return (byte) (c - 0x30);
-    } else if ('A' <= c && c <= 'F') {
-        return (byte) (c - 0x37);
-    } else {
-        return (byte) (c - 0x57);
-    }
-}
-
 //region Predicate
 static boolean isBin(char c) {
     return c == '0' || c == '1';
@@ -297,7 +287,7 @@ static @NotNull Float64 parsePrefixFloat(@NotNull String str, int shift) {
 
     byte[] fra = Big.zero;
     while (str.charAt(i) != '.') {
-        byte n = valueOfChar(str.charAt(i));
+        byte n = Share.valueOfChar(str.charAt(i));
         fra = Big.add(Big.shiftLeft(fra, shift), new byte[]{n});
         i += 1;
     }
@@ -307,7 +297,7 @@ static @NotNull Float64 parsePrefixFloat(@NotNull String str, int shift) {
     i += 1;
     int e2 = 0;
     while (i < sz) {
-        byte n = valueOfChar(str.charAt(i));
+        byte n = Share.valueOfChar(str.charAt(i));
         fra = Big.add(Big.shiftLeft(fra, shift), new byte[]{n});
         e2 -= shift;
         i += 1;
@@ -367,7 +357,7 @@ static @NotNull Intact parsePrefixInteger(@NotNull String str, int shift) {
     int sz = str.length();
     byte[] inta = Big.zero;
     while (i < sz) {
-        byte n = valueOfChar(str.charAt(i));
+        byte n = Share.valueOfChar(str.charAt(i));
         inta = Big.add(Big.shiftLeft(inta, shift), new byte[]{n});
         i += 1;
     }
@@ -398,7 +388,7 @@ static @NotNull Intact parseInteger(@NotNull String str) {
     int sz = str.length();
     byte[] inta = Big.zero;
     while (i < sz) {
-        byte n = valueOfChar(str.charAt(i));
+        byte n = Share.valueOfChar(str.charAt(i));
         inta = Big.add(Big.mul(inta, Big.ten), new byte[]{n});
         i += 1;
     }
@@ -417,7 +407,7 @@ static @NotNull Real parseFraction(@NotNull String str) {
 
     Intact num = parseVariousInteger(str_num);
     Intact den = parseVariousInteger(str_den);
-    if (Arithmetic.realLess(den, Intact.zero)) {
+    if (Arithmetic.realValueLessThan(den, Intact.zero)) {
         num = num.neg();
         den = den.neg();
     }

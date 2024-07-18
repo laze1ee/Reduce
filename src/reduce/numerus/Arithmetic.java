@@ -24,13 +24,13 @@ private static @NotNull Real fractionAdd(@NotNull Fraction fr1, @NotNull Fractio
     }
 }
 
-static boolean realEq(Real r1, Real r2) {
+static boolean realValueEqual(Real r1, Real r2) {
     if (r1 instanceof Intact i1) {
         if (r2 instanceof Intact i2) {
             return Big.equal(i1.data, i2.data);
         } else if (r2 instanceof Float64 fl &&
                    Double.isFinite(fl.data)) {
-            return realEq(i1, fl.toExact());
+            return realValueEqual(i1, fl.toExact());
         } else {
             return false;
         }
@@ -40,7 +40,7 @@ static boolean realEq(Real r1, Real r2) {
                    Big.equal(fr1.denominator, fr2.denominator);
         } else if (r2 instanceof Float64 fl &&
                    Double.isFinite(fl.data)) {
-            return realEq(fr1, fl.toExact());
+            return realValueEqual(fr1, fl.toExact());
         } else {
             return false;
         }
@@ -49,12 +49,12 @@ static boolean realEq(Real r1, Real r2) {
         if (r2 instanceof Float64 fl2) {
             return fl1.data == fl2.data;
         } else {
-            return realEq(r2, fl1);
+            return realValueEqual(r2, fl1);
         }
     }
 }
 
-static boolean realLess(Real r1, Real r2) {
+static boolean realValueLessThan(Real r1, Real r2) {
     if (r1 instanceof Intact in1) {
         if (r2 instanceof Intact in2) {
             return Big.less(in1.data, in2.data);
@@ -69,13 +69,13 @@ static boolean realLess(Real r1, Real r2) {
             }
         } else if (r2 instanceof Float64 fl &&
                    Double.isFinite(fl.data)) {
-            return realLess(r1, fl.toExact());
+            return realValueLessThan(r1, fl.toExact());
         } else {
             return r2 == Float64.POS_INF;
         }
     } else if (r1 instanceof Fraction fr1) {
         if (r2 instanceof Intact) {
-            return !realLess(r2, r1);
+            return !realValueLessThan(r2, r1);
         } else if (r2 instanceof Fraction fr2) {
             if (Big.equal(fr1.denominator, fr2.denominator)) {
                 return Big.less(fr1.numerator, fr2.numerator);
@@ -86,7 +86,7 @@ static boolean realLess(Real r1, Real r2) {
             }
         } else if (r2 instanceof Float64 fl &&
                    Double.isFinite(fl.data)) {
-            return realLess(r1, fl.toExact());
+            return realValueLessThan(r1, fl.toExact());
         } else {
             return r2 == Float64.POS_INF;
         }
@@ -94,7 +94,7 @@ static boolean realLess(Real r1, Real r2) {
         Float64 fl1 = (Float64) r1;
         if (r2 instanceof Intact || r2 instanceof Fraction) {
             if (Double.isFinite(fl1.data)) {
-                return realLess(fl1.toExact(), r2);
+                return realValueLessThan(fl1.toExact(), r2);
             } else {
                 return fl1 == Float64.NEG_INF;
             }

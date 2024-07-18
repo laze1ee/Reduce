@@ -25,8 +25,7 @@ public String toString() {
     if (this.isEmpty()) {
         return "nil";
     } else {
-        return String.format("(%s %s %s %s %s)", stringOf(key), stringOf(value),
-                             RBTreeMate.stringOfColor(color), left, right);
+        return String.format("(%s %s %s %s)", stringOf(key), stringOf(value), left, right);
     }
 }
 

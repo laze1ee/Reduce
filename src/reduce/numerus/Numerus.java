@@ -54,16 +54,6 @@ public static boolean isInexact(Object datum) {
     }
 }
 
-public static boolean isInteger(Object datum) {
-    if (datum instanceof Intact) {
-        return true;
-    } else if (datum instanceof Float64 fl) {
-        return fl.isInteger();
-    } else {
-        return false;
-    }
-}
-
 public static Numerus exactToInexact(Numerus num) {
     if (num instanceof Intact in) {
         return in.toInexact();
@@ -115,6 +105,10 @@ public static boolean eq(Numerus n1, Numerus n2) {
     if (n1 instanceof Intact in1 &&
         n2 instanceof Intact in2) {
         return Big.equal(in1.data, in2.data);
+    } else if (n1 instanceof Fraction fr1 &&
+               n2 instanceof Fraction fr2) {
+        return Big.equal(fr1.numerator, fr2.numerator) &&
+               Big.equal(fr1.denominator, fr2.denominator);
     } else if (n1 instanceof Float64 fl1 &&
                n2 instanceof Float64 fl2) {
         return fl1.data == fl2.data;
@@ -123,21 +117,21 @@ public static boolean eq(Numerus n1, Numerus n2) {
     }
 }
 
-public static boolean valueEq(Numerus n1, Numerus n2) {
+public static boolean valueEqual(Numerus n1, Numerus n2) {
     if (n1 instanceof Real r1 &&
         n2 instanceof Real r2) {
-        return Arithmetic.realEq(r1, r2);
+        return Arithmetic.realValueEqual(r1, r2);
     } else if (n1 instanceof Complex co1 &&
                n2 instanceof Complex co2) {
-        return Arithmetic.realEq(co1.real, co2.real) &&
-               Arithmetic.realEq(co1.imaginary, co2.imaginary);
+        return Arithmetic.realValueEqual(co1.real, co2.real) &&
+               Arithmetic.realValueEqual(co1.imaginary, co2.imaginary);
     } else {
         return false;
     }
 }
 
-public static boolean valueLess(Real r1, Real r2) {
-    return Arithmetic.realLess(r1, r2);
+public static boolean valueLessThan(Real r1, Real r2) {
+    return Arithmetic.realValueLessThan(r1, r2);
 }
 
 
@@ -204,58 +198,14 @@ public static Numerus div(Numerus n1, Numerus n2) {
     }
 }
 
-public static @NotNull Real quotient(Real r1, Real r2) {
-    if (r1 instanceof Intact in1 &&
-        r2 instanceof Intact in2) {
-        byte[] q = Big.quotient(in1.data, in2.data);
-        return new Intact(q);
-    } else if (r1 instanceof Float64 fl &&
-               r2 instanceof Intact in) {
-        Intact in1 = (Intact) fl.toExact();
-        byte[] q = Big.quotient(in1.data, in.data);
-        return new Float64(Big.doubleOf(q));
-    } else if (r1 instanceof Intact in &&
-               r2 instanceof Float64 fl) {
-        Intact in2 = (Intact) fl.toExact();
-        byte[] q = Big.quotient(in.data, in2.data);
-        return new Float64(Big.doubleOf(q));
-    } else if (r1 instanceof Float64 fl1 &&
-               r2 instanceof Float64 fl2) {
-        Intact in1 = (Intact) fl1.toExact();
-        Intact in2 = (Intact) fl2.toExact();
-        byte[] q = Big.quotient(in1.data, in2.data);
-        return new Float64(Big.doubleOf(q));
-    } else {
-        // redundant clause
-        return Intact.zero;
-    }
+public static @NotNull Real quotient(@NotNull Intact in1, @NotNull Intact in2) {
+    byte[] q = Big.quotient(in1.data, in2.data);
+    return new Intact(q);
 }
 
-public static @NotNull Real remainder(Real r1, Real r2) {
-    if (r1 instanceof Intact i1 &&
-        r2 instanceof Intact i2) {
-        byte[] q = Big.remainder(i1.data, i2.data);
-        return new Intact(q);
-    } else if (r1 instanceof Float64 fl &&
-               r2 instanceof Intact in) {
-        Intact in1 = (Intact) fl.toExact();
-        byte[] q = Big.remainder(in1.data, in.data);
-        return new Float64(Big.doubleOf(q));
-    } else if (r1 instanceof Intact in &&
-               r2 instanceof Float64 fl) {
-        Intact in2 = (Intact) fl.toExact();
-        byte[] q = Big.remainder(in.data, in2.data);
-        return new Float64(Big.doubleOf(q));
-    } else if (r1 instanceof Float64 fl1 &&
-               r2 instanceof Float64 fl2) {
-        Intact in1 = (Intact) fl1.toExact();
-        Intact in2 = (Intact) fl2.toExact();
-        byte[] q = Big.remainder(in1.data, in2.data);
-        return new Float64(Big.doubleOf(q));
-    } else {
-        // redundant clause
-        return Intact.zero;
-    }
+public static @NotNull Real remainder(@NotNull Intact in1, @NotNull Intact in2) {
+    byte[] q = Big.remainder(in1.data, in2.data);
+    return new Intact(q);
 }
 
 public static Intact shift(Intact in, @NotNull Intact shift) {

@@ -1,6 +1,5 @@
 package reduce.utility;
 
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import reduce.progressive.Lot;
 import reduce.refmethod.Has;
@@ -10,16 +9,6 @@ import static reduce.progressive.Pr.*;
 
 @SuppressWarnings("SuspiciousNameCombination")
 class RBTreeMate {
-
-@Contract(pure = true)
-static @NotNull String stringOfColor(boolean color) {
-    if (color) {
-        return "red";
-    } else {
-        return "black";
-    }
-}
-
 
 static @NotNull Lot pathOf(@NotNull RBNode node, Object key) {
     Lot path = new Lot();
@@ -48,9 +37,6 @@ private static boolean isRightOf(Object node1, @NotNull RBNode node2) {
 private static void leftRotate(RBTree tree, Lot path) {
     RBNode x = (RBNode) car(path);
     RBNode y = x.right;
-    if (y.isEmpty()) {
-        throw new RuntimeException(String.format("right branch is empty in node %s", x));
-    }
     RBNode b = y.left;
 
     y.left = x;
@@ -71,9 +57,6 @@ private static void leftRotate(RBTree tree, Lot path) {
 private static void rightRotate(RBTree tree, Lot path) {
     RBNode x = (RBNode) car(path);
     RBNode y = x.left;
-    if (y.isEmpty()) {
-        throw new RuntimeException(String.format("left branch is empty in node %s", x));
-    }
     RBNode b = y.right;
 
     y.right = x;
@@ -117,7 +100,7 @@ record InsertFixing(RBTree tree, Lot path) {
     }
 
     private void _job(Lot path) {
-        if (2 < length(path) && ((RBNode) get1(path)).isRed())   {
+        if (2 < length(path) && ((RBNode) get1(path)).isRed()) {
             RBNode p = (RBNode) get1(path);
             RBNode pp = (RBNode) get2(path);
             if (isLeftOf(p, pp)) {
