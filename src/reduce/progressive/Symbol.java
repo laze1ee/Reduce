@@ -11,7 +11,7 @@ import static reduce.progressive.Pr.stringOf;
 
 public class Symbol {
 
-private static final RBTree catalog = new RBTree();
+private static final RBTree tree = new RBTree(Mate::less, Mate::greater);
 
 final int identifier;
 
@@ -21,13 +21,13 @@ public Symbol(@NotNull String str) {
         throw new RuntimeException(String.format(Msg.INVALID_STRING, stringOf(str)));
     } else {
         int checksum = CheckSum.fletcher32(str.getBytes(StandardCharsets.UTF_8));
-        if (RBTree.isPresent(Symbol.catalog, checksum)) {
-            String str2 = (String) RBTree.ref(Symbol.catalog, checksum);
+        if (RBTree.isPresent(Symbol.tree, checksum)) {
+            String str2 = (String) RBTree.ref(Symbol.tree, checksum);
             if (!str.equals(str2)) {
                 throw new RuntimeException(String.format(Msg.JACKPOT, str, str2));
             }
         } else {
-            RBTree.insert(Symbol.catalog, checksum, str);
+            RBTree.insert(Symbol.tree, checksum, str);
         }
         identifier = checksum;
     }
@@ -36,7 +36,7 @@ public Symbol(@NotNull String str) {
 
 @Override
 public String toString() {
-    return (String) RBTree.ref(catalog, identifier);
+    return (String) RBTree.ref(tree, identifier);
 }
 
 @Override

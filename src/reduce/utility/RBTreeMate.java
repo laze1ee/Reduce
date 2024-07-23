@@ -2,7 +2,7 @@ package reduce.utility;
 
 import org.jetbrains.annotations.NotNull;
 import reduce.progressive.Lot;
-import reduce.refmethod.Has;
+import reduce.refmethod.Has1;
 
 import static reduce.progressive.Pr.*;
 
@@ -10,13 +10,14 @@ import static reduce.progressive.Pr.*;
 @SuppressWarnings("SuspiciousNameCombination")
 class RBTreeMate {
 
-static @NotNull Lot pathOf(@NotNull RBNode node, Object key) {
+static @NotNull Lot pathOf(@NotNull RBTree tree, Object key) {
+    RBNode node = tree.root();
     Lot path = new Lot();
     while (!node.isEmpty()) {
-        if (less(key, node.key)) {
+        if (tree.less().apply(key, node.key)) {
             path = cons(node, path);
             node = node.left;
-        } else if (greater(key, node.key)) {
+        } else if (tree.greater().apply(key, node.key)) {
             path = cons(node, path);
             node = node.right;
         } else {
@@ -43,7 +44,7 @@ private static void leftRotate(RBTree tree, Lot path) {
     x.right = b;
 
     if (cdr(path).isEmpty()) {
-        tree.root = y;
+        tree.setRoot(y);
     } else {
         RBNode p = (RBNode) cadr(path);
         if (isLeftOf(x, p)) {
@@ -63,7 +64,7 @@ private static void rightRotate(RBTree tree, Lot path) {
     x.left = b;
 
     if (cdr(path).isEmpty()) {
-        tree.root = y;
+        tree.setRoot(y);
     } else {
         RBNode p = (RBNode) cadr(path);
         if (isLeftOf(x, p)) {
@@ -96,7 +97,7 @@ record InsertFixing(RBTree tree, Lot path) {
 
     void process() {
         _job(path);
-        tree.root.color = false;
+        tree.root().color = false;
     }
 
     private void _job(Lot path) {
@@ -143,7 +144,7 @@ record InsertFixing(RBTree tree, Lot path) {
 
 private static void transplant(RBTree tree, Lot path, RBNode node) {
     if (1 == length(path)) {
-        tree.root = node;
+        tree.setRoot(node);
     } else {
         RBNode p = (RBNode) get1(path);
         if (isLeftOf(car(path), p)) {
@@ -155,7 +156,7 @@ private static void transplant(RBTree tree, Lot path, RBNode node) {
 }
 
 static boolean delete(@NotNull RBTree tree, Object key) {
-    Lot path = pathOf(tree.root, key);
+    Lot path = pathOf(tree, key);
     RBNode deleted = (RBNode) car(path);
     if (deleted.isEmpty()) {
         return false;
@@ -293,25 +294,25 @@ static class Traveling {
 static class Filter {
 
     Lot col;
-    final Has pred;
+    final Has1 pred;
 
-    Filter(Has pred) {
+    Filter(Has1 pred) {
         col = new Lot();
         this.pred = pred;
     }
 
     Lot process(RBNode node) {
-        _aid(node);
+        _job(node);
         return col;
     }
 
-    private void _aid(@NotNull RBNode node) {
+    private void _job(@NotNull RBNode node) {
         if (!node.isEmpty()) {
-            _aid(node.right);
+            _job(node.right);
             if (pred.apply(node.value)) {
                 col = cons(node.key, col);
             }
-            _aid(node.left);
+            _job(node.left);
         }
     }
 }

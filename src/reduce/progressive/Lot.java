@@ -1,6 +1,7 @@
 package reduce.progressive;
 
 import org.jetbrains.annotations.NotNull;
+import reduce.utility.Binary;
 import reduce.utility.CheckSum;
 
 import static reduce.progressive.Pr.*;
@@ -65,7 +66,7 @@ public boolean equals(Object datum) {
 
 @Override
 public int hashCode() {
-    byte[] bin = code(this);
+    byte[] bin = Binary.code(this);
     return CheckSum.fletcher32(bin);
 }
 

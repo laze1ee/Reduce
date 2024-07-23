@@ -3,7 +3,7 @@ package reduce.progressive;
 import org.jetbrains.annotations.NotNull;
 import reduce.utility.CheckSum;
 
-import static reduce.progressive.Pr.code;
+import static reduce.utility.Binary.code;
 
 
 public class Few extends Fer {

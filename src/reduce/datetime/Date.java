@@ -8,7 +8,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
-import static reduce.progressive.Pr.code;
+import static reduce.utility.Binary.code;
 
 
 public class Date {

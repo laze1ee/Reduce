@@ -1,8 +1,7 @@
 package reduce.refmethod;
 
 @FunctionalInterface
-public interface Eqv {
+public interface Has2 {
 
-@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 boolean apply(Object o1, Object o2);
 }

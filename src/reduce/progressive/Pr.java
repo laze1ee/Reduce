@@ -2,12 +2,10 @@ package reduce.progressive;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import reduce.datetime.Date;
 import reduce.datetime.Time;
-import reduce.numerus.*;
-import reduce.refmethod.Do;
-import reduce.refmethod.Eqv;
-import reduce.refmethod.Has;
+import reduce.refmethod.Do1;
+import reduce.refmethod.Has2;
+import reduce.refmethod.Has1;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -333,7 +331,7 @@ public static @NotNull Lot fewToLot(@NotNull Few fw) {
 }
 
 @Contract("_, _ -> new")
-public static @NotNull Lot filter(Has pred, @NotNull Lot lt) {
+public static @NotNull Lot filter(Has1 pred, @NotNull Lot lt) {
     if (lt.isCircularInBreadth()) {
         throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
     } else {
@@ -349,7 +347,7 @@ public static @NotNull Lot filter(Has pred, @NotNull Lot lt) {
 }
 
 @Contract("_, _ -> new")
-public static @NotNull Lot map(Do func, @NotNull Lot lt) {
+public static @NotNull Lot map(Do1 func, @NotNull Lot lt) {
     if (lt.isCircularInBreadth()) {
         throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
     } else {
@@ -363,7 +361,7 @@ public static @NotNull Lot map(Do func, @NotNull Lot lt) {
     }
 }
 
-public static @NotNull Few map(Do func, Few fw) {
+public static @NotNull Few map(Do1 func, Few fw) {
     int n = length(fw);
     Few ooo = makeFew(n, 0);
     for (int i = 0; i < n; i = i + 1) {
@@ -441,9 +439,6 @@ public static boolean eq(Object o1, Object o2) {
     } else if (o1 instanceof Number n1 &&
                o2 instanceof Number n2) {
         return Mate.numberEq(n1, n2);
-    } else if (o1 instanceof Numerus n1 &&
-               o2 instanceof Numerus n2) {
-        return Numerus.eq(n1, n2);
     } else if (o1 instanceof Character c1 &&
                o2 instanceof Character c2) {
         return ((char) c1) == c2;
@@ -494,6 +489,14 @@ public static boolean equal(Object o1, Object o2) {
     }
 }
 
+/**
+ * The types supported to compare size:
+ * <ul><li>Symbol</li>
+ * <li>Number</li>
+ * <li>String</li>
+ * <li>Time</li>
+ * <li>boolean[], byte[], int[], long[], double[]</li></ul>
+ */
 public static boolean less(Object o1, Object o2) {
     if (o1 instanceof Symbol sym1 &&
         o2 instanceof Symbol sym2) {
@@ -501,9 +504,6 @@ public static boolean less(Object o1, Object o2) {
     } else if (o1 instanceof Number n1 &&
                o2 instanceof Number n2) {
         return Mate.numberLess(n1, n2);
-    } else if (o1 instanceof Real r1 &&
-               o2 instanceof Real r2) {
-        return Numerus.valueLessThan(r1, r2);
     } else if (o1 instanceof String s1 &&
                o2 instanceof String s2) {
         int m = s1.compareTo(s2);
@@ -581,7 +581,7 @@ public static @NotNull Lot removeDup(@NotNull Lot lt) {
     }
 }
 
-public static int fewIndex(Eqv pred, Object datum, Few fw) {
+public static int fewIndex(Has2 pred, Object datum, Few fw) {
     int sz = length(fw);
     int i = 0;
     while (i < sz &&
@@ -593,60 +593,6 @@ public static int fewIndex(Eqv pred, Object datum, Few fw) {
     } else {
         return i;
     }
-}
-//endregion
-
-
-//region Binary
-public static byte[] code(Object datum) {
-    if (datum instanceof Boolean b) {
-        return Mate.codeBoolean(b);
-    } else if (datum instanceof Integer in) {
-        return Mate.codeInt(in);
-    } else if (datum instanceof Long l) {
-        return Mate.codeLong(l);
-    } else if (datum instanceof Double d) {
-        return Mate.codeDouble(d);
-    } else if (datum instanceof Character c) {
-        return Mate.codeChar(c);
-    } else if (datum instanceof String str) {
-        return Mate.codeString(str);
-
-    } else if (datum instanceof int[] ins) {
-        return Mate.codeInts(ins);
-    } else if (datum instanceof long[] ls) {
-        return Mate.codeLongs(ls);
-    } else if (datum instanceof double[] ds) {
-        return Mate.codeDoubles(ds);
-
-    } else if (datum instanceof Intact in) {
-        return in.code();
-    } else if (datum instanceof Fraction fr) {
-        return fr.code();
-    } else if (datum instanceof Float64 fl) {
-        return fl.code();
-    } else if (datum instanceof Complex cx) {
-        return cx.code();
-
-    } else if (datum instanceof Symbol sym) {
-        return Mate.codeSymbol(sym);
-    } else if (datum instanceof Lot lt) {
-        return Mate.codeLot(lt);
-    } else if (datum instanceof Few fw) {
-        return Mate.codeFew(fw);
-
-    } else if (datum instanceof Time t) {
-        return Mate.codeTime(t);
-    } else if (datum instanceof Date d) {
-        return Mate.codeDate(d);
-    } else {
-        throw new RuntimeException(String.format(Msg.UNSUPPORTED, datum));
-    }
-}
-
-public static Object decode(byte[] bin) {
-    Mate.Decoding de = new Mate.Decoding(bin);
-    return de.process();
 }
 //endregion
 }

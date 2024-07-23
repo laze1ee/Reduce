@@ -16,8 +16,4 @@ static final String JACKPOT =
 // Comparison
 static final String UNDEFINED_ARR_COMPARE = "undefined array type %s and %s for comparing in size";
 static final String UNDEFINED_COMPARE = "undefined type %s and %s for comparing in size";
-
-// Binary
-static final String UNSUPPORTED = "unsupported data tye %s for coding";
-static final String UNMATCHED = "unmatched label code %s for decoding";
 }

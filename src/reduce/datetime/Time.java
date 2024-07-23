@@ -9,7 +9,7 @@ import java.lang.management.ThreadMXBean;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
-import static reduce.progressive.Pr.code;
+import static reduce.utility.Binary.code;
 
 
 public record Time(long second, int nanosecond) {
