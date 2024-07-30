@@ -48,7 +48,7 @@ private static class Detecting {
     }
 
     private void _collectPair(Pair pair) {
-        if (!(pair instanceof PairTail)) {
+        if (!(pair instanceof PairEnd)) {
             if (Mate.isBelong(pair, collector)) {
                 if (!Mate.isBelong(pair, cycle)) {
                     cycle = cons(pair, cycle);
@@ -141,8 +141,8 @@ private static class Labeling {
     }
 
     private @NotNull Pair _jobNext(Pair pair) {
-        if (pair instanceof PairTail) {
-            return new PairTail();
+        if (pair instanceof PairEnd) {
+            return new PairEnd();
         } else {
             Few cyc = _find(pair);
             if (cyc != null &&

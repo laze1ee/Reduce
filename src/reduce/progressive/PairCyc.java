@@ -15,7 +15,7 @@ PairCyc(Object data, Pair next, int count) {
 
 @Override
 public String toString() {
-    if (next instanceof PairTail) {
+    if (next instanceof PairEnd) {
         return String.format("#%s=(%s)", count, stringOf(data));
     } else if (next instanceof PairCyc ||
                next instanceof PairMark) {

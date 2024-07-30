@@ -1,3 +1,7 @@
+> This project is no longer being updated since refactored a lot of code. Now it has been migrated
+> to a new project [Essential](https://github.com/laze1ee/Essential). As usual, new project will be
+> updated from time to time.
+
 ### Intro
 
 In the Scheme programming language, various high-level data structures, including stacks, heaps, and

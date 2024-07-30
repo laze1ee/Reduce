@@ -14,8 +14,8 @@ class Mate {
 //region Lot
 @Contract("null -> new")
 static @NotNull Pair toPairCons(Pair pair) {
-    if (pair instanceof PairTail) {
-        return new PairTail();
+    if (pair instanceof PairEnd) {
+        return new PairEnd();
     } else {
         PairOn on = (PairOn) pair;
         return new PairCons(on.data, toPairCons(on.next));
@@ -81,20 +81,19 @@ static boolean greater(Object o1, Object o2) {
     return (int) o1 > (int) o2;
 }
 
-static final char[] occupant1 = "+-.@".toCharArray();
-static final char[] occupant2 = "\"#'(),;[\\]{|}".toCharArray();
+static final char[] occupant = "\"#'(),;[\\]{|}".toCharArray();
 
-static boolean isCharPresent(char c, char @NotNull [] charset) {
-    int sz = charset.length;
+private static boolean isCharPresent(char c) {
+    int bound = Mate.occupant.length;
     int i = 0;
-    while (i < sz && c != charset[i]) {
+    while (i < bound && c != Mate.occupant[i]) {
         i = i + 1;
     }
-    return i < sz;
+    return i < bound;
 }
 
 static boolean isScalar(char c) {
-    return c <= 0x1F || Character.isWhitespace(c) || isCharPresent(c, occupant2);
+    return c <= 0x1F || Character.isWhitespace(c) || isCharPresent(c);
 }
 //endregion
 
@@ -118,10 +117,10 @@ static @NotNull String stringOfChar(char c) {
 }
 
 static @NotNull String originalString(@NotNull String str) {
-    int sz = str.length();
+    int bound = str.length();
     StringBuilder builder = new StringBuilder();
     builder.append('"');
-    for (int i = 0; i < sz; i += 1) {
+    for (int i = 0; i < bound; i += 1) {
         char c = str.charAt(i);
         switch (c) {
         case '\b' -> {
@@ -152,9 +151,7 @@ static @NotNull String originalString(@NotNull String str) {
             builder.append(c);
             builder.append(c);
         }
-        default -> {
-            builder.append(c);
-        }
+        default -> builder.append(c);
         }
     }
     builder.append('"');
@@ -177,17 +174,17 @@ static @NotNull String stringOfArray(@NotNull Object array) {
     }
 }
 
-static @NotNull String consArray(Object arr, int sz) {
-    if (sz == 0) {
+static @NotNull String consArray(Object arr, int bound) {
+    if (bound == 0) {
         return "";
     } else {
         StringBuilder str = new StringBuilder();
-        sz = sz - 1;
-        for (int i = 0; i < sz; i = i + 1) {
+        bound = bound - 1;
+        for (int i = 0; i < bound; i = i + 1) {
             str.append(stringOf(Array.get(arr, i)));
             str.append(" ");
         }
-        str.append(stringOf(Array.get(arr, sz)));
+        str.append(stringOf(Array.get(arr, bound)));
         return str.toString();
     }
 }
@@ -261,7 +258,7 @@ static boolean objectArrayEqual(Object @NotNull [] arr1, Object @NotNull [] arr2
     }
 }
 
-static boolean timeLessThan(@NotNull Time t1, @NotNull Time t2) {
+static boolean timeLess(@NotNull Time t1, @NotNull Time t2) {
     if (t1.second() < t2.second()) {
         return true;
     } else if (t1.second() == t2.second()) {

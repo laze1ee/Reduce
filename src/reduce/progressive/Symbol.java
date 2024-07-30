@@ -36,7 +36,28 @@ public Symbol(@NotNull String str) {
 
 @Override
 public String toString() {
-    return (String) RBTree.ref(tree, identifier);
+    String str = (String) RBTree.ref(tree, identifier);
+    if (str.isEmpty()) {
+        return "||";
+    } else {
+        StringBuilder builder = new StringBuilder();
+        int sz = str.length();
+        char c = str.charAt(0);
+        if (Character.isDigit(c) || Mate.isScalar(c)) {
+            builder.append(String.format("\\u%X;", (int) c));
+        } else {
+            builder.append(c);
+        }
+        for (int i = 1; i < sz; i = i + 1) {
+            c = str.charAt(i);
+            if (Mate.isScalar(c)) {
+                builder.append(String.format("\\u%X;", (int) c));
+            } else {
+                builder.append(c);
+            }
+        }
+        return builder.toString();
+    }
 }
 
 @Override
@@ -53,28 +74,7 @@ public int hashCode() {
     return identifier;
 }
 
-public String display() {
-    String name = toString();
-    if (name.isEmpty()) {
-        return "||";
-    } else {
-        StringBuilder str = new StringBuilder();
-        int sz = name.length();
-        char c = name.charAt(0);
-        if (Character.isDigit(c) || Mate.isCharPresent(c, Mate.occupant1) || Mate.isScalar(c)) {
-            str.append(String.format("\\u%X;", (int) c));
-        } else {
-            str.append(c);
-        }
-        for (int i = 1; i < sz; i = i + 1) {
-            c = name.charAt(i);
-            if (Mate.isScalar(c)) {
-                str.append(String.format("\\u%X;", (int) c));
-            } else {
-                str.append(c);
-            }
-        }
-        return str.toString();
-    }
+public String toRaw() {
+    return (String) RBTree.ref(tree, identifier);
 }
 }

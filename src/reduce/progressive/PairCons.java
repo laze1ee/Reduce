@@ -12,7 +12,7 @@ PairCons(Object data, Pair next) {
 
 @Override
 public String toString() {
-    if (next instanceof PairTail) {
+    if (next instanceof PairEnd) {
         return String.format("%s", stringOf(data));
     } else if (next instanceof PairCyc ||
                next instanceof PairMark) {

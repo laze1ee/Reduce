@@ -3,7 +3,7 @@ package reduce.progressive;
 class Msg {
 
 // Lot and Few
-static final String LOT_EMPTY = "list () is empty";
+static final String LOT_EMPTY = "lot () is empty";
 static final String CYC_BREADTH = "%s is circular in breadth";
 static final String FEW_INDEX_OUT = "index %s is out of range for few %s";
 static final String LOT_INDEX_OUT = "index %s is out of range for lot %s";

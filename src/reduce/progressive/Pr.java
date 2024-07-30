@@ -220,36 +220,37 @@ public static Lot append(@NotNull Lot lt1, Lot lt2) {
         return eee;
     }
 }
-//endregion
 
-
-//region Copy
 public static @NotNull Lot reverse(@NotNull Lot lt) {
     if (lt.isEmpty()) {
         return lt;
     } else if (lt.isCircularInBreadth()) {
         throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
     } else {
-        Pair pair = new PairTail();
+        PairOn item = new PairOn(car(lt), new PairEnd());
+        lt = cdr(lt);
         while (!lt.isEmpty()) {
-            pair = new PairOn(car(lt), pair);
+            item = new PairOn(car(lt), item);
             lt = cdr(lt);
         }
-        return new Lot(pair);
+        return new Lot(item);
     }
 }
+//endregion
 
+
+//region Copy
 public static @NotNull Lot lotHead(@NotNull Lot lt, int index) {
     if (lt.isCircularInBreadth() ||
         (0 <= index && index <= length(lt))) {
         if (index == 0) {
             return new Lot();
         } else {
-            PairOn head = new PairOn(car(lt), new PairTail());
+            PairOn head = new PairOn(car(lt), new PairEnd());
             PairOn ooo = head;
             Lot eee = cdr(lt);
             for (int i = index - 1; i > 0; i -= 1) {
-                ooo.next = new PairOn(car(eee), new PairTail());
+                ooo.next = new PairOn(car(eee), new PairEnd());
                 ooo = (PairOn) ooo.next;
                 eee = cdr(eee);
             }
@@ -279,11 +280,11 @@ public static @NotNull Lot copy(@NotNull Lot lt) {
     } else if (lt.isCircularInBreadth()) {
         throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
     } else {
-        PairOn head = new PairOn(car(lt), new PairTail());
+        PairOn head = new PairOn(car(lt), new PairEnd());
         PairOn ooo = head;
         Lot eee = cdr(lt);
         while (!eee.isEmpty()) {
-            ooo.next = new PairOn(car(eee), new PairTail());
+            ooo.next = new PairOn(car(eee), new PairEnd());
             ooo = (PairOn) ooo.next;
             eee = cdr(eee);
         }
@@ -322,7 +323,7 @@ public static @NotNull Few lotToFew(@NotNull Lot lt) {
 
 @Contract("_ -> new")
 public static @NotNull Lot fewToLot(@NotNull Few fw) {
-    Pair pair = new PairTail();
+    Pair pair = new PairEnd();
     int n = length(fw);
     for (int i = n - 1; i >= 0; i -= 1) {
         pair = new PairOn(fewRef(fw, i), pair);
@@ -335,7 +336,7 @@ public static @NotNull Lot filter(Has1 pred, @NotNull Lot lt) {
     if (lt.isCircularInBreadth()) {
         throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
     } else {
-        Pair pair = new PairTail();
+        Pair pair = new PairEnd();
         while (!lt.isEmpty()) {
             if (pred.apply(car(lt))) {
                 pair = new PairOn(car(lt), pair);
@@ -351,7 +352,7 @@ public static @NotNull Lot map(Do1 func, @NotNull Lot lt) {
     if (lt.isCircularInBreadth()) {
         throw new RuntimeException(String.format(Msg.CYC_BREADTH, lt));
     } else {
-        Pair pair = new PairTail();
+        Pair pair = new PairEnd();
         while (!lt.isEmpty()) {
             Object datum = func.apply(car(lt));
             pair = new PairOn(datum, pair);
@@ -376,7 +377,7 @@ public static @NotNull Few map(Do1 func, Few fw) {
 //region StringOf
 @SuppressWarnings("SpellCheckingInspection")
 private static final char[] CHARS_SET =
-"_-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
+        "_-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
 
 public static @NotNull String randomString(int length) {
     Random rd = new Random();
@@ -510,7 +511,7 @@ public static boolean less(Object o1, Object o2) {
         return m < 0;
     } else if (o1 instanceof Time t1 &&
                o2 instanceof Time t2) {
-        return Mate.timeLessThan(t1, t2);
+        return Mate.timeLess(t1, t2);
     } else if (o1.getClass().isArray() &&
                o2.getClass().isArray()) {
         if (o1 instanceof boolean[] bs1 &&

@@ -16,7 +16,7 @@ Lot(Pair pair) {
 }
 
 public Lot(Object @NotNull ... args) {
-    Pair pair = new PairTail();
+    Pair pair = new PairEnd();
     int n = args.length;
     for (int i = n - 1; i >= 0; i -= 1) {
         pair = new PairOn(args[i], pair);
@@ -27,7 +27,7 @@ public Lot(Object @NotNull ... args) {
 
 @Override
 public String toString() {
-    if (pair instanceof PairTail) {
+    if (pair instanceof PairEnd) {
         return "()";
     } else {
         Lot cycle = Cycle.detect(this);
@@ -66,19 +66,19 @@ public boolean equals(Object datum) {
 
 @Override
 public int hashCode() {
-    byte[] bin = Binary.code(this);
+    byte[] bin = Binary.encode(this);
     return CheckSum.fletcher32(bin);
 }
 
 public boolean isEmpty() {
-    return pair instanceof PairTail;
+    return pair instanceof PairEnd;
 }
 
 public boolean isCircularInBreadth() {
     Pair ooo = pair;
     Lot col = new Lot();
     col = cons(pair, col);
-    while (!(ooo instanceof PairTail)) {
+    while (!(ooo instanceof PairEnd)) {
         PairOn eee = (PairOn) ooo;
         if (Mate.isBelong(eee.next, col)) {
             return true;

@@ -1,14 +1,13 @@
 package reduce.datetime;
 
 import org.jetbrains.annotations.NotNull;
+import reduce.utility.Binary;
 import reduce.utility.CheckSum;
 
 import java.time.OffsetTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-
-import static reduce.utility.Binary.code;
 
 
 public class Date {
@@ -87,7 +86,7 @@ public boolean equals(Object datum) {
 
 @Override
 public int hashCode() {
-    byte[] bin = code(this);
+    byte[] bin = Binary.encode(this);
     return CheckSum.fletcher32(bin);
 }
 

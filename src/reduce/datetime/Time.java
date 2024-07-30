@@ -2,14 +2,13 @@ package reduce.datetime;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import reduce.utility.Binary;
 import reduce.utility.CheckSum;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-
-import static reduce.utility.Binary.code;
 
 
 public record Time(long second, int nanosecond) {
@@ -50,7 +49,7 @@ public boolean equals(Object datum) {
 
 @Override
 public int hashCode() {
-    byte[] bin = code(this);
+    byte[] bin = Binary.encode(this);
     return CheckSum.fletcher32(bin);
 }
 
